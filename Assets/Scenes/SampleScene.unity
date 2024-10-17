@@ -657,6 +657,7 @@ MonoBehaviour:
   mapLimitSettingsFoldout: 1
   targetingSettingsFoldout: 1
   inputSettingsFoldout: 1
+  m_Transform: {fileID: 0}
   useFixedUpdate: 0
   keyboardMovementSpeed: 15
   screenEdgeMovementSpeed: 3
@@ -666,13 +667,13 @@ MonoBehaviour:
   mouseRotationSpeed: 100
   autoHeight: 1
   groundMask:
-    serializedVersion: 2
     m_Bits: 55
   maxHeight: 25
   minHeight: 5
   heightDampening: 5
   keyboardZoomingSensitivity: 2
   scrollWheelZoomingSensitivity: 25
+  zoomPos: 0
   limitMap: 1
   limitX: 70
   limitY: 70
