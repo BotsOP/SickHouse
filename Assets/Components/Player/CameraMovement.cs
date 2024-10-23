@@ -90,7 +90,6 @@ public class CameraMovement : MonoBehaviour
         }
         zoomPos = Mathf.Clamp01(zoomPos);
         timeCached = Mathf.Clamp01(timeCached);
-        Debug.Log($"{zoomPos} {zoomPosCached}");
         zoomPosCached = Mathf.Lerp(zoomPosCached, zoomPos, timeCached);
 
         float targetHeight = Mathf.Lerp(minZoomDistance, maxZoomDistance, zoomPosCached);
