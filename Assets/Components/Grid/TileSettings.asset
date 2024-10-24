@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: TileSettings
   m_EditorClassIdentifier: 
   tiles:
-  - mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-    texture: {fileID: 2800000, guid: 6a922ef408ae54f438d9f7ee01699bf7, type: 3}
+  - mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+    material: {fileID: 2100000, guid: b0daab6cec0cb5b44b16ad4ba1e188e7, type: 2}
     tileID: 0
-  - mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-    texture: {fileID: 2800000, guid: 939ba8164b8603240a2937cc058c6d25, type: 3}
+  - mesh: {fileID: -462981019419857548, guid: 493e119e9b5c6bc49addae7e4f99e950, type: 3}
+    material: {fileID: 2100000, guid: 8358fcb025503a74f9f1676e919d0a78, type: 2}
     tileID: 1

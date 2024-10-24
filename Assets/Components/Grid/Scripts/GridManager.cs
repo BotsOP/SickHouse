@@ -1,83 +1,44 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 
 public class GridManager : MonoBehaviour
 {
-    private readonly static int GridBuffer = Shader.PropertyToID("gridBuffer");
-    private readonly static int GridWidth = Shader.PropertyToID("gridWidth");
-    private readonly static int GridHeight = Shader.PropertyToID("gridHeight");
-    private readonly static int TileSize = Shader.PropertyToID("tileSize");
-    private readonly static int TileRotation = Shader.PropertyToID("tileRotation");
-    
-    [SerializeField] private ComputeShader computeShader;
+    [SerializeField] private GameObject tile;
     [SerializeField] private TileObject tileObject;
-    [SerializeField] private Mesh mesh;
-    [SerializeField] private Material material;
     [SerializeField] private float tileSize = 1;
     [SerializeField] private int gridWidth = 100;
     [SerializeField] private int gridHeight = 100;
     
     private TileID[,] tiles;
-    private ComputeBuffer gridBuffer;
-    private ComputeBuffer argsBuffer;
-    private uint[] args = { 0, 0, 0, 0, 0 };
-    private Bounds bounds;
-
-    private void OnDisable()
-    {
-        gridBuffer?.Release();
-        argsBuffer?.Release();
-    }
+    private GridTile[,] gridTiles;
 
     private void Awake()
     {
         tiles = new TileID[gridWidth, gridHeight];
-        gridBuffer = new ComputeBuffer(gridWidth * gridHeight, sizeof(float) * 3 + sizeof(int));
-        
+        gridTiles = new GridTile[gridWidth, gridHeight];
         Vector3 middleGrid = new Vector3(gridWidth / 2f, 1, gridHeight / 2f);
-        bounds = new Bounds(new Vector3(gridWidth / 2f, 0, gridHeight / 2f), middleGrid * 1000);
 
-        GridTile[] gridTiles = new GridTile[gridWidth * gridHeight];
         for (int x = 0; x < gridWidth; x++)
         for (int y = 0; y < gridHeight; y++)
         {
             int index = x * gridWidth + y % gridHeight;
             int randomIndex = Random.Range(0, tileObject.tiles.Length);
 
-            gridTiles[index].position = new Vector3(x * tileSize, 0.0f, y * tileSize) - new Vector3(gridWidth * tileSize / 2f, 0, gridHeight * tileSize / 2f);
-            gridTiles[index].tileID = randomIndex;
+            Vector3 pos = new Vector3(x * tileSize, 0.0f, y * tileSize) -
+                          new Vector3(gridWidth * tileSize / 2f, 0, gridHeight * tileSize / 2f);
+
+            GameObject temp = Instantiate(tile, pos, Quaternion.identity, transform);
+            MeshFilter meshFilter = temp.GetComponent<MeshFilter>();
+            MeshRenderer meshRenderer = temp.GetComponent<MeshRenderer>();
+            meshFilter.sharedMesh = tileObject.tiles[randomIndex].mesh;
+            meshRenderer.material = tileObject.tiles[randomIndex].material;
+            gridTiles[x, y] = new GridTile(meshRenderer, meshFilter);
 
             tiles[x, y] = (TileID)randomIndex;
         }
-        gridBuffer.SetData(gridTiles);
-        
-        UpdateMaterial();
-
-        argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
-        args[0] = mesh.GetIndexCount(0);
-        args[1] = (uint)(gridWidth * gridHeight);
-        argsBuffer.SetData(args);
-        
-        computeShader.SetBuffer(0, "gridBuffer", gridBuffer);
-    }
-    
-    private void UpdateMaterial()
-    {
-
-        material.SetBuffer(GridBuffer, gridBuffer);
-        material.SetFloat(GridWidth, gridWidth);
-        material.SetFloat(GridHeight, gridHeight);
-        material.SetFloat(TileSize, tileSize / 2);
-        Quaternion rotation = transform.rotation;
-        material.SetVector(TileRotation, new Vector4(rotation.x, rotation.y, rotation.z, rotation.w));
-    }
-
-    private void Update()
-    {
-        UpdateMaterial();
-        Graphics.DrawMeshInstancedIndirect(mesh, 0, material, bounds, argsBuffer);
     }
 
     public void ChangeTile(Vector3 position, TileID tileID)
@@ -89,13 +50,11 @@ public class GridManager : MonoBehaviour
         {
             return;
         }
-        
+
+        gridTiles[posIndex.x, posIndex.y].meshFilter.sharedMesh = tileObject.tiles[(int)tileID].mesh;
+        gridTiles[posIndex.x, posIndex.y].meshRenderer.material = tileObject.tiles[(int)tileID].material;
         Debug.Log($"Changed tile to {tileID}");
         tiles[posIndex.x, posIndex.y] = tileID;
-        int index = posIndex.x * gridWidth + posIndex.y % gridHeight;
-        computeShader.SetInt("index", index);
-        computeShader.SetInt("tileID", (int)tileID);
-        computeShader.Dispatch(0, 1, 1, 1);
     }
 
     private Vector2Int GetTile(Vector3 worldPos)
@@ -105,21 +64,73 @@ public class GridManager : MonoBehaviour
     
     private struct GridTile
     {
-        public Vector3 position;
-        public int tileID;
+        public MeshRenderer meshRenderer;
+        public MeshFilter meshFilter;
+
+        public GridTile(MeshRenderer meshRenderer, MeshFilter meshFilter)
+        {
+            this.meshRenderer = meshRenderer;
+            this.meshFilter = meshFilter;
+        }
     }
+
+    #region Matrix
+    public static float ConvertDegToRad(float degrees)
+    {
+        return ((float)Math.PI / (float) 180) * degrees;
+    }
+    
+    public static Matrix4x4 GetTranslationMatrix(Vector3 position)
+    {
+        return new Matrix4x4(new Vector4(1, 0, 0, 0),
+            new Vector4(0, 1, 0, 0),
+            new Vector4(0, 0, 1, 0),
+            new Vector4(position.x, position.y, position.z, 1));
+    }
+
+    public static Matrix4x4 GetRotationMatrix(Vector3 anglesDeg)
+    {
+        anglesDeg = new Vector3(ConvertDegToRad(anglesDeg[0]), ConvertDegToRad(anglesDeg[1]), ConvertDegToRad(anglesDeg[2]));
+
+        Matrix4x4 rotationX = new Matrix4x4(new Vector4(1, 0, 0, 0), 
+            new Vector4(0, Mathf.Cos(anglesDeg[0]), Mathf.Sin(anglesDeg[0]), 0), 
+            new Vector4(0, -Mathf.Sin(anglesDeg[0]), Mathf.Cos(anglesDeg[0]), 0),
+            new Vector4(0, 0, 0, 1));
+
+        Matrix4x4 rotationY = new Matrix4x4(new Vector4(Mathf.Cos(anglesDeg[1]), 0, -Mathf.Sin(anglesDeg[1]), 0),
+            new Vector4(0, 1, 0, 0),
+            new Vector4(Mathf.Sin(anglesDeg[1]), 0, Mathf.Cos(anglesDeg[1]), 0),
+            new Vector4(0, 0, 0, 1));
+
+        Matrix4x4 rotationZ = new Matrix4x4(new Vector4(Mathf.Cos(anglesDeg[2]), Mathf.Sin(anglesDeg[2]), 0, 0),
+            new Vector4(-Mathf.Sin(anglesDeg[2]), Mathf.Cos(anglesDeg[2]), 0, 0),
+            new Vector4(0, 0, 1, 0),
+            new Vector4(0, 0, 0, 1));
+
+        return rotationX * rotationY * rotationZ;
+    }
+
+    public static Matrix4x4 GetScaleMatrix(Vector3 scale)
+    {
+        return new Matrix4x4(new Vector4(scale.x, 0, 0, 0),
+            new Vector4(0, scale.y, 0, 0),
+            new Vector4(0, 0, scale.z, 0),
+            new Vector4(0, 0, 0, 1));
+    }
+
+    public static Matrix4x4 Get_TRS_Matrix(Vector3 position, Vector3 rotationAngles, Vector3 scale) 
+    {
+        return GetTranslationMatrix(position) * GetRotationMatrix(rotationAngles) * GetScaleMatrix(scale);
+    }
+    
+    public static Matrix4x4 Get_TRS_Matrix(Vector3 position, Vector3 rotationAngles) 
+    {
+        return GetTranslationMatrix(position) * GetRotationMatrix(rotationAngles);
+    }
+    
+    public static Matrix4x4 Get_TRS_Matrix(Vector3 position) 
+    {
+        return GetTranslationMatrix(position);
+    }
+    #endregion
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
