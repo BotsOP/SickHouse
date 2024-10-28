@@ -493,11 +493,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   computeShader: {fileID: 7200000, guid: 7c01da526d0f89f4bb3b41ed8f99847a, type: 3}
   tileObject: {fileID: 11400000, guid: 9558d8a0caf02b34a815b7f507964330, type: 2}
-  mesh: {fileID: -462981019419857548, guid: 493e119e9b5c6bc49addae7e4f99e950, type: 3}
-  material: {fileID: 2100000, guid: 5b4b01dce66e19949b601ad9e517f9c5, type: 2}
+  mesh: {fileID: -462981019419857548, guid: 95b5fbdb358f3f246a585fd58b819dfc, type: 3}
+  material: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
   tileSize: 1
-  gridWidth: 1000
-  gridHeight: 1000
+  gridWidth: 100
+  gridHeight: 100
 --- !u!4 &777743095
 Transform:
   m_ObjectHideFlags: 0
@@ -635,6 +635,7 @@ MonoBehaviour:
   gridManager: {fileID: 777743094}
   mainCamera: {fileID: 350924378}
   pointer: {fileID: 1775906372}
+  tileID: 0
 --- !u!1 &1716631827
 GameObject:
   m_ObjectHideFlags: 0
