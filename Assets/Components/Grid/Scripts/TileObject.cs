@@ -18,6 +18,6 @@ public class TileObject : ScriptableObject
 public struct Tile
 {
     public Mesh mesh;
-    public Texture2D texture;
+    public Material material;
     public TileID tileID;
 }
