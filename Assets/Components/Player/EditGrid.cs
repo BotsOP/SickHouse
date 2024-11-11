@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class EditGrid : MonoBehaviour
 {
@@ -8,6 +10,9 @@ public class EditGrid : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Transform pointer;
     [SerializeField] private TileID tileID;
+    [SerializeField] private List<SelectionBox> selectionBoxes;
+    [SerializeField] private List<SelectionSphere> selectionSpheres;
+    private Vector3 cachedPosition;
 
     private void Update()
     {
@@ -18,8 +23,18 @@ public class EditGrid : MonoBehaviour
         {
             if (Physics.Raycast(ray, out hit)) {
                 pointer.position = hit.point;
-                gridManager.ChangeTile(hit.point, tileID);
+                cachedPosition = hit.point;
+                gridManager.PlacementSelection(hit.point, tileID);
             }
         }
+        if (Input.GetMouseButtonUp(0))
+        {
+            gridManager.ChangeTile(cachedPosition, tileID);
+        }
+    }
+
+    public void ChangeTileSelect(TileID tileID)
+    {
+        this.tileID = tileID;
     }
 }

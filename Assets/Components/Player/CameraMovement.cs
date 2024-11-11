@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class CameraMovement : MonoBehaviour
+public class CameraMovement : MonoBehaviour 
 {
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private float keyboardMovementSpeed = 15;
@@ -43,7 +43,7 @@ public class CameraMovement : MonoBehaviour
     private void Update()
     {
         Move();
-        Rotation();
+        //Rotation();
         HeightCalculation();
         LimitPosition();
     }
@@ -59,7 +59,7 @@ public class CameraMovement : MonoBehaviour
 
             transform.Translate(desiredMove, Space.Self);
             
-            if(Input.GetKey(KeyCode.Mouse1) && MouseAxis != Vector2.zero)
+            if(Input.GetKey(KeyCode.Mouse2) && MouseAxis != Vector2.zero)
             {
                 desiredMove = new Vector3(-MouseAxis.x, 0, -MouseAxis.y);
 
