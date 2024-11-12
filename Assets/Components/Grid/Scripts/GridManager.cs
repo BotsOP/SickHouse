@@ -160,22 +160,31 @@ public class GridManager : MonoBehaviour
         TileID oldTile = tiles[posIndex.x, posIndex.y];
 
         
-        
         if (oldTile == tileID)
             return;
         
         void AreaSelection(int index) { selectionColors[index] = placeableColor; }
         GetAreaSelection(tileID, posIndex, AreaSelection);
+        
+        bool requiredPlacement = false;
+        void RequiredSelection(int index) { 
+            selectionColors[index] = requirementColor;
+            requiredPlacement = true;
+        }
+        GetRequiredSelection(tileID, posIndex, RequiredSelection);
 
         bool constrained = false;
-        void SelectionConstraint(int index) { 
+        void ConstraintSelection(int index) { 
             selectionColors[index] = constrainedColor;
             constrained = true;
         }
-
-        ConstraintSelection(tileID, posIndex, SelectionConstraint);
+        GetConstraintSelection(tileID, posIndex, ConstraintSelection);
         
         selectionMeshRenderer.material.SetVector("_SelectionColor", placeableColor);
+        if (requiredPlacement)
+        {
+            selectionMeshRenderer.material.SetVector("_SelectionColor", requirementColor);
+        }
         if (constrained)
         {
             selectionMeshRenderer.material.SetVector("_SelectionColor", constrainedColor);
@@ -202,59 +211,7 @@ public class GridManager : MonoBehaviour
         Array.Fill(selectionColors, Vector4.one);
     }
     
-    private void GetAreaSelection(TileID tileID, Vector2Int posIndex, Action<int> callback)
-    {
-        Vector2Int cachedIndex = new Vector2Int();
-        foreach (AreaSelection areaSelection in tileObject.tiles[(int)tileID].selection)
-        {
-            foreach (SelectionBox placementConstraintSelectionBox in areaSelection.selectionBoxes)
-            {
-                Vector2Int lowerCorner = new Vector2Int(Mathf.RoundToInt(placementConstraintSelectionBox.position.x - placementConstraintSelectionBox.size.x / 2f), 
-                                                        Mathf.RoundToInt(placementConstraintSelectionBox.position.y - placementConstraintSelectionBox.size.y / 2f));
-                Vector2Int upperCorner = new Vector2Int(Mathf.RoundToInt(placementConstraintSelectionBox.position.x + placementConstraintSelectionBox.size.x / 2f), 
-                                                        Mathf.RoundToInt(placementConstraintSelectionBox.position.y + placementConstraintSelectionBox.size.y / 2f));
-                
-                for (int x = lowerCorner.x; x < upperCorner.x; x++)
-                for (int y = lowerCorner.y; y < upperCorner.y; y++)
-                {
-                    cachedIndex.x = posIndex.x + x;
-                    cachedIndex.y = posIndex.y + y;
-                    int index = cachedIndex.x * gridWidth + cachedIndex.y % gridHeight;
-                    callback?.Invoke(index);
-                }
-            }
-        }
-    }
     
-    private void ConstraintSelection(TileID tileID, Vector2Int posIndex, Action<int> callback)
-    {
-        Vector2Int cachedIndex = new Vector2Int();
-        foreach (AreaRequirement placementConstraint in tileObject.tiles[(int)tileID].placementConstraints)
-        {
-            foreach (SelectionBox placementConstraintSelectionBox in placementConstraint.selectionBoxes)
-            {
-                Vector2Int lowerCorner = new Vector2Int(Mathf.RoundToInt(placementConstraintSelectionBox.position.x - placementConstraintSelectionBox.size.x / 2f), 
-                                                        Mathf.RoundToInt(placementConstraintSelectionBox.position.y - placementConstraintSelectionBox.size.y / 2f));
-                Vector2Int upperCorner = new Vector2Int(Mathf.RoundToInt(placementConstraintSelectionBox.position.x + placementConstraintSelectionBox.size.x / 2f), 
-                                                        Mathf.RoundToInt(placementConstraintSelectionBox.position.y + placementConstraintSelectionBox.size.y / 2f));
-                
-                for (int x = lowerCorner.x; x < upperCorner.x; x++)
-                for (int y = lowerCorner.y; y < upperCorner.y; y++)
-                {
-                    cachedIndex.x = posIndex.x + x;
-                    cachedIndex.y = posIndex.y + y;
-                    foreach (TileID t in placementConstraint.tileID)
-                    {
-                        if (tiles[cachedIndex.x, cachedIndex.y] != t)
-                            continue;
-                        
-                        int index = cachedIndex.x * gridWidth + cachedIndex.y % gridHeight;
-                        callback?.Invoke(index);
-                    }
-                }
-            }
-        }
-    }
 
     private void Update()
     {
@@ -280,7 +237,21 @@ public class GridManager : MonoBehaviour
         TileID oldTile = tiles[posIndex.x, posIndex.y];
         selectionObject.SetActive(false);
         
-        if (oldTile == tileID)
+        bool requiredPlacement = false;
+        void RequiredSelection(int index) { 
+            selectionColors[index] = requirementColor;
+            requiredPlacement = true;
+        }
+        GetRequiredSelection(tileID, posIndex, RequiredSelection);
+
+        bool constrained = false;
+        void ConstraintSelection(int index) { 
+            selectionColors[index] = constrainedColor;
+            constrained = true;
+        }
+        GetConstraintSelection(tileID, posIndex, ConstraintSelection);
+        
+        if (oldTile == tileID || requiredPlacement || constrained)
             return;
         
         Matrix4x4 matrix4X4 = IndexToMatrix4x4(posIndex);
@@ -302,6 +273,102 @@ public class GridManager : MonoBehaviour
     private Vector3 GetPosition(Vector2Int index)
     {
         return new Vector3(Mathf.RoundToInt((index.x * tileSize) - (gridWidth / tileSize * 2f)), 0, Mathf.RoundToInt((index.y * tileSize) - (gridHeight / tileSize * 2f)));
+    }
+    
+    private void GetAreaSelection(TileID tileID, Vector2Int posIndex, Action<int> callback)
+    {
+        Vector2Int cachedIndex = new Vector2Int();
+        foreach (AreaSelection areaSelection in tileObject.tiles[(int)tileID].selection)
+        {
+            foreach (SelectionBox placementConstraintSelectionBox in areaSelection.selectionBoxes)
+            {
+                Vector2Int lowerCorner = new Vector2Int(Mathf.CeilToInt(placementConstraintSelectionBox.position.x - placementConstraintSelectionBox.size.x / 2f), 
+                                                        Mathf.CeilToInt(placementConstraintSelectionBox.position.y - placementConstraintSelectionBox.size.y / 2f));
+                Vector2Int upperCorner = new Vector2Int(Mathf.CeilToInt(placementConstraintSelectionBox.position.x + placementConstraintSelectionBox.size.x / 2f), 
+                                                        Mathf.CeilToInt(placementConstraintSelectionBox.position.y + placementConstraintSelectionBox.size.y / 2f));
+                
+                for (int x = lowerCorner.x; x < upperCorner.x; x++)
+                for (int y = lowerCorner.y; y < upperCorner.y; y++)
+                {
+                    cachedIndex.x = posIndex.x + x;
+                    cachedIndex.y = posIndex.y + y;
+                    int index = cachedIndex.x * gridWidth + cachedIndex.y % gridHeight;
+                    callback?.Invoke(index);
+                }
+            }
+        }
+    }
+    
+    private void GetConstraintSelection(TileID tileID, Vector2Int posIndex, Action<int> callback)
+    {
+        Vector2Int cachedIndex = new Vector2Int();
+        foreach (AreaRequirement placementConstraint in tileObject.tiles[(int)tileID].placementConstraints)
+        {
+            foreach (SelectionBox placementConstraintSelectionBox in placementConstraint.selectionBoxes)
+            {
+                Vector2Int lowerCorner = new Vector2Int(Mathf.CeilToInt(placementConstraintSelectionBox.position.x - placementConstraintSelectionBox.size.x / 2f), 
+                                                        Mathf.CeilToInt(placementConstraintSelectionBox.position.y - placementConstraintSelectionBox.size.y / 2f));
+                Vector2Int upperCorner = new Vector2Int(Mathf.CeilToInt(placementConstraintSelectionBox.position.x + placementConstraintSelectionBox.size.x / 2f), 
+                                                        Mathf.CeilToInt(placementConstraintSelectionBox.position.y + placementConstraintSelectionBox.size.y / 2f));
+                
+                for (int x = lowerCorner.x; x < upperCorner.x; x++)
+                for (int y = lowerCorner.y; y < upperCorner.y; y++)
+                {
+                    cachedIndex.x = posIndex.x + x;
+                    cachedIndex.y = posIndex.y + y;
+                    bool invoke = false;
+                    foreach (TileID t in placementConstraint.tileID)
+                    {
+                        if (tiles[cachedIndex.x, cachedIndex.y] == t)
+                            continue;
+
+                        invoke = true;
+                        break;
+                    }
+                    if (invoke)
+                    {
+                        int index = cachedIndex.x * gridWidth + cachedIndex.y % gridHeight;
+                        callback?.Invoke(index);
+                    }
+                }
+            }
+        }
+    }
+    
+    private void GetRequiredSelection(TileID tileID, Vector2Int posIndex, Action<int> callback)
+    {
+        Vector2Int cachedIndex = new Vector2Int();
+        foreach (AreaRequirement areaRequirement in tileObject.tiles[(int)tileID].placementRequirements)
+        {
+            foreach (SelectionBox placementConstraintSelectionBox in areaRequirement.selectionBoxes)
+            {
+                Vector2Int lowerCorner = new Vector2Int(Mathf.CeilToInt(placementConstraintSelectionBox.position.x - placementConstraintSelectionBox.size.x / 2f), 
+                                                        Mathf.CeilToInt(placementConstraintSelectionBox.position.y - placementConstraintSelectionBox.size.y / 2f));
+                Vector2Int upperCorner = new Vector2Int(Mathf.CeilToInt(placementConstraintSelectionBox.position.x + placementConstraintSelectionBox.size.x / 2f), 
+                                                        Mathf.CeilToInt(placementConstraintSelectionBox.position.y + placementConstraintSelectionBox.size.y / 2f));
+                
+                for (int x = lowerCorner.x; x < upperCorner.x; x++)
+                for (int y = lowerCorner.y; y < upperCorner.y; y++)
+                {
+                    cachedIndex.x = posIndex.x + x;
+                    cachedIndex.y = posIndex.y + y;
+                    bool invoke = false;
+                    foreach (TileID t in areaRequirement.tileID)
+                    {
+                        if (tiles[cachedIndex.x, cachedIndex.y] != t)
+                            continue;
+
+                        invoke = true;
+                        break;
+                    }
+                    if (invoke)
+                    {
+                        int index = cachedIndex.x * gridWidth + cachedIndex.y % gridHeight;
+                        callback?.Invoke(index);
+                    }
+                }
+            }
+        }
     }
     
     private struct GridTile
