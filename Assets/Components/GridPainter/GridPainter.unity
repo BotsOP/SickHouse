@@ -1212,7 +1212,6 @@ GameObject:
   m_Component:
   - component: {fileID: 777743095}
   - component: {fileID: 777743094}
-  - component: {fileID: 777743096}
   m_Layer: 0
   m_Name: GridManager
   m_TagString: Untagged
@@ -1232,7 +1231,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 310685b2980734e499493865199a1436, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  computeShader: {fileID: 7200000, guid: 7c01da526d0f89f4bb3b41ed8f99847a, type: 3}
+  gridObject: {fileID: 11400000, guid: 1008d74c9d7a5c043a6fc94e197ba5de, type: 2}
   tileObject: {fileID: 11400000, guid: 9558d8a0caf02b34a815b7f507964330, type: 2}
   mesh: {fileID: -462981019419857548, guid: 95b5fbdb358f3f246a585fd58b819dfc, type: 3}
   material: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
@@ -1243,6 +1242,7 @@ MonoBehaviour:
   placeableColor: {r: 0, g: 1, b: 0, a: 1}
   requirementColor: {r: 0, g: 0, b: 1, a: 1}
   selectionObject: {fileID: 1753995847}
+  startFillTileID: 0
 --- !u!4 &777743095
 Transform:
   m_ObjectHideFlags: 0
@@ -1258,19 +1258,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &777743096
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 777743093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 111ecd99ea0b4ec4cac3bb492943df5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gridObject: {fileID: 0}
 --- !u!1 &796794079
 GameObject:
   m_ObjectHideFlags: 0
@@ -1795,21 +1782,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 959978666}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13de39db96c79dd4fa96f96c8d6d63d1, type: 3}
+  m_Script: {fileID: 11500000, guid: 111ecd99ea0b4ec4cac3bb492943df5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridManager: {fileID: 777743094}
+  gridObject: {fileID: 11400000, guid: 1008d74c9d7a5c043a6fc94e197ba5de, type: 2}
   mainCamera: {fileID: 350924378}
-  pointer: {fileID: 1775906372}
-  tileID: 2
-  selectionBoxes:
-  - position: {x: 0, y: 0}
-    size: {x: 10, y: 10}
-  - position: {x: 0, y: 0}
-    size: {x: 30, y: 1}
-  selectionSpheres:
-  - position: {x: 0, y: 0}
-    size: 50
+  tileID: 1
 --- !u!1 &988115661
 GameObject:
   m_ObjectHideFlags: 0

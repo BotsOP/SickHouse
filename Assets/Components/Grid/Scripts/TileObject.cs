@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+[Serializable]
 public enum TileID
 {
-    GRASS,
     DIRT,
+    GRASS,
     TREE,
     WATER,
 }

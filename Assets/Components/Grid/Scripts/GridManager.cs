@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Managers;
 using Unity.Collections;
 using UnityEngine;
+using EventType = Managers.EventType;
 using Random = UnityEngine.Random;
 
 
@@ -15,18 +17,19 @@ public class GridManager : MonoBehaviour
     private readonly static int SelectionColor = Shader.PropertyToID("_SelectionColor");
     private readonly static int AlbedoMap = Shader.PropertyToID("_AlbedoMap");
 
-    [SerializeField] private ComputeShader computeShader;
+    [SerializeField] private GridObject gridObject;
     [SerializeField] private TileObject tileObject;
     [SerializeField] private Mesh mesh;
     [SerializeField] private Material material;
     [SerializeField] private float tileSize = 1;
-    [SerializeField] private int gridWidth = 100;
-    [SerializeField] private int gridHeight = 100;
+    public int gridWidth = 100;
+    public int gridHeight = 100;
     [SerializeField] private Color constrainedColor = Color.red;
     [SerializeField] private Color placeableColor = Color.green;
     [SerializeField] private Color requirementColor = Color.blue;
 
     [SerializeField] private GameObject selectionObject;
+    [SerializeField] private TileID startFillTileID;
     
     public TileID[,] tiles;
     private ComputeBuffer gridBuffer;
@@ -43,10 +46,18 @@ public class GridManager : MonoBehaviour
     private void OnDisable()
     {
         gridBuffer?.Release();
+        
+        EventSystem<Vector3, TileID>.Unsubscribe(EventType.SELECT_TILE, PlacementSelection);
+        EventSystem<Vector3, TileID>.Unsubscribe(EventType.CHANGE_TILE, ChangeTile);
+        EventSystem<Vector3, TileID>.Unsubscribe(EventType.FORCE_CHANGE_TILE, ForceChangeTile);
     }
 
     private void Awake()
     {
+        EventSystem<Vector3, TileID>.Subscribe(EventType.SELECT_TILE, PlacementSelection);
+        EventSystem<Vector3, TileID>.Subscribe(EventType.CHANGE_TILE, ChangeTile);
+        EventSystem<Vector3, TileID>.Subscribe(EventType.FORCE_CHANGE_TILE, ForceChangeTile);
+        
         tiles = new TileID[gridWidth, gridHeight];
         gridBuffer = new ComputeBuffer(gridWidth * gridHeight, sizeof(float) * 4);
         selectionColors = new Vector4[gridWidth * gridHeight];
@@ -63,13 +74,23 @@ public class GridManager : MonoBehaviour
             matricesList.Add(new List<Matrix4x4>());
         }
 
+        bool gridObjectIsNull = gridObject is null;
+        gridObject?.Load();
+        
         Vector2Int cachedIndex = new Vector2Int(0, 0);
         for (int x = 0; x < gridWidth; x++)
         for (int y = 0; y < gridHeight; y++)
         {
             int index = x * gridWidth + y % gridHeight;
-            int randomIndex = Random.Range(0, 2);
-            selectionColors[index] = new Vector3(randomIndex, randomIndex, randomIndex);
+            int randomIndex;
+            if (gridObjectIsNull)
+            {
+                randomIndex = (int)startFillTileID;
+            }
+            else
+            {
+                randomIndex = (int)gridObject.tiles[x, y];
+            }
 
             cachedIndex.x = x;
             cachedIndex.y = y;
