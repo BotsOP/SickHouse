@@ -12,7 +12,9 @@ public class GridManager : MonoBehaviour
     private readonly static int GridWidth = Shader.PropertyToID("gridWidth");
     private readonly static int GridHeight = Shader.PropertyToID("gridHeight");
     private readonly static int TileSize = Shader.PropertyToID("tileSize");
-    
+    private readonly static int SelectionColor = Shader.PropertyToID("_SelectionColor");
+    private readonly static int AlbedoMap = Shader.PropertyToID("_AlbedoMap");
+
     [SerializeField] private ComputeShader computeShader;
     [SerializeField] private TileObject tileObject;
     [SerializeField] private Mesh mesh;
@@ -26,14 +28,10 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private GameObject selectionObject;
     
-    private TileID[,] tiles;
+    public TileID[,] tiles;
     private ComputeBuffer gridBuffer;
-    private ComputeBuffer argsBuffer;
-    private uint[] args = { 0, 0, 0, 0, 0 };
-    private Bounds bounds;
     private List<List<Matrix4x4>> matricesList;
     private RenderParams renderParams;
-    private RenderParams selectionParams;
     private MaterialPropertyBlock materialPropertyBlock;
     private Vector4[] selectionColors;
     private Vector2Int beforeSelectionIndex;
@@ -45,7 +43,6 @@ public class GridManager : MonoBehaviour
     private void OnDisable()
     {
         gridBuffer?.Release();
-        argsBuffer?.Release();
     }
 
     private void Awake()
@@ -54,8 +51,8 @@ public class GridManager : MonoBehaviour
         gridBuffer = new ComputeBuffer(gridWidth * gridHeight, sizeof(float) * 4);
         selectionColors = new Vector4[gridWidth * gridHeight];
         
-        Vector3 middleGrid = new Vector3(gridWidth / 2f, 1, gridHeight / 2f);
-        bounds = new Bounds(new Vector3(gridWidth / 2f, 0, gridHeight / 2f), middleGrid * 1000);
+        // Vector3 middleGrid = new Vector3(gridWidth / 2f, 1, gridHeight / 2f);
+        // bounds = new Bounds(new Vector3(gridWidth / 2f, 0, gridHeight / 2f), middleGrid * 1000);
         
         selectionMeshFilter = selectionObject.GetComponent<MeshFilter>();
         selectionMeshRenderer = selectionObject.GetComponent<MeshRenderer>();
@@ -71,7 +68,6 @@ public class GridManager : MonoBehaviour
         for (int y = 0; y < gridHeight; y++)
         {
             int index = x * gridWidth + y % gridHeight;
-            // int randomIndex = 0;
             int randomIndex = Random.Range(0, 2);
             selectionColors[index] = new Vector3(randomIndex, randomIndex, randomIndex);
 
@@ -87,22 +83,13 @@ public class GridManager : MonoBehaviour
         renderParams = new RenderParams(material);
         renderParams.matProps = materialPropertyBlock;
 
-        Array.Fill(selectionColors, Vector3.one);
+        Array.Fill(selectionColors, Vector4.one);
         gridBuffer.SetData(selectionColors);
         material.SetBuffer(GridBuffer, gridBuffer);
         
         material.SetFloat(GridWidth, gridWidth);
         material.SetFloat(GridHeight, gridHeight);
         material.SetFloat(TileSize, tileSize);
-        
-        // UpdateMaterial();
-
-        // argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
-        // args[0] = mesh.GetIndexCount(0);
-        // args[1] = (uint)(gridWidth * gridHeight);
-        // argsBuffer.SetData(args);
-        //
-        // computeShader.SetBuffer(0, "gridBuffer", gridBuffer);
     }
     private Matrix4x4 IndexToMatrix4x4(Vector2Int index)
     {
@@ -180,20 +167,20 @@ public class GridManager : MonoBehaviour
         }
         GetConstraintSelection(tileID, posIndex, ConstraintSelection);
         
-        selectionMeshRenderer.material.SetVector("_SelectionColor", placeableColor);
+        selectionMeshRenderer.material.SetVector(SelectionColor, placeableColor);
         if (requiredPlacement)
         {
-            selectionMeshRenderer.material.SetVector("_SelectionColor", requirementColor);
+            selectionMeshRenderer.material.SetVector(SelectionColor, requirementColor);
         }
         if (constrained)
         {
-            selectionMeshRenderer.material.SetVector("_SelectionColor", constrainedColor);
+            selectionMeshRenderer.material.SetVector(SelectionColor, constrainedColor);
         }
 
         if (tileID != beforeSelectionTileID)
         {
             beforeSelectionTileID = tileID;
-            selectionMeshRenderer.material.SetTexture("_AlbedoMap", tileObject.tiles[(int)tileID].texture);
+            selectionMeshRenderer.material.SetTexture(AlbedoMap, tileObject.tiles[(int)tileID].texture);
         }
         
         if (beforeSelectionIndex != posIndex)
@@ -201,17 +188,14 @@ public class GridManager : MonoBehaviour
             selectionObject.SetActive(true);
             selectionObject.transform.position = new Vector3(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y), Mathf.RoundToInt(position.z));
             selectionMeshFilter.sharedMesh = tileObject.tiles[(int)tileID].mesh;
-            // selectionMeshRenderer.material.SetFloat();
             beforeSelectionIndex = posIndex;
         }
         int index = posIndex.x * gridWidth + posIndex.y % gridHeight;
         selectionColors[index].w = 0;
         
-        gridBuffer.SetData(selectionColors);
         Array.Fill(selectionColors, Vector4.one);
+        gridBuffer.SetData(selectionColors);
     }
-    
-    
 
     private void Update()
     {
@@ -222,9 +206,8 @@ public class GridManager : MonoBehaviour
             {
                 continue;
             }
-            materialPropertyBlock.SetTexture("_AlbedoMap", tileObject.tiles[i].texture);
+            materialPropertyBlock.SetTexture(AlbedoMap, tileObject.tiles[i].texture);
             Graphics.RenderMeshInstanced(renderParams, tileObject.tiles[i].mesh, 0, matricesList[i]);
-            // Graphics.RenderMeshIndirect(renderParams, tileObject.tiles[i].mesh, );
         }
     }
 
@@ -242,6 +225,7 @@ public class GridManager : MonoBehaviour
             selectionColors[index] = requirementColor;
             requiredPlacement = true;
         }
+        
         GetRequiredSelection(tileID, posIndex, RequiredSelection);
 
         bool constrained = false;
@@ -259,10 +243,22 @@ public class GridManager : MonoBehaviour
         tiles[posIndex.x, posIndex.y] = tileID;
         matricesList[(int)oldTile].RemoveSwapBack(matrix4X4);
         matricesList[(int)tileID].Add(matrix4X4);
-        // int index = posIndex.x * gridWidth + posIndex.y % gridHeight;
-        // computeShader.SetInt("index", index);
-        // computeShader.SetInt("tileID", (int)tileID);
-        // computeShader.Dispatch(0, 1, 1, 1);
+    }
+    
+    public void ForceChangeTile(Vector3 position, TileID tileID)
+    {
+        Array.Fill(selectionColors, Vector4.one);
+        gridBuffer.SetData(selectionColors);
+        
+        Vector2Int posIndex = GetTile(position);
+        TileID oldTile = tiles[posIndex.x, posIndex.y];
+        selectionObject.SetActive(false);
+        
+        Matrix4x4 matrix4X4 = IndexToMatrix4x4(posIndex);
+        
+        tiles[posIndex.x, posIndex.y] = tileID;
+        matricesList[(int)oldTile].RemoveSwapBack(matrix4X4);
+        matricesList[(int)tileID].Add(matrix4X4);
     }
 
     private Vector2Int GetTile(Vector3 worldPos)
@@ -370,14 +366,6 @@ public class GridManager : MonoBehaviour
             }
         }
     }
-    
-    private struct GridTile
-    {
-        // public Vector3 position;
-        public int tileID;
-    }
-
-
 }
 
 
