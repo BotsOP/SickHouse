@@ -12,10 +12,28 @@ public class EditGrid : MonoBehaviour
     [SerializeField] private TileID tileID;
     private Vector3 cachedPosition;
 
+    private void OnEnable()
+    {
+        EventSystem<TileID>.Subscribe(EventType.CHANGE_BRUSH, ChangeTileID);
+    }
+    private void OnDisable()
+    {
+        EventSystem<TileID>.Unsubscribe(EventType.CHANGE_BRUSH, ChangeTileID);
+    }
+
+    private void ChangeTileID(TileID tileID)
+    {
+        this.tileID = tileID;
+    }
+
     private void Update()
     {
         RaycastHit hit;
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        bool isOverUI = UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
+        
+        if(isOverUI)
+            return;
         
         if (Input.GetMouseButton(0))
         {

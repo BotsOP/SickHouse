@@ -9,25 +9,27 @@ public enum TileID
     GRASS,
     TREE,
     WATER,
+    WALL,
 }
 
 [CreateAssetMenu(fileName = "TileSettings", menuName = "Tiles/Settings")]
 public class TileObject : ScriptableObject
 {
-    public Tile[] tiles;
+    public TileSettings[] tileSettings;
 }
 
 [Serializable]
-public struct Tile
+public struct TileSettings
 {
     [Header("Tile Settings")]
     public Mesh mesh;
     public Texture2D texture;
     public TileID tileID;
+    public int appleCost;
     [Header("Selection")]
     public AreaSelection[] selection;
     [Header("Placement Constraints")]
-    public AreaRequirement[] placementConstraints;
+    public AreaConstraint[] placementConstraints;
     [Header("Placement Requirement")]
     public AreaRequirement[] placementRequirements;
 }
@@ -43,9 +45,18 @@ public struct AreaSelection
 }
 
 [Serializable]
+public struct AreaConstraint
+{
+    public TileID[] tileID;
+    public SelectionBox[] selectionBoxes;
+    public SelectionSphere[] selectionSpheres;
+}
+
+[Serializable]
 public struct AreaRequirement
 {
     public TileID[] tileID;
+    public int amountRequiredTiles;
     public SelectionBox[] selectionBoxes;
     public SelectionSphere[] selectionSpheres;
 }

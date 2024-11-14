@@ -93,7 +93,7 @@ public class GridPainter : MonoBehaviour
         }
         GridManager gridManager = FindFirstObjectByType<GridManager>();
         int[,] tiles = new int[gridManager.gridWidth,gridManager.gridHeight];
-        Array.Copy(gridManager.tiles, tiles, gridManager.tiles.Length);
+        Array.Copy(gridManager.tileIDs, tiles, gridManager.tileIDs.Length);
         gridObject.tiles = tiles;
         gridObject.Save();
     }
