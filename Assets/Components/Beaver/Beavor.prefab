@@ -62,17 +62,14 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 724a6229327114f4bb96ebda314fd63b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8598436224953470478}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 724a6229327114f4bb96ebda314fd63b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6164306926182980503}
+      addedObject: {fileID: 4378992950371793976}
   m_SourcePrefab: {fileID: 100100000, guid: 724a6229327114f4bb96ebda314fd63b, type: 3}
 --- !u!1 &2929558080248765489 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 724a6229327114f4bb96ebda314fd63b, type: 3}
   m_PrefabInstance: {fileID: 2622933764226376032}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8598436224953470478
+--- !u!114 &4378992950371793976
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -91,19 +88,16 @@ MonoBehaviour:
   logTaskChanges: 0
   group: 0
   resetValuesOnRestart: 0
-  externalBehavior: {fileID: 11400000, guid: e7d2147c8153f8a459a43dd1165a540d, type: 2}
+  externalBehavior: {fileID: 11400000, guid: e58d063d2a70d7c4abf8da1e457b4040, type: 2}
   mBehaviorSource:
     behaviorName: Behavior
-    behaviorDescription: For every tree in the world, the maximum amount of raccoons
-      increases by X. Raccoons are bought through the encyclopedia using apples.
-      Raccoons normally pathfind to trees and take their apples for X seconds per
-      tree, increasing your supply.
+    behaviorDescription: 
     mTaskData:
       types: []
       parentIndex: 
       startIndex: 
       variableStartIndex: 
-      JSONSerialization: '{"Variables":[{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"target","IsShared":true},{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":"walkSpeed","IsShared":true,"SinglemValue":5},{"Type":"BehaviorDesigner.Runtime.SharedVector3","Name":"home","IsShared":true,"Vector3mValue":"(0,0,0)"}]}'
+      JSONSerialization: '{"Variables":[{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"target","IsShared":true},{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":"walkSpeed","IsShared":true,"SinglemValue":0},{"Type":"BehaviorDesigner.Runtime.SharedVector3","Name":"home","IsShared":true,"Vector3mValue":"(0,0,0)"}]}'
       fieldSerializationData:
         typeName: []
         fieldNameHash: 
@@ -115,16 +109,3 @@ MonoBehaviour:
       Version: 1.7.7
   gizmoViewMode: 2
   showBehaviorDesignerGizmo: 1
---- !u!114 &6164306926182980503
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2929558080248765489}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fabf43163157814380139a50760a1ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  walkSpeed: 5

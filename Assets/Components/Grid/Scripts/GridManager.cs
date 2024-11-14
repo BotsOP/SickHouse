@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BehaviorDesigner.Runtime;
 using Managers;
 using Unity.Collections;
 using UnityEngine;
@@ -148,6 +149,12 @@ public class GridManager : MonoBehaviour
         material.SetFloat(GridWidth, gridWidth);
         material.SetFloat(GridHeight, gridHeight);
         material.SetFloat(TileSize, tileSize);
+        
+        SharedTiles sharedTiles = new SharedTiles();
+        GridTile gridTile = new GridTile();
+        gridTile.tilesFlattened = new TileID[5];
+        sharedTiles.Value = gridTile;
+        GlobalVariables.Instance.SetVariable("tiles", sharedTiles);
     }
     private Matrix4x4 IndexToMatrix4x4(Vector2Int index)
     {
@@ -204,6 +211,8 @@ public class GridManager : MonoBehaviour
         }
         int index = posIndex.x * gridWidth + posIndex.y % gridHeight;
         selectionColors[index].w = 0;
+
+        
         
         gridBuffer.SetData(selectionColors);
         Array.Fill(selectionColors, Vector4.one);
