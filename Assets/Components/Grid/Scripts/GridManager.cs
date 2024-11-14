@@ -40,7 +40,7 @@ public class GridManager : MonoBehaviour
 
     [Foldout("AppleTree")]
     [SerializeField] private int amountApplesPerCycle = 1;
-    [SerializeField] private float amountSecondsPerCycle = 1;
+    [SerializeField] private float appleCycleInSeconds = 1;
     [SerializeField] private int appleCost = 5;
     [SerializeField] private GameObject applePrefab;
 
@@ -84,6 +84,7 @@ public class GridManager : MonoBehaviour
         EventSystem<Vector3, TileID>.Unsubscribe(EventType.FORCE_CHANGE_TILE, ForceChangeTile);
         EventSystem.Unsubscribe(EventType.SPAWN_RACOON, SpawnRacoon);
         EventSystem.Unsubscribe(EventType.SPAWN_BEAVOR, SpawnBeavor);
+        EventSystem<int>.Unsubscribe(EventType.GAIN_APPLES, GainApples);
     }
 
     private void Awake()
@@ -93,6 +94,7 @@ public class GridManager : MonoBehaviour
         EventSystem<Vector3, TileID>.Subscribe(EventType.FORCE_CHANGE_TILE, ForceChangeTile);
         EventSystem.Subscribe(EventType.SPAWN_RACOON, SpawnRacoon);      
         EventSystem.Subscribe(EventType.SPAWN_BEAVOR, SpawnBeavor);
+        EventSystem<int>.Subscribe(EventType.GAIN_APPLES, GainApples);
         
         tileIDs = new TileID[gridWidth, gridHeight];
         gridBuffer = new ComputeBuffer(gridWidth * gridHeight, sizeof(float) * 4);
@@ -155,6 +157,11 @@ public class GridManager : MonoBehaviour
         gridTile.tilesFlattened = new TileID[5];
         sharedTiles.Value = gridTile;
         GlobalVariables.Instance.SetVariable("tiles", sharedTiles);
+    }
+
+    private void GainApples(int amount)
+    {
+        amountApples += amount;
     }
     private Matrix4x4 IndexToMatrix4x4(Vector2Int index)
     {
@@ -311,21 +318,24 @@ public class GridManager : MonoBehaviour
             Graphics.RenderMeshInstanced(renderParams, tileObject.tileSettings[i].mesh, 0, matricesList[i]);
         }
 
-        if (Time.time > lastTimeAppleCycle + amountSecondsPerCycle)
+        if (Time.time > lastTimeAppleCycle + appleCycleInSeconds)
         {
             lastTimeAppleCycle = Time.time;
             for (int i = 0; i < matricesList[(int)TileID.TREE].Count; i++)
             {
                 Vector2Int posIndex = GetTile(matricesList[(int)TileID.TREE][i]);
                 Vector3 position = matricesList[(int)TileID.TREE][i].GetPosition();
-                Vector3 randomOffset = new Vector3(Random.Range(-2, 2), 0, Random.Range(-2, 2));
-                Instantiate(applePrefab, position + randomOffset, Quaternion.identity);
-                amountApples += amountApplesPerCycle;
+                for (int j = 0; j < amountApplesPerCycle; j++)
+                {
+                    Vector3 randomOffset = new Vector3(Random.Range(-2f, 2f), 0, Random.Range(-2f, 2f));
+                    Instantiate(applePrefab, position + randomOffset, Quaternion.identity);
+                }
+                // amountApples += amountApplesPerCycle;
             }
         }
         
         //check how many dirt tiles are in this row then delete all of them
-        if (Time.time > lastTimeWallCycle + amountSecondsPerCycle)
+        if (Time.time > lastTimeWallCycle + wallCycleInSeconds)
         {
             lastTimeWallCycle = Time.time;
             wallLength--;

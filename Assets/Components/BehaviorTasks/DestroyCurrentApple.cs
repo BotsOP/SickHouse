@@ -10,6 +10,7 @@ public class DestroyCurrentApple : Action
     public SharedTransform target;
     public override TaskStatus OnUpdate()
     {
+        EventSystem<int>.RaiseEvent(EventType.GAIN_APPLES, 1);
         target.Value.gameObject.Destroy();
         return TaskStatus.Success;
     }
