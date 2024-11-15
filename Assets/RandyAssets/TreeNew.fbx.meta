@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 415e581b9653a674a9a80964ec38b27c
+guid: 41eb108338e40204899369c526b99b4b
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,8 +7,13 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: initialShadingGroup.001
-    second: {fileID: 2100000, guid: c7845e7dd0da075478379df4c2eb564c, type: 2}
+      name: lambert2.001
+    second: {fileID: 2100000, guid: 5c0d8062e4ef48f4293aa3879fdc162a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert2.003
+    second: {fileID: 2100000, guid: 5c0d8062e4ef48f4293aa3879fdc162a, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
