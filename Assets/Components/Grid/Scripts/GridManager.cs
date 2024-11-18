@@ -55,7 +55,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Transform beavorSpawnPoint;
     [SerializeField] private int beavorSpawnCost = 15;
     
-    public TileID[,] tileIDs;
+    public TileID[] tileIDs;
     private ComputeBuffer gridBuffer;
     private List<List<Matrix4x4>> matricesList;
     private RenderParams renderParams;
@@ -73,6 +73,8 @@ public class GridManager : MonoBehaviour
     private float lastTimeAppleCycle;
     private float lastTimeWallCycle;
     private int wallLength;
+
+    private Damm[] damms;
 
 
     private void OnDisable()
@@ -96,7 +98,7 @@ public class GridManager : MonoBehaviour
         EventSystem.Subscribe(EventType.SPAWN_BEAVOR, SpawnBeavor);
         EventSystem<int>.Subscribe(EventType.GAIN_APPLES, GainApples);
         
-        tileIDs = new TileID[gridWidth, gridHeight];
+        tileIDs = new TileID[gridWidth * gridHeight];
         gridBuffer = new ComputeBuffer(gridWidth * gridHeight, sizeof(float) * 4);
         selectionColors = new Vector4[gridWidth * gridHeight];
 
@@ -121,7 +123,6 @@ public class GridManager : MonoBehaviour
         for (int x = 0; x < gridWidth; x++)
         for (int y = 0; y < gridHeight; y++)
         {
-            // int index = x * gridWidth + y % gridHeight;
             int tileID;
             if (gridObjectIsNull)
             {
@@ -137,7 +138,7 @@ public class GridManager : MonoBehaviour
             Matrix4x4 matrix4X4 = IndexToMatrix4x4(cachedIndex);
             matricesList[tileID].Add(matrix4X4);
 
-            tileIDs[x, y] = (TileID)tileID;
+            tileIDs[IndexPosToIndex(x, y)] = (TileID)tileID;
         }
 
         materialPropertyBlock = new MaterialPropertyBlock();
@@ -152,16 +153,40 @@ public class GridManager : MonoBehaviour
         material.SetFloat(GridHeight, gridHeight);
         material.SetFloat(TileSize, tileSize);
         
-        SharedTiles sharedTiles = new SharedTiles();
-        GridTile gridTile = new GridTile();
-        gridTile.tilesFlattened = new TileID[5];
-        sharedTiles.Value = gridTile;
-        GlobalVariables.Instance.SetVariable("tiles", sharedTiles);
+        GridInfo gridInfo = new GridInfo();
+        GridInfoClass gridInfoClass = new GridInfoClass
+        {
+            tilesFlattened = tileIDs,
+            gridWidth = gridWidth,
+            gridHeight = gridHeight,
+            tileSize = tileSize,
+        };
+        gridInfo.Value = gridInfoClass;
+        GlobalVariables.Instance.SetVariable("gridInfo", gridInfo);
+
+        damms = new Damm[gridWidth];
+        for (int i = 0; i < gridWidth; i++)
+        {
+            damms[i] = new Damm();
+        }
+        DammArrayClass dammArrayClass = new DammArrayClass
+        {
+            dammArray = damms,
+        };
+        DammArray dammArray = new DammArray
+        {
+            Value = dammArrayClass,
+        };
+        GlobalVariables.Instance.SetVariable("DammArray", dammArray);
     }
 
     private void GainApples(int amount)
     {
         amountApples += amount;
+    }
+    private int IndexPosToIndex(int x, int y)
+    {
+        return x * gridWidth + y % gridHeight;
     }
     private Matrix4x4 IndexToMatrix4x4(Vector2Int index)
     {
@@ -175,8 +200,8 @@ public class GridManager : MonoBehaviour
         Vector2Int posIndex = GetTile(position);
         if(posIndex.x < 0 || posIndex.x >= gridWidth || posIndex.y < 0 || posIndex.y >= gridHeight)
             return;
-        
-        TileID oldTile = tileIDs[posIndex.x, posIndex.y];
+
+        TileID oldTile = tileIDs[IndexPosToIndex(posIndex.x, posIndex.y)];
         if (oldTile == tileID)
             return;
         
@@ -234,7 +259,7 @@ public class GridManager : MonoBehaviour
         if(posIndex.x < 0 || posIndex.x >= gridWidth || posIndex.y < 0 || posIndex.y >= gridHeight)
             return;
         
-        TileID oldTile = tileIDs[posIndex.x, posIndex.y];
+        TileID oldTile = tileIDs[IndexPosToIndex(posIndex.x, posIndex.y)];
         selectionObject.SetActive(false);
         
         bool requiredPlacement = GetRequiredSelection(tileID, posIndex);
@@ -246,7 +271,7 @@ public class GridManager : MonoBehaviour
         
         Matrix4x4 matrix4X4 = IndexToMatrix4x4(posIndex);
         
-        tileIDs[posIndex.x, posIndex.y] = tileID;
+        tileIDs[IndexPosToIndex(posIndex.x, posIndex.y)] = tileID;
         matricesList[(int)oldTile].RemoveSwapBack(matrix4X4);
         matricesList[(int)tileID].Add(matrix4X4);
         
@@ -265,12 +290,12 @@ public class GridManager : MonoBehaviour
         gridBuffer.SetData(selectionColors);
         
         Vector2Int posIndex = GetTile(position);
-        TileID oldTile = tileIDs[posIndex.x, posIndex.y];
+        TileID oldTile = tileIDs[IndexPosToIndex(posIndex.x, posIndex.y)];
         selectionObject.SetActive(false);
         
         Matrix4x4 matrix4X4 = IndexToMatrix4x4(posIndex);
         
-        tileIDs[posIndex.x, posIndex.y] = tileID;
+        tileIDs[IndexPosToIndex(posIndex.x, posIndex.y)] = tileID;
         matricesList[(int)oldTile].RemoveSwapBack(matrix4X4);
         matricesList[(int)tileID].Add(matrix4X4);
     }
@@ -279,12 +304,12 @@ public class GridManager : MonoBehaviour
         Array.Fill(selectionColors, Vector4.one);
         gridBuffer.SetData(selectionColors);
         
-        TileID oldTile = tileIDs[posIndex.x, posIndex.y];
+        TileID oldTile = tileIDs[IndexPosToIndex(posIndex.x, posIndex.y)];
         selectionObject.SetActive(false);
         
         Matrix4x4 matrix4X4 = IndexToMatrix4x4(posIndex);
         
-        tileIDs[posIndex.x, posIndex.y] = tileID;
+        tileIDs[IndexPosToIndex(posIndex.x, posIndex.y)] = tileID;
         matricesList[(int)oldTile].RemoveSwapBack(matrix4X4);
         matricesList[(int)tileID].Add(matrix4X4);
     }
@@ -408,7 +433,7 @@ public class GridManager : MonoBehaviour
                     bool invoke = true;
                     foreach (TileID t in placementConstraint.tileID)
                     {
-                        if (tileIDs[cachedIndex.x, cachedIndex.y] == t)
+                        if (tileIDs[IndexPosToIndex(cachedIndex.x, cachedIndex.y)] == t)
                             continue;
 
                         invoke = false;
@@ -447,7 +472,7 @@ public class GridManager : MonoBehaviour
                     cachedIndex.y = Mathf.Clamp(posIndex.y + y, 0, gridHeight);
                     foreach (TileID t in areaRequirement.tileID)
                     {
-                        if (tileIDs[cachedIndex.x, cachedIndex.y] != t)
+                        if (tileIDs[IndexPosToIndex(cachedIndex.x, cachedIndex.y)] != t)
                             continue;
 
                         requirementTileAmount++;

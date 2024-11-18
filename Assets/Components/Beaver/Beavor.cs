@@ -10,5 +10,6 @@ public class Beavor : MonoBehaviour
     private BehaviorTree behaviorTree;
     private void OnEnable()
     {
+        
     }
 }
