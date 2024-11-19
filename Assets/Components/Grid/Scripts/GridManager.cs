@@ -28,6 +28,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private float tileSize = 1;
     public int gridWidth = 100;
     public int gridHeight = 100;
+    private long test;
 
     [Header("Selection")]
     [SerializeField] private GameObject selectionObject;
@@ -54,6 +55,10 @@ public class GridManager : MonoBehaviour
     [SerializeField] private GameObject beavorPrefab;
     [SerializeField] private Transform beavorSpawnPoint;
     [SerializeField] private int beavorSpawnCost = 15;
+
+    [Foldout("Damm")]
+    [SerializeField] private int dammSlowDown = 1;
+    [SerializeField] private int checkAmountTilesInfrontOfWall = 3;
     
     public TileID[] tileIDs;
     private ComputeBuffer gridBuffer;
@@ -71,10 +76,10 @@ public class GridManager : MonoBehaviour
     private List<GameObject> beavors = new List<GameObject>();
 
     private float lastTimeAppleCycle;
-    private float lastTimeWallCycle;
+    public float lastTimeWallCycle;
     private int wallLength;
 
-    private Damm[] damms;
+    public Damm[] damms;
 
 
     private void OnDisable()
@@ -164,8 +169,8 @@ public class GridManager : MonoBehaviour
         gridInfo.Value = gridInfoClass;
         GlobalVariables.Instance.SetVariable("gridInfo", gridInfo);
 
-        damms = new Damm[gridWidth];
-        for (int i = 0; i < gridWidth; i++)
+        damms = new Damm[gridWidth * gridHeight];
+        for (int i = 0; i < gridWidth * gridHeight; i++)
         {
             damms[i] = new Damm();
         }
@@ -359,18 +364,45 @@ public class GridManager : MonoBehaviour
             }
         }
         
-        //check how many dirt tiles are in this row then delete all of them
+        UpdateWall();
+        
+        EventSystem<int>.RaiseEvent(EventType.AMOUNT_APPLES, amountApples);
+    }
+    private void UpdateWall()
+    {
         if (Time.time > lastTimeWallCycle + wallCycleInSeconds)
         {
+            bool hitDamm = false;
+            for (int x = 0; x < gridWidth; x++)
+            {
+                int index = IndexPosToIndex(x, wallLength - checkAmountTilesInfrontOfWall - 1);
+                if (tileIDs[index] == TileID.DAMM && damms[index].progress < 1.5f && damms[index].buildDamm)
+                {
+                    damms[index].progress = 2;
+                    hitDamm = true;
+                    lastTimeWallCycle += dammSlowDown;
+                }
+            }
+            
+            if(hitDamm)
+                return;
+            
             lastTimeWallCycle = Time.time;
             wallLength--;
             for (int x = 0; x < gridWidth; x++)
             {
+                int dammIndex = IndexPosToIndex(x, wallLength - checkAmountTilesInfrontOfWall);
+                if (damms[dammIndex].buildDamm && tileIDs[dammIndex] == TileID.DAMM)
+                {
+                    damms[dammIndex].amountBeavorsWorking = 0;
+                    damms[dammIndex].progress = 0;
+                    damms[dammIndex].buildDamm = false;
+                }
+                
+                ForceChangeTile(new Vector2Int(x, wallLength - checkAmountTilesInfrontOfWall), TileID.DIRT);
                 ForceChangeTile(new Vector2Int(x, wallLength), TileID.WALL);
             }
         }
-        
-        EventSystem<int>.RaiseEvent(EventType.AMOUNT_APPLES, amountApples);
     }
 
     private Vector2Int GetTile(Vector3 worldPos)

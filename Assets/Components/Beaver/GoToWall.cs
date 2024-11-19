@@ -9,6 +9,8 @@ public class GoToWall : Conditional
     public GridInfo gridInfo;
     public SharedVector3 targetPosition;
     public DammArray dammArray;
+    public SharedInt amountTilesDammFromWall;
+    public SharedInt currentDammIndex;
     public override TaskStatus OnUpdate()
     {
         Vector2Int posIndex = GetTile(transform.position);
@@ -16,29 +18,34 @@ public class GoToWall : Conditional
         {
             Vector2Int localIndex = posIndex + new Vector2Int(0, i);
             int index = IndexPosToIndex(localIndex);
+            
             if(index >= gridInfo.Value.gridWidth * gridInfo.Value.gridHeight)
                 break;
+            
             if (gridInfo.Value.tilesFlattened[index] == TileID.WALL)
             {
                 int flip = 1;
                 int indexToCheck = 0;
                 int amountFlipped = 0;
-                for (int j = 0; j < 100; j++)
+                for (int j = 0; j < 200; j++)
                 {
-                    int newIndex = localIndex.x + (flip * indexToCheck);
-                    if (newIndex < 0 || newIndex >= 100)
+                    int dammIndex = localIndex.x + (flip * indexToCheck);
+                    if (dammIndex < 0 || dammIndex >= 100)
                     {
-                        break;
+                        flip *= -1;
+                        continue;
                     }
-                    if (dammArray.Value.dammArray[newIndex].amountBeavorsWorking < 3)
+                    
+                    int newIndex = IndexPosToIndex(new Vector2Int(dammIndex, localIndex.y - amountTilesDammFromWall.Value));
+                    if (dammArray.Value.dammArray[newIndex].amountBeavorsWorking < 3 && !dammArray.Value.dammArray[newIndex].buildDamm && gridInfo.Value.tilesFlattened[newIndex] != TileID.TREE)
                     {
                         dammArray.Value.dammArray[newIndex].amountBeavorsWorking++;
-                        targetPosition.Value = GetPosition(new Vector2Int(newIndex, localIndex.y));
+                        targetPosition.Value = GetPosition(new Vector2Int(dammIndex, localIndex.y - amountTilesDammFromWall.Value));
+                        currentDammIndex.Value = newIndex;
                         return TaskStatus.Success;
                     }
 
-                    indexToCheck++;
-                    if (localIndex.x + (flip * indexToCheck * -1) >= 0 || localIndex.x + (flip * indexToCheck * -1) < 100)
+                    if (localIndex.x + (flip * indexToCheck * -1) >= 0 && localIndex.x + (flip * indexToCheck * -1) < 100)
                     {
                         flip *= -1;
                     }
@@ -47,7 +54,7 @@ public class GoToWall : Conditional
                         indexToCheck++;
                         continue;
                     }
-                    if (amountFlipped == 2)
+                    if (amountFlipped == 1)
                     {
                         indexToCheck++;
                         amountFlipped = 0;
@@ -74,37 +81,4 @@ public class GoToWall : Conditional
     {
         return posIndex.x * gridInfo.Value.gridWidth + posIndex.y % gridInfo.Value.gridHeight;
     }
-}
-
-
-[System.Serializable]
-public class GridInfoClass
-{
-    public TileID[] tilesFlattened;
-    public int gridWidth;
-    public int gridHeight;
-    public float tileSize;
-}
-[System.Serializable]
-public class GridInfo : SharedVariable<GridInfoClass>
-{
-    public static implicit operator GridInfo(GridInfoClass value) { return new GridInfo { Value = value }; }
-}
-
-[System.Serializable]
-public class DammArrayClass
-{
-    public Damm[] dammArray;
-}
-
-[System.Serializable]
-public class Damm
-{
-    public int amountBeavorsWorking;
-    public float progress;
-}
-[System.Serializable]
-public class DammArray : SharedVariable<DammArrayClass>
-{
-    public static implicit operator DammArray(DammArrayClass value) { return new DammArray { Value = value }; }
 }
