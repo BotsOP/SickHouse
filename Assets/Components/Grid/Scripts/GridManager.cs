@@ -77,7 +77,7 @@ public class GridManager : MonoBehaviour
 
     private float lastTimeAppleCycle;
     public float lastTimeWallCycle;
-    private int wallLength;
+    public int wallDistance;
 
     public Damm[] damms;
 
@@ -107,7 +107,7 @@ public class GridManager : MonoBehaviour
         gridBuffer = new ComputeBuffer(gridWidth * gridHeight, sizeof(float) * 4);
         selectionColors = new Vector4[gridWidth * gridHeight];
 
-        wallLength = gridHeight;
+        wallDistance = gridHeight;
         
         // Vector3 middleGrid = new Vector3(gridWidth / 2f, 1, gridHeight / 2f);
         // bounds = new Bounds(new Vector3(gridWidth / 2f, 0, gridHeight / 2f), middleGrid * 1000);
@@ -392,7 +392,7 @@ public class GridManager : MonoBehaviour
             for (int y = 0; y < checkAmountTilesInfrontOfWall + 1; y++)
             for (int x = 0; x < gridWidth; x++)
             {
-                int index = IndexPosToIndex(x, wallLength - y);
+                int index = IndexPosToIndex(x, wallDistance - y);
                 if (tileIDs[index] == TileID.DAMM && damms[index].progress < 1.5f && damms[index].buildDamm)
                 {
                     howManyDammsHit++;
@@ -404,15 +404,15 @@ public class GridManager : MonoBehaviour
 
             if (hitDamm)
             {
-                Debug.Log($"hit {howManyDammsHit} damms at {wallLength}");
+                Debug.Log($"hit {howManyDammsHit} damms at {wallDistance}");
                 return;
             }
             
             lastTimeWallCycle = Time.time;
-            wallLength--;
+            wallDistance--;
             for (int x = 0; x < gridWidth; x++)
             {
-                int dammIndex = IndexPosToIndex(x, wallLength);
+                int dammIndex = IndexPosToIndex(x, wallDistance);
                 if (damms[dammIndex].buildDamm && tileIDs[dammIndex] == TileID.DAMM)
                 {
                     damms[dammIndex].amountBeavorsWorking = 0;
@@ -421,7 +421,7 @@ public class GridManager : MonoBehaviour
                 }
                 
                 // ForceChangeTile(new Vector2Int(x, wallLength - checkAmountTilesInfrontOfWall), TileID.DIRT);
-                ForceChangeTile(new Vector2Int(x, wallLength), TileID.WALL);
+                ForceChangeTile(new Vector2Int(x, wallDistance), TileID.WALL);
             }
         }
     }

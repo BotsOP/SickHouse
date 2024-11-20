@@ -63,9 +63,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 724a6229327114f4bb96ebda314fd63b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6941390521074405277}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 724a6229327114f4bb96ebda314fd63b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7922293324029037275}
   m_SourcePrefab: {fileID: 100100000, guid: 724a6229327114f4bb96ebda314fd63b, type: 3}
 --- !u!1 &1427630360002137444 stripped
 GameObject:
@@ -115,16 +112,3 @@ MonoBehaviour:
       Version: 1.7.7
   gizmoViewMode: 2
   showBehaviorDesignerGizmo: 1
---- !u!114 &7922293324029037275
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1427630360002137444}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fabf43163157814380139a50760a1ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  walkSpeed: 5

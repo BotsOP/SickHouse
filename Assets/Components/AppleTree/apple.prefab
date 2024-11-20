@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: c7845e7dd0da075478379df4c2eb564c, type: 2}
+    - target: {fileID: -5754084199372789682, guid: 9a02e8a66cc85ed4ea79e9625de30cf3, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -472147775963580301, guid: f1fab1b9dff026a4aa580532fbce8faa, type: 3}
     - target: {fileID: 919132149155446097, guid: 9a02e8a66cc85ed4ea79e9625de30cf3, type: 3}
       propertyPath: m_Name
       value: apple
