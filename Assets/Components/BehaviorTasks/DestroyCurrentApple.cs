@@ -11,6 +11,7 @@ public class DestroyCurrentApple : Action
     public override TaskStatus OnUpdate()
     {
         EventSystem<int>.RaiseEvent(EventType.GAIN_APPLES, 1);
+        EventSystem<int>.RaiseEvent(EventType.COLLECTED_APPLE, target.Value.GetComponent<Apple>().treeIndex);
         target.Value.gameObject.Destroy();
         return TaskStatus.Success;
     }

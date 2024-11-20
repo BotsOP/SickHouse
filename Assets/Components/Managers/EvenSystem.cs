@@ -12,6 +12,7 @@ namespace Managers
         //Managing
         AMOUNT_APPLES,
         GAIN_APPLES,
+        COLLECTED_APPLE,
         CHANGE_BRUSH,
         DESTROY_GAMEOBJECT,
         
