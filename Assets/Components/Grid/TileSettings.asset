@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileSettings:
   - mesh: {fileID: -462981019419857548, guid: 95b5fbdb358f3f246a585fd58b819dfc, type: 3}
-    texture: {fileID: 2800000, guid: 94e5d42781313b746bc2ef080b95d297, type: 3}
+    texture: {fileID: 2800000, guid: 1b57394056c1238498fd12780ac057b4, type: 3}
     tileID: 0
     appleCost: 0
     selection: []
@@ -26,7 +26,7 @@ MonoBehaviour:
       selectionSpheres: []
     placementRequirements: []
   - mesh: {fileID: -462981019419857548, guid: 95b5fbdb358f3f246a585fd58b819dfc, type: 3}
-    texture: {fileID: 2800000, guid: 5b2abf89925e35148baf2ae672d2928f, type: 3}
+    texture: {fileID: 2800000, guid: c8e66a51fc88b724b8a733debd030783, type: 3}
     tileID: 1
     appleCost: 1
     selection: []
@@ -37,7 +37,7 @@ MonoBehaviour:
         size: {x: 1, y: 1}
       selectionSpheres: []
     placementRequirements: []
-  - mesh: {fileID: 5668788170693331272, guid: 5e4166a602db146488244de8ff383c0c, type: 3}
+  - mesh: {fileID: 9145555101598989314, guid: 41eb108338e40204899369c526b99b4b, type: 3}
     texture: {fileID: 2800000, guid: 9890f38ca26b6cf45b8889be95b928f2, type: 3}
     tileID: 2
     appleCost: 5
@@ -66,8 +66,8 @@ MonoBehaviour:
       - position: {x: 0, y: 0}
         size: {x: 5, y: 5}
       selectionSpheres: []
-  - mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-    texture: {fileID: 2800000, guid: 155a2c39262df22439abfa5a9e0fcc65, type: 3}
+  - mesh: {fileID: -462981019419857548, guid: 95b5fbdb358f3f246a585fd58b819dfc, type: 3}
+    texture: {fileID: 2800000, guid: 6667768dc6164e240a12185b3ce6d9c4, type: 3}
     tileID: 3
     appleCost: 1
     selection:
@@ -94,8 +94,8 @@ MonoBehaviour:
       - position: {x: 0, y: 0}
         size: {x: 3, y: 1}
       selectionSpheres: []
-  - mesh: {fileID: -5495902117074765545, guid: 161dfb7419e6d514e9ad1d6fc3cfe021, type: 3}
-    texture: {fileID: 10309, guid: 0000000000000000f000000000000000, type: 0}
+  - mesh: {fileID: -462981019419857548, guid: 95b5fbdb358f3f246a585fd58b819dfc, type: 3}
+    texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
     tileID: 4
     appleCost: 1
     selection:

@@ -4,6 +4,7 @@ using System.Linq;
 using BehaviorDesigner.Runtime;
 using Managers;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 using VInspector;
 using EventType = Managers.EventType;
@@ -47,6 +48,9 @@ public class GridManager : MonoBehaviour
 
     [Foldout("Wall")]
     [SerializeField] private float wallCycleInSeconds = 10f;
+    [SerializeField] private List<GameObject> wallPrefabs;
+    [SerializeField] private GameObject bulldozerPrefab;
+    [SerializeField] private Animator bulldozerAnimation;
     
     [Foldout("Creatures")]
     [SerializeField] private GameObject racoonPrefab;
@@ -61,7 +65,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int checkAmountTilesInfrontOfWall = 3;
     
     public TileID[] tileIDs;
-    public List<List<Matrix4x4>> matricesList;
+    private List<List<Matrix4x4>> matricesList;
     private ComputeBuffer gridBuffer;
     private RenderParams renderParams;
     private MaterialPropertyBlock materialPropertyBlock;
@@ -76,10 +80,10 @@ public class GridManager : MonoBehaviour
     private List<GameObject> beavors = new List<GameObject>();
 
     private float lastTimeAppleCycle;
-    public float lastTimeWallCycle;
-    public int wallDistance;
+    private float lastTimeWallCycle;
+    private int wallDistance;
 
-    public Damm[] damms;
+    private Damm[] damms;
 
 
     private void OnDisable()
@@ -386,6 +390,7 @@ public class GridManager : MonoBehaviour
     private void UpdateWall()
     {
         int howManyDammsHit = 0;
+
         if (Time.time > lastTimeWallCycle + wallCycleInSeconds)
         {
             bool hitDamm = false;
@@ -410,6 +415,19 @@ public class GridManager : MonoBehaviour
             
             lastTimeWallCycle = Time.time;
             wallDistance--;
+            
+            bulldozerPrefab.transform.position -= new Vector3(0, 0, tileSize);
+            bulldozerAnimation.Play("Move");
+            
+            if ((gridHeight - wallDistance) % 2 == 0 & (gridHeight - wallDistance) > 5)
+            {
+                int skyscraperIndex = wallDistance / 2 % wallPrefabs.Count;
+                previousSkyscraperIndex = skyscraperIndex;
+                Instantiate(wallPrefabs[(wallDistance / 2 + previousSkyscraperIndex) % wallPrefabs.Count], new Vector3(0, 0, wallDistance - (gridHeight * tileSize / 2f) + tileSize * 5), Quaternion.identity).transform.GetChild(0).GetComponent<Animation>().Play();
+                Debug.Log($"{(wallDistance / 2 + previousSkyscraperIndex) % wallPrefabs.Count}");
+            }
+
+
             for (int x = 0; x < gridWidth; x++)
             {
                 int dammIndex = IndexPosToIndex(x, wallDistance);
@@ -423,8 +441,11 @@ public class GridManager : MonoBehaviour
                 // ForceChangeTile(new Vector2Int(x, wallLength - checkAmountTilesInfrontOfWall), TileID.DIRT);
                 ForceChangeTile(new Vector2Int(x, wallDistance), TileID.WALL);
             }
+            return;
         }
     }
+
+    private int previousSkyscraperIndex = 0;
 
     private Vector2Int GetTile(Vector3 worldPos)
     {
