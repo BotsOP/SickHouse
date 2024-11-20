@@ -17,7 +17,7 @@ public class GoAwayFromWall : Conditional
             Matrix4x4 test = gridInfo.Value.matricesList[(int)TileID.WATER][i];
             Vector2Int posIndex = GetTile(test);
             int newIndex = IndexPosToIndex(posIndex);
-            if (dammArray.Value.dammArray[newIndex].amountBeavorsWorking < 3 && !dammArray.Value.dammArray[newIndex].buildDamm && gridInfo.Value.tilesFlattened[newIndex] != TileID.TREE)
+            if (dammArray.Value.dammArray[newIndex].amountBeavorsWorking < 3 && !dammArray.Value.dammArray[newIndex].buildDamm)
             {
                 dammArray.Value.dammArray[newIndex].amountBeavorsWorking++;
                 targetPosition.Value = test.GetPosition();

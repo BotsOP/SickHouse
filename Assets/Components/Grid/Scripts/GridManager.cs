@@ -279,19 +279,27 @@ public class GridManager : MonoBehaviour
         Matrix4x4 matrix4X4 = IndexToMatrix4x4(posIndex);
         
         tileIDs[IndexPosToIndex(posIndex.x, posIndex.y)] = tileID;
-        matricesList[(int)oldTile].RemoveSwapBack(matrix4X4);
+        if (oldTile == TileID.WATER)
+        {
+            matricesList[(int)oldTile].Remove(matrix4X4);
+        }
+        else
+        {
+            matricesList[(int)oldTile].RemoveSwapBack(matrix4X4);
+        }
         matricesList[(int)tileID].Add(matrix4X4);
 
-        if (tileID == TileID.WATER)
+        switch (tileID)
         {
-            matricesList[(int)TileID.WATER] = matricesList[(int)TileID.WATER].OrderBy(x => x.GetRow(2).w).ToList();
+            case TileID.WATER:
+                matricesList[(int)TileID.WATER] = matricesList[(int)TileID.WATER].OrderBy(x => x.GetRow(2).w).ToList();
+                break;
+
+            case TileID.DIRT:
+                amountApples += tileObject.tileSettings[(int)oldTile].appleCost;
+                return;
         }
-        
-        if (tileID == TileID.DIRT)
-        {
-            amountApples += tileObject.tileSettings[(int)oldTile].appleCost;
-            return;
-        }
+
         amountApples -= tileObject.tileSettings[(int)tileID].appleCost;
         EventSystem<int>.RaiseEvent(EventType.AMOUNT_APPLES, amountApples);
     }

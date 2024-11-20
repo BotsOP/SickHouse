@@ -21,8 +21,7 @@ public class CheckIfCloseToWall : Conditional
             dammArray.Value.dammArray[currentDammIndex.Value].amountBeavorsWorking--;
             return TaskStatus.Failure;
         }
-        amountTilesDammFromWall.Value--;
-        return TaskStatus.Success;
+        return TaskStatus.Running;
     }
     
     private Vector2Int GetTile(Vector3 worldPos)
