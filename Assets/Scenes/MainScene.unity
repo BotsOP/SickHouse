@@ -1941,7 +1941,7 @@ MonoBehaviour:
   beavorSpawnPoint: {fileID: 288050427}
   beavorSpawnCost: 15
   dammSlowDown: 1
-  checkAmountTilesInfrontOfWall: 3
+  checkAmountTilesInfrontOfWall: 2
   tileIDs: 
   lastTimeWallCycle: 0
   damms: []

@@ -61,8 +61,8 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int checkAmountTilesInfrontOfWall = 3;
     
     public TileID[] tileIDs;
+    public List<List<Matrix4x4>> matricesList;
     private ComputeBuffer gridBuffer;
-    private List<List<Matrix4x4>> matricesList;
     private RenderParams renderParams;
     private MaterialPropertyBlock materialPropertyBlock;
     private Vector4[] selectionColors;
@@ -145,6 +145,7 @@ public class GridManager : MonoBehaviour
 
             tileIDs[IndexPosToIndex(x, y)] = (TileID)tileID;
         }
+        matricesList[(int)TileID.WATER] = matricesList[(int)TileID.WATER].OrderBy(x => x.GetRow(2).w).ToList();
 
         materialPropertyBlock = new MaterialPropertyBlock();
         renderParams = new RenderParams(material);
@@ -162,6 +163,7 @@ public class GridManager : MonoBehaviour
         GridInfoClass gridInfoClass = new GridInfoClass
         {
             tilesFlattened = tileIDs,
+            matricesList = matricesList,
             gridWidth = gridWidth,
             gridHeight = gridHeight,
             tileSize = tileSize,
@@ -279,6 +281,11 @@ public class GridManager : MonoBehaviour
         tileIDs[IndexPosToIndex(posIndex.x, posIndex.y)] = tileID;
         matricesList[(int)oldTile].RemoveSwapBack(matrix4X4);
         matricesList[(int)tileID].Add(matrix4X4);
+
+        if (tileID == TileID.WATER)
+        {
+            matricesList[(int)TileID.WATER] = matricesList[(int)TileID.WATER].OrderBy(x => x.GetRow(2).w).ToList();
+        }
         
         if (tileID == TileID.DIRT)
         {
@@ -370,28 +377,34 @@ public class GridManager : MonoBehaviour
     }
     private void UpdateWall()
     {
+        int howManyDammsHit = 0;
         if (Time.time > lastTimeWallCycle + wallCycleInSeconds)
         {
             bool hitDamm = false;
+            for (int y = 0; y < checkAmountTilesInfrontOfWall + 1; y++)
             for (int x = 0; x < gridWidth; x++)
             {
-                int index = IndexPosToIndex(x, wallLength - checkAmountTilesInfrontOfWall - 1);
+                int index = IndexPosToIndex(x, wallLength - y);
                 if (tileIDs[index] == TileID.DAMM && damms[index].progress < 1.5f && damms[index].buildDamm)
                 {
+                    howManyDammsHit++;
                     damms[index].progress = 2;
                     hitDamm = true;
                     lastTimeWallCycle += dammSlowDown;
                 }
             }
-            
-            if(hitDamm)
+
+            if (hitDamm)
+            {
+                Debug.Log($"hit {howManyDammsHit} damms at {wallLength}");
                 return;
+            }
             
             lastTimeWallCycle = Time.time;
             wallLength--;
             for (int x = 0; x < gridWidth; x++)
             {
-                int dammIndex = IndexPosToIndex(x, wallLength - checkAmountTilesInfrontOfWall);
+                int dammIndex = IndexPosToIndex(x, wallLength);
                 if (damms[dammIndex].buildDamm && tileIDs[dammIndex] == TileID.DAMM)
                 {
                     damms[dammIndex].amountBeavorsWorking = 0;
@@ -399,7 +412,7 @@ public class GridManager : MonoBehaviour
                     damms[dammIndex].buildDamm = false;
                 }
                 
-                ForceChangeTile(new Vector2Int(x, wallLength - checkAmountTilesInfrontOfWall), TileID.DIRT);
+                // ForceChangeTile(new Vector2Int(x, wallLength - checkAmountTilesInfrontOfWall), TileID.DIRT);
                 ForceChangeTile(new Vector2Int(x, wallLength), TileID.WALL);
             }
         }

@@ -1,9 +1,12 @@
+using System.Collections.Generic;
 using BehaviorDesigner.Runtime;
+using UnityEngine;
 
 [System.Serializable]
 public class GridInfoClass
 {
     public TileID[] tilesFlattened;
+    public List<List<Matrix4x4>> matricesList;
     public int gridWidth;
     public int gridHeight;
     public float tileSize;
