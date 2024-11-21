@@ -12,9 +12,9 @@ public class GridInfoClass
     public float tileSize;
 }
 [System.Serializable]
-public class GridInfo : SharedVariable<GridInfoClass>
+public class GridInfo : SharedVariable<GridManager>
 {
-    public static implicit operator GridInfo(GridInfoClass value) { return new GridInfo { Value = value }; }
+    public static implicit operator GridInfo(GridManager value) { return new GridInfo { Value = value }; }
 }
 
 [System.Serializable]

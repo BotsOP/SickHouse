@@ -20,16 +20,19 @@ public class GridManager : MonoBehaviour
     private readonly static int SelectionColor = Shader.PropertyToID("_SelectionColor");
     private readonly static int AlbedoMap = Shader.PropertyToID("_AlbedoMap");
 
-    [SerializeField] private int amountApples = 100;
+    public TileID[] tileIDs;
+    public int wallDistance;
+    [NonSerialized] public List<List<Matrix4x4>> matricesList;
+    
     [Foldout("Grid Settings")]
     [Header("Grid")]
+    public int gridWidth = 100;
+    public int gridHeight = 100;
+    public float tileSize = 1;
     [SerializeField] private GridObject gridObject;
     [SerializeField] private TileObject tileObject;
     [SerializeField] private Material material;
-    [SerializeField] private float tileSize = 1;
-    public int gridWidth = 100;
-    public int gridHeight = 100;
-    private long test;
+    [SerializeField] private int amountApples = 100;
 
     [Header("Selection")]
     [SerializeField] private GameObject selectionObject;
@@ -62,11 +65,9 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int beavorSpawnCost = 15;
 
     [Foldout("Damm")]
-    [SerializeField] private int dammSlowDown = 1;
+    [SerializeField] private float dammSlowDown = 1;
     [SerializeField] private int checkAmountTilesInfrontOfWall = 3;
     
-    public TileID[] tileIDs;
-    private List<List<Matrix4x4>> matricesList;
     private ComputeBuffer gridBuffer;
     private RenderParams renderParams;
     private MaterialPropertyBlock materialPropertyBlock;
@@ -82,7 +83,6 @@ public class GridManager : MonoBehaviour
 
     private float lastTimeAppleCycle;
     private float lastTimeWallCycle;
-    private int wallDistance;
 
     private Damm[] damms;
     private int[] appleTrees;
@@ -168,16 +168,10 @@ public class GridManager : MonoBehaviour
         material.SetFloat(GridHeight, gridHeight);
         material.SetFloat(TileSize, tileSize);
         
-        GridInfo gridInfo = new GridInfo();
-        GridInfoClass gridInfoClass = new GridInfoClass
+        GridInfo gridInfo = new GridInfo
         {
-            tilesFlattened = tileIDs,
-            matricesList = matricesList,
-            gridWidth = gridWidth,
-            gridHeight = gridHeight,
-            tileSize = tileSize,
+            Value = this,
         };
-        gridInfo.Value = gridInfoClass;
         GlobalVariables.Instance.SetVariable("gridInfo", gridInfo);
 
         damms = new Damm[gridWidth * gridHeight];
