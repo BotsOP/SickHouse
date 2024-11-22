@@ -30,6 +30,8 @@ public class GridManager : MonoBehaviour
     public int gridWidth = 100;
     public int gridHeight = 100;
     public float tileSize = 1;
+    public List<GameObject> racoons = new List<GameObject>();
+    public List<GameObject> beavers = new List<GameObject>();
     [SerializeField] private GridObject gridObject;
     [SerializeField] private TileObject tileObject;
     [SerializeField] private Material material;
@@ -62,6 +64,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Transform racoonSpawnPoint;
     [SerializeField] private int racoonSpawnCost = 15;
     [SerializeField] private GameObject beavorPrefab;
+    [SerializeField] private GameObject beavorGhostPrefab;
     [SerializeField] private Transform beavorSpawnPoint;
     [SerializeField] private int beavorSpawnCost = 15;
 
@@ -80,8 +83,6 @@ public class GridManager : MonoBehaviour
     private GraphicsBuffer dammVFXBuffer;
     private List<Vector3> dammVFXPositions;
 
-    private List<GameObject> racoons = new List<GameObject>();
-    private List<GameObject> beavors = new List<GameObject>();
 
     private float lastTimeAppleCycle;
     private float lastTimeWallCycle;
@@ -331,17 +332,20 @@ public class GridManager : MonoBehaviour
     {
         if(amountApples < racoonSpawnCost)
             return;
-
+        
         GainApples(-racoonSpawnCost);
         racoons.Add(Instantiate(racoonPrefab, racoonSpawnPoint.position, racoonSpawnPoint.rotation));
+        EventSystem<int>.RaiseEvent(EventType.AMOUNT_RACCOONS, racoons.Count + 1);
     }
     private void SpawnBeavor()
     {
-        if(amountApples < beavorSpawnCost)
+        int amountDams = matricesList[(int)TileID.DAMM_WATER].Count;
+        if(amountApples < beavorSpawnCost || (beavers.Count * 2 > amountDams && beavers.Count > 1))
             return;
         
         GainApples(-beavorSpawnCost);
-        beavors.Add(Instantiate(beavorPrefab, beavorSpawnPoint.position, beavorSpawnPoint.rotation));
+        beavers.Add(Instantiate(beavorPrefab, beavorSpawnPoint.position, beavorSpawnPoint.rotation));
+        EventSystem<int>.RaiseEvent(EventType.AMOUNT_BEAVERS, beavers.Count + 1);
     }
     
     private void Update()
@@ -359,6 +363,14 @@ public class GridManager : MonoBehaviour
         UpdateApples();
         
         UpdateWall();
+
+        int amountDams = matricesList[(int)TileID.DAMM_WATER].Count;
+        if (beavers.Count * 2 > amountDams && beavers.Count > 1)
+        {
+            Destroy(Instantiate(beavorGhostPrefab, beavers[0].transform.position, Quaternion.identity), 0.99f);
+            Destroy(beavers[0]);
+            beavers.RemoveAtSwapBack(0);
+        }
         
         EventSystem<int>.RaiseEvent(EventType.AMOUNT_APPLES, amountApples);
     }
@@ -391,7 +403,6 @@ public class GridManager : MonoBehaviour
     private int amountDamsAgainstWall = 0;
     private void UpdateWall()
     {
-        Debug.Log($"{amountDamsAgainstWall}");
         if (Time.time > lastTimeWallCycle + wallCycleInSeconds)
         {
             bool hitDamm = false;
@@ -520,17 +531,13 @@ public class GridManager : MonoBehaviour
                     bool invoke = true;
                     foreach (TileID t in placementConstraint.tileID)
                     {
-                        if (tileIDs[IndexPosToIndex(cachedIndex)] == t)
+                        if (tileIDs[IndexPosToIndex(cachedIndex)] != t)
                             continue;
 
-                        invoke = false;
-                        break;
-                    }
-                    if (invoke)
-                    {
                         int index = cachedIndex.x * gridWidth + cachedIndex.y % gridHeight;
                         callback?.Invoke(index);
                         meetsRequirements = false;
+                        break;
                     }
                 }
             }

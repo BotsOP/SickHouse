@@ -49,7 +49,7 @@ MonoBehaviour:
         size: {x: 5, y: 5}
       selectionSpheres: []
     placementConstraints:
-    - tileID: 03000000
+    - tileID: 0300000006000000
       selectionBoxes:
       - position: {x: 0, y: 0}
         size: {x: 1, y: 1}
@@ -57,10 +57,10 @@ MonoBehaviour:
     - tileID: 0200000004000000
       selectionBoxes:
       - position: {x: 0, y: 0}
-        size: {x: 3, y: 3}
+        size: {x: 5, y: 5}
       selectionSpheres: []
     placementRequirements:
-    - tileID: 03000000
+    - tileID: 0300000006000000
       amountRequiredTiles: 3
       selectionBoxes:
       - position: {x: 0, y: 0}

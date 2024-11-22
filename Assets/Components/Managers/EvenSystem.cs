@@ -12,12 +12,15 @@ namespace Managers
         
         //Managing
         AMOUNT_APPLES,
+        AMOUNT_BEAVERS,
+        AMOUNT_RACCOONS,
         CHANGE_AMOUNT_APPLES,
         GAIN_APPLES,
         COLLECTED_APPLE,
         CHANGE_BRUSH,
         DESTROY_GAMEOBJECT,
         GAME_OVER,
+        DESTROY_OBJECT,
         
         //Spawning
         SPAWN_RACOON,
