@@ -13,7 +13,6 @@ public class ScoreTracker : MonoBehaviour
 {
     [SerializeField] private LeaderboardObject leaderboardObject;
     [SerializeField] private GameObject scoreUI;
-    [SerializeField] private GameObject newHigh;
     [SerializeField] private GameObject gameUI;
     [SerializeField] private TMP_Text char1;
     [SerializeField] private TMP_Text char2;
@@ -25,6 +24,7 @@ public class ScoreTracker : MonoBehaviour
     [SerializeField] private TMP_Text leaderboardEntry;
     [SerializeField] private RectTransform leaderboardContent;
     [SerializeField] private Text highScore;
+    [SerializeField] private Text newRecord;
     private List<LeaderboardRanking> leaderboard;
 
     private void OnDisable()
@@ -71,10 +71,11 @@ public class ScoreTracker : MonoBehaviour
         scoreUI.SetActive(true);
         gameUI.SetActive(false);
         score.text = finalScore.ToString();
+        highScore.text = leaderboard[0].playerTime.ToString("#.##");
 
         if (leaderboard[0].playerTime < finalScore)
         {
-            newHigh.SetActive(true);
+            newRecord.gameObject.SetActive(true);
         }
     }
 
