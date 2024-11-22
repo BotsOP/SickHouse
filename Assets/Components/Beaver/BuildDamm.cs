@@ -27,7 +27,7 @@ public class BuildDamm : Conditional
             dammArray.Value.dammArray[currentDammIndex.Value].progress += Time.deltaTime * dammBuildProgress.Value;
             return TaskStatus.Running;
         }
-        EventSystem<Vector3, TileID>.RaiseEvent(EventType.CHANGE_TILE, targetPosition.Value, TileID.DAMM);
+        EventSystem<Vector3, TileID>.RaiseEvent(EventType.FORCE_CHANGE_TILE, targetPosition.Value, TileID.DAMM);
         dammArray.Value.dammArray[currentDammIndex.Value].buildDamm = true;
         amountTilesDammFromWall.Value = Mathf.Max(amountTilesDammFromWall.Value - 1, 2);
         return TaskStatus.Success;

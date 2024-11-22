@@ -7,11 +7,11 @@ using UnityEngine;
 public class GridObject : ScriptableObject
 {
     public string fileName = "Level 1";
-    public int[,] tiles;
+    public int[] tiles;
     
     public void Save()
     {
-        string jsonArray = ArraySerializer.SaveArray(tiles);
+        string jsonArray = JsonUtility.ToJson(new GridLevel(tiles), true);
         string path = Path.Combine(Path.Combine(Application.dataPath, "SaveFiles"), fileName);
         File.WriteAllText(path, jsonArray);
         Debug.Log($"Successfully saved grid tiles");
@@ -24,11 +24,21 @@ public class GridObject : ScriptableObject
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
-            tiles = ArraySerializer.LoadArray(json);
+            
+            tiles = JsonUtility.FromJson<GridLevel>(json).tiles;
         }
         else
         {
             Debug.LogWarning("Save file not found");
         }
+    }
+}
+
+public class GridLevel
+{
+    public int[] tiles;
+    public GridLevel(int[] tiles)
+    {
+        this.tiles = tiles;
     }
 }

@@ -5,16 +5,19 @@ namespace Managers
     public enum EventType
     {
         //INPUT
+        SELECT_TILE_DOWN,
         SELECT_TILE,
         CHANGE_TILE,
         FORCE_CHANGE_TILE,
         
         //Managing
         AMOUNT_APPLES,
+        CHANGE_AMOUNT_APPLES,
         GAIN_APPLES,
         COLLECTED_APPLE,
         CHANGE_BRUSH,
         DESTROY_GAMEOBJECT,
+        GAME_OVER,
         
         //Spawning
         SPAWN_RACOON,

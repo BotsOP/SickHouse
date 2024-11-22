@@ -91,8 +91,8 @@ public class GridPainter : MonoBehaviour
             Debug.LogError($"GridObject is empty");
             return;
         }
-        GridManager gridManager = FindFirstObjectByType<GridManager>();
-        int[,] tiles = new int[gridManager.gridWidth,gridManager.gridHeight];
+        GridManagerPainter gridManager = FindFirstObjectByType<GridManagerPainter>();
+        int[] tiles = new int[gridManager.gridWidth * gridManager.gridHeight];
         Array.Copy(gridManager.tileIDs, tiles, gridManager.tileIDs.Length);
         gridObject.tiles = tiles;
         gridObject.Save();

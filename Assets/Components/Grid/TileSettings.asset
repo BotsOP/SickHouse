@@ -122,9 +122,16 @@ MonoBehaviour:
       - position: {x: 0, y: 0}
         size: {x: 3, y: 1}
       selectionSpheres: []
-  - mesh: {fileID: 3323506845839024359, guid: 8a921c13811f5cd47996578282b45bcd, type: 3}
-    texture: {fileID: 2800000, guid: d4ddd6ce606434848bddd7014e59d8bd, type: 3}
+  - mesh: {fileID: 3323506845839024359, guid: 85c09695d536e1b4c83ad44bd6a443b2, type: 3}
+    texture: {fileID: 2800000, guid: 071125bbe5709bb44ab463d021c5489b, type: 3}
     tileID: 5
+    appleCost: 1
+    selection: []
+    placementConstraints: []
+    placementRequirements: []
+  - mesh: {fileID: 3323506845839024359, guid: dcf6c3e3ae8bacb42a51d19f8df8132c, type: 3}
+    texture: {fileID: 2800000, guid: 071125bbe5709bb44ab463d021c5489b, type: 3}
+    tileID: 6
     appleCost: 1
     selection: []
     placementConstraints: []

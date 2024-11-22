@@ -6,13 +6,12 @@ using Managers;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.VFX;
 using VInspector;
 using EventType = Managers.EventType;
 using Random = UnityEngine.Random;
 
 
-public class GridManager : MonoBehaviour
+public class GridManagerPainter : MonoBehaviour
 {
     private readonly static int GridBuffer = Shader.PropertyToID("gridBuffer");
     private readonly static int GridWidth = Shader.PropertyToID("gridWidth");
@@ -68,7 +67,6 @@ public class GridManager : MonoBehaviour
     [Foldout("Damm")]
     [SerializeField] private float dammSlowDown = 1;
     [SerializeField] private int checkAmountTilesInfrontOfWall = 3;
-    [SerializeField] private VisualEffect dammVFX;
     
     private ComputeBuffer gridBuffer;
     private RenderParams renderParams;
@@ -77,32 +75,22 @@ public class GridManager : MonoBehaviour
     private TileID beforeSelectionTileID;
     private MeshFilter selectionMeshFilter;
     private MeshRenderer selectionMeshRenderer;
-    private GraphicsBuffer dammVFXBuffer;
-    private List<Vector3> dammVFXPositions;
-
-    private List<GameObject> racoons = new List<GameObject>();
-    private List<GameObject> beavors = new List<GameObject>();
+    
 
     private float lastTimeAppleCycle;
     private float lastTimeWallCycle;
 
     private Damm[] damms;
-    private int[] appleTrees;
 
 
     private void OnDisable()
     {
         gridBuffer?.Release();
-        dammVFXBuffer?.Release();
         
         EventSystem<Vector3, TileID>.Unsubscribe(EventType.SELECT_TILE_DOWN, StartChangingTile);
         EventSystem<Vector3, TileID>.Unsubscribe(EventType.SELECT_TILE, PlacementSelection);
         EventSystem<Vector3, TileID>.Unsubscribe(EventType.CHANGE_TILE, ChangeTile);
         EventSystem<Vector3, TileID>.Unsubscribe(EventType.FORCE_CHANGE_TILE, ForceChangeTile);
-        EventSystem.Unsubscribe(EventType.SPAWN_RACOON, SpawnRacoon);
-        EventSystem.Unsubscribe(EventType.SPAWN_BEAVOR, SpawnBeavor);
-        EventSystem<int>.Unsubscribe(EventType.GAIN_APPLES, GainApples);
-        EventSystem<int>.Unsubscribe(EventType.COLLECTED_APPLE, collectedAppleFromTree);
     }
 
     private void Awake()
@@ -111,18 +99,10 @@ public class GridManager : MonoBehaviour
         EventSystem<Vector3, TileID>.Subscribe(EventType.SELECT_TILE, PlacementSelection);
         EventSystem<Vector3, TileID>.Subscribe(EventType.CHANGE_TILE, ChangeTile);
         EventSystem<Vector3, TileID>.Subscribe(EventType.FORCE_CHANGE_TILE, ForceChangeTile);
-        EventSystem.Subscribe(EventType.SPAWN_RACOON, SpawnRacoon);
-        EventSystem.Subscribe(EventType.SPAWN_BEAVOR, SpawnBeavor);
-        EventSystem<int>.Subscribe(EventType.GAIN_APPLES, GainApples);
-        EventSystem<int>.Subscribe(EventType.COLLECTED_APPLE, collectedAppleFromTree);
         
         tileIDs = new TileID[gridWidth * gridHeight];
         gridBuffer = new ComputeBuffer(gridWidth * gridHeight, sizeof(float) * 4);
         selectionColors = new Vector4[gridWidth * gridHeight];
-        appleTrees = new int[gridWidth * gridHeight];
-        dammVFXPositions = new List<Vector3>(gridWidth);
-        dammVFXBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, gridWidth, sizeof(float) * 3);
-        dammVFX.SetGraphicsBuffer("OffsetPositions", dammVFXBuffer);
 
         wallDistance = gridHeight;
         
@@ -175,27 +155,6 @@ public class GridManager : MonoBehaviour
         material.SetFloat(GridWidth, gridWidth);
         material.SetFloat(GridHeight, gridHeight);
         material.SetFloat(TileSize, tileSize);
-        
-        GridInfo gridInfo = new GridInfo
-        {
-            Value = this,
-        };
-        GlobalVariables.Instance.SetVariable("gridInfo", gridInfo);
-
-        damms = new Damm[gridWidth * gridHeight];
-        for (int i = 0; i < gridWidth * gridHeight; i++)
-        {
-            damms[i] = new Damm();
-        }
-        DammArrayClass dammArrayClass = new DammArrayClass
-        {
-            dammArray = damms,
-        };
-        DammArray dammArray = new DammArray
-        {
-            Value = dammArrayClass,
-        };
-        GlobalVariables.Instance.SetVariable("DammArray", dammArray);
     }
 
     private void StartChangingTile(Vector3 position, TileID tileID)
@@ -292,11 +251,9 @@ public class GridManager : MonoBehaviour
                 break;
 
             case TileID.DIRT:
-                GainApples(tileObject.tileSettings[(int)oldTile].appleCost);
                 return;
         }
 
-        GainApples(-tileObject.tileSettings[(int)tileID].appleCost);
         EventSystem<int>.RaiseEvent(EventType.AMOUNT_APPLES, amountApples);
     }
     
@@ -304,13 +261,13 @@ public class GridManager : MonoBehaviour
     {
         Vector2Int posIndex = GetTile(position);
         TileID oldTile = tileIDs[IndexPosToIndex(posIndex)];
-        Matrix4x4 matrix4X4 = IndexToMatrix4x4(posIndex);
 
-        if(oldTile == TileID.DAMM_WATER && tileID == TileID.DAMM)
-            return;
-        
         if (oldTile == TileID.WATER && tileID == TileID.DAMM)
+        {
             tileID = TileID.DAMM_WATER;
+        }
+        
+        Matrix4x4 matrix4X4 = IndexToMatrix4x4(posIndex);
         
         tileIDs[IndexPosToIndex(posIndex)] = tileID;
         matricesList[(int)oldTile].RemoveSwapBack(matrix4X4);
@@ -320,28 +277,16 @@ public class GridManager : MonoBehaviour
     {
         TileID oldTile = tileIDs[IndexPosToIndex(posIndex)];
         
+        if (oldTile == TileID.WATER && tileID == TileID.DAMM)
+        {
+            tileID = TileID.DAMM_WATER;
+        }
+        
         Matrix4x4 matrix4X4 = IndexToMatrix4x4(posIndex);
         
         tileIDs[IndexPosToIndex(posIndex)] = tileID;
         matricesList[(int)oldTile].RemoveSwapBack(matrix4X4);
         matricesList[(int)tileID].Add(matrix4X4);
-    }
-
-    private void SpawnRacoon()
-    {
-        if(amountApples < racoonSpawnCost)
-            return;
-
-        GainApples(-racoonSpawnCost);
-        racoons.Add(Instantiate(racoonPrefab, racoonSpawnPoint.position, racoonSpawnPoint.rotation));
-    }
-    private void SpawnBeavor()
-    {
-        if(amountApples < beavorSpawnCost)
-            return;
-        
-        GainApples(-beavorSpawnCost);
-        beavors.Add(Instantiate(beavorPrefab, beavorSpawnPoint.position, beavorSpawnPoint.rotation));
     }
     
     private void Update()
@@ -355,114 +300,12 @@ public class GridManager : MonoBehaviour
             materialPropertyBlock.SetTexture(AlbedoMap, tileObject.tileSettings[i].texture);
             Graphics.RenderMeshInstanced(renderParams, tileObject.tileSettings[i].mesh, 0, matricesList[i]);
         }
-
-        UpdateApples();
-        
-        UpdateWall();
-        
-        EventSystem<int>.RaiseEvent(EventType.AMOUNT_APPLES, amountApples);
     }
-    private void UpdateApples()
-    {
-        if (Time.time > lastTimeAppleCycle + appleCycleInSeconds)
-        {
-            lastTimeAppleCycle = Time.time;
-            for (int i = 0; i < matricesList[(int)TileID.TREE].Count; i++)
-            {
-                Vector3 position = matricesList[(int)TileID.TREE][i].GetPosition();
-                int index = IndexPosToIndex(GetTile(position));
-                
-                if(appleTrees[index] >= maxAmountApplesProduced)
-                    continue;
-                
-                for (int j = 0; j < amountApplesPerCycle; j++)
-                {
-                    if(appleTrees[index] >= maxAmountApplesProduced)
-                        break;
-                    
-                    appleTrees[index]++;
-                    Vector3 randomOffset = new Vector3(Random.Range(-2f, 2f), 0, Random.Range(-2f, 2f));
-                    Instantiate(applePrefab, position + randomOffset, Quaternion.identity).treeIndex = index;
-                }
-            }
-        }
-    }
-
-    private int amountDamsAgainstWall = 0;
-    private void UpdateWall()
-    {
-        Debug.Log($"{amountDamsAgainstWall}");
-        if (Time.time > lastTimeWallCycle + wallCycleInSeconds)
-        {
-            bool hitDamm = false;
-            for (int x = 0; x < gridWidth; x++)
-            {
-                Vector2Int posIndex = new Vector2Int(x, wallDistance - 1);
-                int index = IndexPosToIndex(posIndex);
-                if ((tileIDs[index] == TileID.DAMM || tileIDs[index] == TileID.DAMM_WATER) && damms[index].progress < 1.5f && damms[index].buildDamm)
-                {
-                    amountDamsAgainstWall++;
-                    dammVFXPositions.Add(GetPosition(posIndex));
-                    damms[index].progress = 2;
-                    hitDamm = true;
-                    lastTimeWallCycle += dammSlowDown;
-                }
-            }
-
-            if (hitDamm)
-            {
-                dammVFXBuffer.SetData(dammVFXPositions);
-                dammVFX.SetGraphicsBuffer("OffsetPositions", dammVFXBuffer);
-                dammVFX.SetInt("AmountDams", amountDamsAgainstWall);
-
-                return;
-            }
-
-            amountDamsAgainstWall = 0;
-            dammVFXPositions.Clear();
-            dammVFXBuffer.SetData(dammVFXPositions);
-            dammVFX.SetGraphicsBuffer("OffsetPositions", dammVFXBuffer);
-            dammVFX.SetInt("AmountDams", amountDamsAgainstWall);
-
-            lastTimeWallCycle = Time.time;
-            wallDistance--;
-
-            if (wallDistance <= 0)
-            {
-                EventSystem.RaiseEvent(EventType.GAME_OVER);
-                return;
-            }
-            
-            bulldozerPrefab.transform.position -= new Vector3(0, 0, tileSize);
-            bulldozerAnimation.Play("Move");
-            
-            if ((gridHeight - wallDistance) % 2 == 0 & (gridHeight - wallDistance) > 5)
-            {
-                int skyscraperIndex = wallDistance / 2 % wallPrefabs.Count;
-                previousSkyscraperIndex = skyscraperIndex;
-                Instantiate(wallPrefabs[(wallDistance / 2 + previousSkyscraperIndex) % wallPrefabs.Count], new Vector3(0, 0, wallDistance - (gridHeight * tileSize / 2f) + tileSize * 5), Quaternion.identity).transform.GetChild(0).GetComponent<Animation>().Play();
-            }
-            
-            for (int x = 0; x < gridWidth; x++)
-            {
-                int dammIndex = IndexPosToIndex(new Vector2Int(x, wallDistance));
-                if (damms[dammIndex].buildDamm && tileIDs[dammIndex] == TileID.DAMM)
-                {
-                    damms[dammIndex].amountBeavorsWorking = 0;
-                    damms[dammIndex].progress = 0;
-                    damms[dammIndex].buildDamm = false;
-                }
-                
-                ForceChangeTile(new Vector2Int(x, wallDistance), TileID.WALL);
-            }
-        }
-    }
-
-    private int previousSkyscraperIndex = 0;
-
+    
     private Vector2Int GetTile(Vector3 worldPos)
     {
-        return new Vector2Int(Mathf.RoundToInt((worldPos.x / tileSize) + (gridWidth * tileSize / 2f)), Mathf.RoundToInt((worldPos.z / tileSize) + (gridHeight * tileSize / 2f)));
+        Vector2Int indexPos = new Vector2Int(Mathf.Clamp(Mathf.RoundToInt((worldPos.x / tileSize) + (gridWidth * tileSize / 2f)), 0, gridWidth - 1), Mathf.Clamp(Mathf.RoundToInt((worldPos.z / tileSize) + (gridHeight * tileSize / 2f)), 0, gridHeight - 1));
+        return indexPos;
     }
 
     private Vector2Int GetTile(Matrix4x4 matrix)
@@ -472,7 +315,7 @@ public class GridManager : MonoBehaviour
     
     private Vector3 GetPosition(Vector2Int index)
     {
-        return new Vector3((index.x * tileSize) - (gridWidth / tileSize / 2f), 0, (index.y * tileSize) - (gridHeight / tileSize / 2f));
+        return new Vector3(Mathf.RoundToInt((index.x * tileSize) - (gridWidth / tileSize * 2f)), 0, Mathf.RoundToInt((index.y * tileSize) - (gridHeight / tileSize * 2f)));
     }
     
     private void GetAreaSelection(TileID tileID, Vector2Int posIndex, Action<int> callback)
@@ -575,16 +418,6 @@ public class GridManager : MonoBehaviour
             }
         }
         return meetsRequirements;
-    }
-    
-    private void GainApples(int amount)
-    {
-        amountApples += amount;
-        EventSystem<int>.RaiseEvent(EventType.CHANGE_AMOUNT_APPLES, amount);
-    }
-    private void collectedAppleFromTree(int treeIndex)
-    {
-        appleTrees[treeIndex]--;
     }
     private int IndexPosToIndex(Vector2Int index)
     {

@@ -1,64 +1,50 @@
+using System;
+using Managers;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using EventType = Managers.EventType;
 
 public class ScoreTracker : MonoBehaviour
 {
-    public GridManager gridManager;
-    public GameObject scoreUI;
-    public GameObject newHigh;
-    public Text score;
-    public Text highScore;
+    [SerializeField] private GameObject scoreUI;
+    [SerializeField] private GameObject newHigh;
+    [SerializeField] private GameObject gameUI;
+    [SerializeField] private Text score;
+    [SerializeField] private Text highScore;
 
-    public float timeAlive;
-    bool gameHasBegun;
-    float finalScore = 0;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void OnDisable()
     {
+        EventSystem.Unsubscribe(EventType.GAME_OVER, GameFinished);
+    }
+
+    void OnEnable()
+    {
+        EventSystem.Subscribe(EventType.GAME_OVER, GameFinished);
         Time.timeScale = 1.0f;
-        finalScore = 0;
         newHigh.SetActive(false);
         scoreUI.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void GameFinished()
     {
-        if (gridManager.wallDistance > 0)
-        {
-            //Start timer
-            timeAlive += Time.deltaTime;
-            gameHasBegun = true;
-        }
-        else
-        {
-            //This little situation is when the  game ends!
-            //Stop timer and if game has started, save the score
-            if (gameHasBegun)
-            {
-                //Save the score and wipe the timer
-                if (finalScore == 0)
-                {
-                    finalScore = timeAlive;
-                    scoreUI.SetActive(true);
-                    score.text = finalScore.ToString();
-                    highScore.text = PlayerPrefs.GetFloat("HighScore").ToString();
+        float finalScore = Time.timeSinceLevelLoad;
+        scoreUI.SetActive(true);
+        gameUI.SetActive(false);
+        score.text = finalScore.ToString();
+        highScore.text = PlayerPrefs.GetFloat("HighScore").ToString();
 
-                    if (PlayerPrefs.GetFloat("HighScore") < finalScore)
-                    {
-                        newHigh.SetActive(true);
-                        PlayerPrefs.GetFloat("HighScore", finalScore);
-                        PlayerPrefs.Save();
-                    }
-                    Time.timeScale = 0f;
-                }
-                timeAlive = 0;                
-            }
-            else
-            {
-                //If the game hasn't started yet
-                timeAlive = 0;
-            }
+        if (PlayerPrefs.GetFloat("HighScore") < finalScore)
+        {
+            newHigh.SetActive(true);
+            PlayerPrefs.GetFloat("HighScore", finalScore);
+            PlayerPrefs.Save();
         }
+        Time.timeScale = 0f;
+    }
+
+    public void BackToMainMenu()
+    {
+        SceneManager.LoadScene("MenuScene");
     }
 }
