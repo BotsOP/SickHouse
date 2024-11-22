@@ -2,7 +2,7 @@ using UnityEngine;
 using BehaviorDesigner.Runtime;
 using BehaviorDesigner.Runtime.Tasks;
 
-public class MoveTowardsTarget : Action
+public class GoToTargetTransform : Action
 {
     public SharedFloat speed = 0;
     public SharedTransform target;

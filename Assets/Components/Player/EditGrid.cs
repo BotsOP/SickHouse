@@ -34,7 +34,30 @@ public class EditGrid : MonoBehaviour
         
         if(isOverUI)
             return;
+
+        if (tileID == TileID.WATER || tileID == TileID.DIRT)
+        {
+            if (Physics.Raycast(ray, out hit)) {
+                cachedPosition = hit.point;
+                EventSystem<Vector3, TileID>.RaiseEvent(EventType.SELECT_TILE_DOWN, hit.point, tileID);
+            }
+            if (Input.GetMouseButton(0))
+            {
+                if (Physics.Raycast(ray, out hit)) {
+                    cachedPosition = hit.point;
+                    EventSystem<Vector3, TileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, tileID);
+                }
+            }
+            return;
+        }
         
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (Physics.Raycast(ray, out hit)) {
+                cachedPosition = hit.point;
+                EventSystem<Vector3, TileID>.RaiseEvent(EventType.SELECT_TILE_DOWN, hit.point, tileID);
+            }
+        }
         if (Input.GetMouseButton(0))
         {
             if (Physics.Raycast(ray, out hit)) {

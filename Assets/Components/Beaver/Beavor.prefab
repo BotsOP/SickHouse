@@ -97,7 +97,7 @@ MonoBehaviour:
       parentIndex: 
       startIndex: 
       variableStartIndex: 
-      JSONSerialization: '{"Variables":[{"Type":"BehaviorDesigner.Runtime.SharedTransform","Name":"target","IsShared":true},{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":"walkSpeed","IsShared":true,"SinglemValue":0},{"Type":"BehaviorDesigner.Runtime.SharedVector3","Name":"home","IsShared":true,"Vector3mValue":"(0,0,0)"}]}'
+      JSONSerialization: '{"Variables":[{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":"walkSpeed","IsShared":true,"SinglemValue":2.5},{"Type":"BehaviorDesigner.Runtime.SharedObjectList","Name":"dammList","IsShared":true,"List`1mValue":[]},{"Type":"BehaviorDesigner.Runtime.SharedVector3","Name":"target","IsShared":true,"Vector3mValue":"(0,0,0)"},{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":"amountTilesDammFromWall","IsShared":true,"Int32mValue":3},{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":"currentDammIndex","IsShared":true,"Int32mValue":0},{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":"dammBuildProgress","IsShared":true,"SinglemValue":1},{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":"amountTilesTooCloseToWall","IsShared":true,"Int32mValue":3}]}'
       fieldSerializationData:
         typeName: []
         fieldNameHash: 

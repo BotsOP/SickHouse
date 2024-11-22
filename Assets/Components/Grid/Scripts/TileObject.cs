@@ -10,6 +10,8 @@ public enum TileID
     TREE,
     WATER,
     WALL,
+    DAMM,
+    DAMM_WATER,
 }
 
 [CreateAssetMenu(fileName = "TileSettings", menuName = "Tiles/Settings")]

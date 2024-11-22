@@ -572,7 +572,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 777743095}
-  - component: {fileID: 777743094}
+  - component: {fileID: 777743096}
   m_Layer: 0
   m_Name: GridManager
   m_TagString: Untagged
@@ -580,33 +580,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &777743094
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 777743093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 310685b2980734e499493865199a1436, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gridObject: {fileID: 11400000, guid: 1008d74c9d7a5c043a6fc94e197ba5de, type: 2}
-  tileObject: {fileID: 11400000, guid: 9558d8a0caf02b34a815b7f507964330, type: 2}
-  material: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
-  tileSize: 1
-  gridWidth: 100
-  gridHeight: 100
-  selectionObject: {fileID: 1753995847}
-  constrainedColor: {r: 1, g: 0, b: 0, a: 1}
-  placeableColor: {r: 0, g: 1, b: 0, a: 1}
-  requirementColor: {r: 0, g: 0, b: 1, a: 1}
-  startFillTileID: 0
-  amountApplesPerCycle: 1
-  amountSecondsPerCycle: 1
-  appleCost: 5
-  amountApples: 100
 --- !u!4 &777743095
 Transform:
   m_ObjectHideFlags: 0
@@ -622,6 +595,49 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &777743096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 777743093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5aa8c24fe1fc9504cabcc23201f43070, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileIDs: 
+  wallDistance: 0
+  gridWidth: 50
+  gridHeight: 50
+  tileSize: 1
+  gridObject: {fileID: 11400000, guid: 1008d74c9d7a5c043a6fc94e197ba5de, type: 2}
+  tileObject: {fileID: 11400000, guid: 9558d8a0caf02b34a815b7f507964330, type: 2}
+  material: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
+  amountApples: 100
+  selectionObject: {fileID: 1753995847}
+  constrainedColor: {r: 1, g: 0, b: 0, a: 1}
+  placeableColor: {r: 0, g: 1, b: 0, a: 1}
+  requirementColor: {r: 0, g: 0, b: 1, a: 1}
+  startFillTileID: 1
+  amountApplesPerCycle: 1
+  appleCycleInSeconds: 1
+  appleCost: 5
+  maxAmountApplesProduced: 10
+  applePrefab: {fileID: 0}
+  wallCycleInSeconds: 10
+  wallPrefabs: []
+  bulldozerPrefab: {fileID: 0}
+  bulldozerAnimation: {fileID: 0}
+  racoonPrefab: {fileID: 0}
+  racoonSpawnPoint: {fileID: 0}
+  racoonSpawnCost: 15
+  beavorPrefab: {fileID: 0}
+  beavorSpawnPoint: {fileID: 0}
+  beavorSpawnCost: 15
+  dammSlowDown: 1
+  checkAmountTilesInfrontOfWall: 3
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
