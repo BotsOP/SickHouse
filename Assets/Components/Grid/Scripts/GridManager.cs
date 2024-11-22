@@ -331,9 +331,10 @@ public class GridManager : MonoBehaviour
     {
         if(amountApples < racoonSpawnCost)
             return;
-
+        
         GainApples(-racoonSpawnCost);
         racoons.Add(Instantiate(racoonPrefab, racoonSpawnPoint.position, racoonSpawnPoint.rotation));
+        EventSystem<int>.RaiseEvent(EventType.AMOUNT_RACCOONS, racoons.Count + 1);
     }
     private void SpawnBeavor()
     {
@@ -342,6 +343,7 @@ public class GridManager : MonoBehaviour
         
         GainApples(-beavorSpawnCost);
         beavors.Add(Instantiate(beavorPrefab, beavorSpawnPoint.position, beavorSpawnPoint.rotation));
+        EventSystem<int>.RaiseEvent(EventType.AMOUNT_BEAVERS, beavors.Count + 1);
     }
     
     private void Update()
@@ -391,7 +393,6 @@ public class GridManager : MonoBehaviour
     private int amountDamsAgainstWall = 0;
     private void UpdateWall()
     {
-        Debug.Log($"{amountDamsAgainstWall}");
         if (Time.time > lastTimeWallCycle + wallCycleInSeconds)
         {
             bool hitDamm = false;

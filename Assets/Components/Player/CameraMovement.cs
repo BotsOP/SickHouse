@@ -17,7 +17,6 @@ public class CameraMovement : MonoBehaviour
     private float zoomPos;
     private float zoomPosCached;
 
-
     private Vector2 MouseAxis
     {
         get { return new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")); }
