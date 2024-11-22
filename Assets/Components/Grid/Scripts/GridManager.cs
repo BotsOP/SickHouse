@@ -340,7 +340,7 @@ public class GridManager : MonoBehaviour
     private void SpawnBeavor()
     {
         int amountDams = matricesList[(int)TileID.DAMM_WATER].Count;
-        if(amountApples < beavorSpawnCost || (beavers.Count * 2 > amountDams && beavers.Count > 1))
+        if(amountApples < beavorSpawnCost || (beavers.Count * 2 > amountDams))
             return;
         
         GainApples(-beavorSpawnCost);
@@ -370,6 +370,7 @@ public class GridManager : MonoBehaviour
             Destroy(Instantiate(beavorGhostPrefab, beavers[0].transform.position, Quaternion.identity), 0.99f);
             Destroy(beavers[0]);
             beavers.RemoveAtSwapBack(0);
+            EventSystem<int>.RaiseEvent(EventType.AMOUNT_BEAVERS, beavers.Count + 1);
         }
         
         EventSystem<int>.RaiseEvent(EventType.AMOUNT_APPLES, amountApples);

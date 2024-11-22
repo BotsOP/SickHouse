@@ -3215,7 +3215,7 @@ MonoBehaviour:
   racoonSpawnPoint: {fileID: 1709512890}
   racoonSpawnCost: 15
   beavorPrefab: {fileID: 2929558080248765489, guid: c8f3d4ace38b28345b7e0ea0cb7a84f1, type: 3}
-  beavorGhostPrefab: {fileID: 0}
+  beavorGhostPrefab: {fileID: 4327260596315858872, guid: 72486a0aa514ca148b590e7554dab112, type: 3}
   beavorSpawnPoint: {fileID: 288050427}
   beavorSpawnCost: 18
   dammSlowDown: 0.2
