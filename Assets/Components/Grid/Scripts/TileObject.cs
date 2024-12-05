@@ -25,6 +25,7 @@ public struct TileSettings
 {
     [Header("Tile Settings")]
     public Mesh mesh;
+    public Material material;
     public Texture2D texture;
     public TileID tileID;
     public int appleCost;

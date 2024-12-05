@@ -10,7 +10,7 @@ namespace Managers
         CHANGE_TILE,
         FORCE_CHANGE_TILE,
         
-        //Managing
+        //GAME STATE
         AMOUNT_APPLES,
         AMOUNT_BEAVERS,
         AMOUNT_RACCOONS,
@@ -18,11 +18,18 @@ namespace Managers
         GAIN_APPLES,
         COLLECTED_APPLE,
         CHANGE_BRUSH,
+        
+        //UI
+        UPDATE_SELECTION_TEXT,
+        DISABLE_SELECTION_TEXT,
+        
+        //GAME MANAGEMENT
+        TOGGLE_INPUT,
         DESTROY_GAMEOBJECT,
         GAME_OVER,
         DESTROY_OBJECT,
         
-        //Spawning
+        //SPAWNING
         SPAWN_RACOON,
         SPAWN_BEAVOR,
     }

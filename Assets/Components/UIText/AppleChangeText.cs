@@ -1,35 +1,38 @@
 using System;
 using Managers;
 using TMPro;
+using Unity.Mathematics;
 using UnityEngine;
 using EventType = Managers.EventType;
 
 public class AppleChangeText : MonoBehaviour
 {
-    [SerializeField] private TMP_Text textUp;
-    [SerializeField] private TMP_Text textDown;
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private GameObject textUp;
+    [SerializeField] private GameObject textDown;
 
     private void OnEnable()
     {
-        EventSystem<int>.Subscribe(EventType.CHANGE_AMOUNT_APPLES, ShowText);
+        EventSystem<int, Vector3>.Subscribe(EventType.CHANGE_AMOUNT_APPLES, ShowText);
     }
     
     private void OnDisable()
     {
-        EventSystem<int>.Unsubscribe(EventType.CHANGE_AMOUNT_APPLES, ShowText);
+        EventSystem<int, Vector3>.Unsubscribe(EventType.CHANGE_AMOUNT_APPLES, ShowText);
     }
 
-    private void ShowText(int newText)
+    private void ShowText(int newText, Vector3 worldPosition)
     {
+        Vector3 screenSpace = mainCamera.WorldToScreenPoint(worldPosition);
         if (newText > 0)
         {
-            TMP_Text text = Instantiate(textUp, transform.parent);
+            TMP_Text text = Instantiate(textUp, screenSpace, quaternion.identity, transform.parent).GetComponentInChildren<TMP_Text>();
             text.text = newText.ToString();
             Destroy(text.gameObject, 1f);
         }
         else if (newText < 0)
         {
-            TMP_Text text = Instantiate(textDown, transform.parent);
+            TMP_Text text = Instantiate(textDown, screenSpace, quaternion.identity, transform.parent).GetComponentInChildren<TMP_Text>();
             text.text = newText.ToString();
             Destroy(text.gameObject, 1f);
         }

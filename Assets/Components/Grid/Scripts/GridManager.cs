@@ -74,7 +74,6 @@ public class GridManager : MonoBehaviour
     [SerializeField] private VisualEffect dammVFX;
     
     private ComputeBuffer gridBuffer;
-    private RenderParams renderParams;
     private MaterialPropertyBlock materialPropertyBlock;
     private Vector4[] selectionColors;
     private TileID beforeSelectionTileID;
@@ -89,6 +88,7 @@ public class GridManager : MonoBehaviour
 
     private Damm[] damms;
     private int[] appleTrees;
+    private RenderParams[] renderParamsArray;
 
 
     private void OnDisable()
@@ -102,7 +102,7 @@ public class GridManager : MonoBehaviour
         EventSystem<Vector3, TileID>.Unsubscribe(EventType.FORCE_CHANGE_TILE, ForceChangeTile);
         EventSystem.Unsubscribe(EventType.SPAWN_RACOON, SpawnRacoon);
         EventSystem.Unsubscribe(EventType.SPAWN_BEAVOR, SpawnBeavor);
-        EventSystem<int>.Unsubscribe(EventType.GAIN_APPLES, GainApples);
+        EventSystem<int, Vector3>.Unsubscribe(EventType.GAIN_APPLES, GainApples);
         EventSystem<int>.Unsubscribe(EventType.COLLECTED_APPLE, collectedAppleFromTree);
     }
 
@@ -114,7 +114,7 @@ public class GridManager : MonoBehaviour
         EventSystem<Vector3, TileID>.Subscribe(EventType.FORCE_CHANGE_TILE, ForceChangeTile);
         EventSystem.Subscribe(EventType.SPAWN_RACOON, SpawnRacoon);
         EventSystem.Subscribe(EventType.SPAWN_BEAVOR, SpawnBeavor);
-        EventSystem<int>.Subscribe(EventType.GAIN_APPLES, GainApples);
+        EventSystem<int, Vector3>.Subscribe(EventType.GAIN_APPLES, GainApples);
         EventSystem<int>.Subscribe(EventType.COLLECTED_APPLE, collectedAppleFromTree);
         
         tileIDs = new TileID[gridWidth * gridHeight];
@@ -165,9 +165,37 @@ public class GridManager : MonoBehaviour
         }
         matricesList[(int)TileID.WATER] = matricesList[(int)TileID.WATER].OrderBy(x => x.GetRow(2).w).ToList();
 
-        materialPropertyBlock = new MaterialPropertyBlock();
-        renderParams = new RenderParams(material);
-        renderParams.matProps = materialPropertyBlock;
+        renderParamsArray = new RenderParams[tileObject.tileSettings.Length];
+        for (int i = 0; i < tileObject.tileSettings.Length; i++)
+        {
+            bool copied = false;
+            for (int j = 0; j < tileObject.tileSettings.Length; j++)
+            {
+                if (tileObject.tileSettings[i].material == tileObject.tileSettings[j].material && i > j)
+                {
+                    renderParamsArray[i] = renderParamsArray[j];
+                    copied = true;
+                    break;
+                }
+            }
+            
+            if(copied)
+                continue;
+
+            if (tileObject.tileSettings[i].material == null)
+            {
+                Debug.LogError($"Material at index {i} in TileSettings is not set");
+            }
+            
+            RenderParams renderParams = new RenderParams(tileObject.tileSettings[i].material)
+            {
+                matProps = new MaterialPropertyBlock(),
+            };
+            renderParamsArray[i] = renderParams;
+        }
+        
+        // materialPropertyBlock = new MaterialPropertyBlock();
+        // renderParams.matProps = materialPropertyBlock;
 
         Array.Fill(selectionColors, Vector4.one);
         gridBuffer.SetData(selectionColors);
@@ -218,9 +246,11 @@ public class GridManager : MonoBehaviour
         
         void AreaSelection(int index) { selectionColors[index] = placeableColor; }
         GetAreaSelection(tileID, posIndex, AreaSelection);
-        
+
+        int amountMatchingRequiredTiles = 0;
         void RequiredSelection(int index) { 
             selectionColors[index] = requirementColor;
+            amountMatchingRequiredTiles++;
         }
         bool requiredPlacement = GetRequiredSelection(tileID, posIndex, RequiredSelection);
 
@@ -243,6 +273,19 @@ public class GridManager : MonoBehaviour
         {
             beforeSelectionTileID = tileID;
             selectionMeshRenderer.material.SetTexture(AlbedoMap, tileObject.tileSettings[(int)tileID].texture);
+        }
+
+        if (tileID == TileID.TREE)
+        {
+            int amountRequiredTiles = tileObject.tileSettings[(int)TileID.TREE].placementRequirements[0].amountRequiredTiles;
+            float lockedX = position.x > 0 ? (int)(position.x + tileSize / 2) : (int)(position.x - tileSize / 2);
+            float lockedZ = position.z > 0 ? (int)(position.z + tileSize / 2) : (int)(position.z - tileSize / 2);
+            Vector3 lockedPosition = new Vector3(lockedX, 0, lockedZ);
+            EventSystem<int, int, Color, Vector3>.RaiseEvent(EventType.UPDATE_SELECTION_TEXT, 
+                                                             amountMatchingRequiredTiles, 
+                                                             amountRequiredTiles, 
+                                                             amountMatchingRequiredTiles>=amountRequiredTiles?placeableColor:requirementColor, 
+                                                             lockedPosition);
         }
         
         selectionObject.transform.position = new Vector3(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y), Mathf.RoundToInt(position.z));
@@ -293,11 +336,11 @@ public class GridManager : MonoBehaviour
                 break;
 
             case TileID.DIRT:
-                GainApples(tileObject.tileSettings[(int)oldTile].appleCost);
+                GainApples(tileObject.tileSettings[(int)oldTile].appleCost, position);
                 return;
         }
 
-        GainApples(-tileObject.tileSettings[(int)tileID].appleCost);
+        GainApples(-tileObject.tileSettings[(int)tileID].appleCost, position);
         EventSystem<int>.RaiseEvent(EventType.AMOUNT_APPLES, amountApples);
     }
     
@@ -333,7 +376,7 @@ public class GridManager : MonoBehaviour
         if(amountApples < racoonSpawnCost)
             return;
         
-        GainApples(-racoonSpawnCost);
+        GainApples(-racoonSpawnCost, racoonSpawnPoint.position);
         racoons.Add(Instantiate(racoonPrefab, racoonSpawnPoint.position, racoonSpawnPoint.rotation));
         EventSystem<int>.RaiseEvent(EventType.AMOUNT_RACCOONS, racoons.Count + 1);
     }
@@ -343,7 +386,7 @@ public class GridManager : MonoBehaviour
         if(amountApples < beavorSpawnCost || ((beavers.Count + 1) > amountDams * 2))
             return;
         
-        GainApples(-beavorSpawnCost);
+        GainApples(-beavorSpawnCost, beavorSpawnPoint.position);
         beavers.Add(Instantiate(beavorPrefab, beavorSpawnPoint.position, beavorSpawnPoint.rotation));
         EventSystem<int>.RaiseEvent(EventType.AMOUNT_BEAVERS, beavers.Count + 1);
     }
@@ -356,8 +399,8 @@ public class GridManager : MonoBehaviour
             {
                 continue;
             }
-            materialPropertyBlock.SetTexture(AlbedoMap, tileObject.tileSettings[i].texture);
-            Graphics.RenderMeshInstanced(renderParams, tileObject.tileSettings[i].mesh, 0, matricesList[i]);
+            renderParamsArray[i].matProps.SetTexture(AlbedoMap, tileObject.tileSettings[i].texture);
+            Graphics.RenderMeshInstanced(renderParamsArray[i], tileObject.tileSettings[i].mesh, 0, matricesList[i]);
         }
 
         UpdateApples();
@@ -585,10 +628,10 @@ public class GridManager : MonoBehaviour
         return meetsRequirements;
     }
     
-    private void GainApples(int amount)
+    private void GainApples(int amount, Vector3 worldPos)
     {
         amountApples += amount;
-        EventSystem<int>.RaiseEvent(EventType.CHANGE_AMOUNT_APPLES, amount);
+        EventSystem<int, Vector3>.RaiseEvent(EventType.CHANGE_AMOUNT_APPLES, amount, worldPos);
     }
     private void collectedAppleFromTree(int treeIndex)
     {
