@@ -48,6 +48,7 @@ public class EditGrid : MonoBehaviour
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Default"))) {
                 cachedPosition = hit.point;
                 EventSystem<Vector3, TileID>.RaiseEvent(EventType.SELECT_TILE_DOWN, hit.point, tileID);
+                EventSystem<Vector3, TileID>.RaiseEvent(EventType.SELECT_TILE, hit.point, tileID);
             }
             if (Input.GetMouseButton(0) && !IsPointerOverUIElement())
             {

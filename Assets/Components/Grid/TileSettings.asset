@@ -17,6 +17,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
     texture: {fileID: 2800000, guid: 1b57394056c1238498fd12780ac057b4, type: 3}
     tileID: 0
+    floorID: 0
     appleCost: 0
     selection: []
     placementConstraints:
@@ -24,12 +25,12 @@ MonoBehaviour:
       selectionBoxes:
       - position: {x: 0, y: 0}
         size: {x: 1, y: 1}
-      selectionSpheres: []
     placementRequirements: []
   - mesh: {fileID: -462981019419857548, guid: 95b5fbdb358f3f246a585fd58b819dfc, type: 3}
     material: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
     texture: {fileID: 2800000, guid: c8e66a51fc88b724b8a733debd030783, type: 3}
     tileID: 1
+    floorID: 1
     appleCost: 0
     selection: []
     placementConstraints:
@@ -37,12 +38,12 @@ MonoBehaviour:
       selectionBoxes:
       - position: {x: 0, y: 0}
         size: {x: 1, y: 1}
-      selectionSpheres: []
     placementRequirements: []
   - mesh: {fileID: 9145555101598989314, guid: 41eb108338e40204899369c526b99b4b, type: 3}
     material: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
     texture: {fileID: 2800000, guid: 9890f38ca26b6cf45b8889be95b928f2, type: 3}
     tileID: 2
+    floorID: 1
     appleCost: 3
     selection:
     - tileID: 0
@@ -50,29 +51,26 @@ MonoBehaviour:
       selectionBoxes:
       - position: {x: 0, y: 0}
         size: {x: 3, y: 3}
-      selectionSpheres: []
     placementConstraints:
     - tileID: 0300000006000000
       selectionBoxes:
       - position: {x: 0, y: 0}
         size: {x: 1, y: 1}
-      selectionSpheres: []
     - tileID: 0200000004000000
       selectionBoxes:
       - position: {x: 0, y: 0}
         size: {x: 5, y: 5}
-      selectionSpheres: []
     placementRequirements:
     - tileID: 0300000006000000
       amountRequiredTiles: 3
       selectionBoxes:
       - position: {x: 0, y: 0}
         size: {x: 3, y: 3}
-      selectionSpheres: []
   - mesh: {fileID: -462981019419857548, guid: 95b5fbdb358f3f246a585fd58b819dfc, type: 3}
     material: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
     texture: {fileID: 2800000, guid: 6667768dc6164e240a12185b3ce6d9c4, type: 3}
     tileID: 3
+    floorID: 3
     appleCost: 1
     selection:
     - tileID: 0
@@ -82,13 +80,11 @@ MonoBehaviour:
         size: {x: 3, y: 1}
       - position: {x: 0, y: 0}
         size: {x: 1, y: 3}
-      selectionSpheres: []
     placementConstraints:
     - tileID: 0400000002000000
       selectionBoxes:
       - position: {x: 0, y: 0}
         size: {x: 1, y: 1}
-      selectionSpheres: []
     placementRequirements:
     - tileID: 03000000
       amountRequiredTiles: 1
@@ -97,11 +93,11 @@ MonoBehaviour:
         size: {x: 1, y: 3}
       - position: {x: 0, y: 0}
         size: {x: 3, y: 1}
-      selectionSpheres: []
   - mesh: {fileID: -462981019419857548, guid: 95b5fbdb358f3f246a585fd58b819dfc, type: 3}
     material: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
     texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
     tileID: 4
+    floorID: 0
     appleCost: 1
     selection:
     - tileID: 0
@@ -111,13 +107,11 @@ MonoBehaviour:
         size: {x: 3, y: 1}
       - position: {x: 0, y: 0}
         size: {x: 1, y: 3}
-      selectionSpheres: []
     placementConstraints:
     - tileID: 00000000
       selectionBoxes:
       - position: {x: 0, y: 1}
         size: {x: 1, y: 2}
-      selectionSpheres: []
     placementRequirements:
     - tileID: 03000000
       amountRequiredTiles: 1
@@ -126,11 +120,11 @@ MonoBehaviour:
         size: {x: 1, y: 3}
       - position: {x: 0, y: 0}
         size: {x: 3, y: 1}
-      selectionSpheres: []
   - mesh: {fileID: 3323506845839024359, guid: 85c09695d536e1b4c83ad44bd6a443b2, type: 3}
     material: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
     texture: {fileID: 2800000, guid: 071125bbe5709bb44ab463d021c5489b, type: 3}
     tileID: 5
+    floorID: 0
     appleCost: 1
     selection: []
     placementConstraints: []
@@ -139,6 +133,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
     texture: {fileID: 2800000, guid: 071125bbe5709bb44ab463d021c5489b, type: 3}
     tileID: 6
+    floorID: 0
     appleCost: 1
     selection: []
     placementConstraints: []

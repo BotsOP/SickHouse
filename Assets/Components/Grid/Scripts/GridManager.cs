@@ -20,6 +20,7 @@ public class GridManager : MonoBehaviour
     private readonly static int TileSize = Shader.PropertyToID("tileSize");
     private readonly static int SelectionColor = Shader.PropertyToID("_SelectionColor");
     private readonly static int AlbedoMap = Shader.PropertyToID("_AlbedoMap");
+    private readonly static int GridFloorBuffer = Shader.PropertyToID("_GridFloorBuffer");
 
     public TileID[] tileIDs;
     public int wallDistance;
@@ -34,7 +35,8 @@ public class GridManager : MonoBehaviour
     public List<GameObject> beavers = new List<GameObject>();
     [SerializeField] private GridObject gridObject;
     [SerializeField] private TileObject tileObject;
-    [SerializeField] private Material material;
+    [SerializeField] private Material instanceMat;
+    [SerializeField] private Material floorMat;
     [SerializeField] private int amountApples = 100;
 
     [Header("Selection")]
@@ -57,7 +59,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private float wallCycleInSeconds = 10f;
     [SerializeField] private List<GameObject> wallPrefabs;
     [SerializeField] private GameObject bulldozerPrefab;
-    [SerializeField] private Animator bulldozerAnimation;
+    [SerializeField] private VisualEffect bulldozerEffect;
     
     [Foldout("Creatures")]
     [SerializeField] private GameObject racoonPrefab;
@@ -74,18 +76,22 @@ public class GridManager : MonoBehaviour
     [SerializeField] private VisualEffect dammVFX;
     
     private ComputeBuffer gridBuffer;
+    private Vector4[] gridBufferArray;
+    private ComputeBuffer gridFloorBuffer;
+    private int[] gridFloorBufferArray;
+    private GraphicsBuffer dammVFXBuffer;
     private MaterialPropertyBlock materialPropertyBlock;
-    private Vector4[] selectionColors;
     private TileID beforeSelectionTileID;
     private MeshFilter selectionMeshFilter;
     private MeshRenderer selectionMeshRenderer;
-    private GraphicsBuffer dammVFXBuffer;
     private List<Vector3> dammVFXPositions;
-
 
     private float lastTimeAppleCycle;
     private float lastTimeWallCycle;
 
+    private float bulldozerProgress = 0;
+    private int amountDamsAgainstWall = 0;
+    private int previousSkyscraperIndex = 0;
     private Damm[] damms;
     private int[] appleTrees;
     private RenderParams[] renderParamsArray;
@@ -119,11 +125,13 @@ public class GridManager : MonoBehaviour
         
         tileIDs = new TileID[gridWidth * gridHeight];
         gridBuffer = new ComputeBuffer(gridWidth * gridHeight, sizeof(float) * 4);
-        selectionColors = new Vector4[gridWidth * gridHeight];
+        gridBufferArray = new Vector4[gridWidth * gridHeight];
         appleTrees = new int[gridWidth * gridHeight];
         dammVFXPositions = new List<Vector3>(gridWidth);
         dammVFXBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, gridWidth, sizeof(float) * 3);
         dammVFX.SetGraphicsBuffer("OffsetPositions", dammVFXBuffer);
+        gridFloorBuffer = new ComputeBuffer(gridWidth * gridHeight, sizeof(int), ComputeBufferType.Structured);
+        gridFloorBufferArray = new int[gridWidth * gridHeight];
 
         wallDistance = gridHeight;
         
@@ -147,21 +155,23 @@ public class GridManager : MonoBehaviour
         for (int y = 0; y < gridHeight; y++)
         {
             int tileID;
+            int indexPosToIndex = IndexPosToIndex(new Vector2Int(x, y));
             if (gridObjectIsNull)
             {
                 tileID = (int)startFillTileID;
             }
             else
             {
-                tileID = gridObject.tiles[IndexPosToIndex(new Vector2Int(x, y))];
+                tileID = gridObject.tiles[indexPosToIndex];
             }
 
+            
             cachedIndex.x = x;
             cachedIndex.y = y;
             Matrix4x4 matrix4X4 = IndexToMatrix4x4(cachedIndex);
             matricesList[tileID].Add(matrix4X4);
-
-            tileIDs[IndexPosToIndex(new Vector2Int(x, y))] = (TileID)tileID;
+            gridFloorBufferArray[indexPosToIndex] = (int)tileObject.tileSettings[tileID].floorID;
+            tileIDs[indexPosToIndex] = (TileID)tileID;
         }
         matricesList[(int)TileID.WATER] = matricesList[(int)TileID.WATER].OrderBy(x => x.GetRow(2).w).ToList();
 
@@ -196,14 +206,19 @@ public class GridManager : MonoBehaviour
         
         // materialPropertyBlock = new MaterialPropertyBlock();
         // renderParams.matProps = materialPropertyBlock;
+        // gridFloorBuffer.SetData(gridFloorBufferArray);
+        // floorMat.SetBuffer(GridFloorBuffer, gridFloorBuffer);
+        // floorMat.SetFloat(GridWidth, gridWidth);
+        // floorMat.SetFloat(GridHeight, gridHeight);
+        // floorMat.SetFloat(TileSize, tileSize);
 
-        Array.Fill(selectionColors, Vector4.one);
-        gridBuffer.SetData(selectionColors);
-        material.SetBuffer(GridBuffer, gridBuffer);
+        Array.Fill(gridBufferArray, Vector4.one);
+        gridBuffer.SetData(gridBufferArray);
+        instanceMat.SetBuffer(GridBuffer, gridBuffer);
         
-        material.SetFloat(GridWidth, gridWidth);
-        material.SetFloat(GridHeight, gridHeight);
-        material.SetFloat(TileSize, tileSize);
+        instanceMat.SetFloat(GridWidth, gridWidth);
+        instanceMat.SetFloat(GridHeight, gridHeight);
+        instanceMat.SetFloat(TileSize, tileSize);
         
         GridInfo gridInfo = new GridInfo
         {
@@ -241,21 +256,19 @@ public class GridManager : MonoBehaviour
             return;
 
         TileID oldTile = tileIDs[IndexPosToIndex(posIndex)];
-        if (oldTile == tileID)
-            return;
         
-        void AreaSelection(int index) { selectionColors[index] = placeableColor; }
+        void AreaSelection(int index) { gridBufferArray[index] = placeableColor; }
         GetAreaSelection(tileID, posIndex, AreaSelection);
 
         int amountMatchingRequiredTiles = 0;
         void RequiredSelection(int index) { 
-            selectionColors[index] = requirementColor;
+            gridBufferArray[index] = requirementColor;
             amountMatchingRequiredTiles++;
         }
         bool requiredPlacement = GetRequiredSelection(tileID, posIndex, RequiredSelection);
 
         void ConstraintSelection(int index) { 
-            selectionColors[index] = constrainedColor;
+            gridBufferArray[index] = constrainedColor;
         }
         bool constrained = GetConstraintSelection(tileID, posIndex, ConstraintSelection);
         
@@ -264,7 +277,7 @@ public class GridManager : MonoBehaviour
         {
             selectionMeshRenderer.material.SetVector(SelectionColor, requirementColor);
         }
-        if (!constrained)
+        if (!constrained || oldTile == tileID)
         {
             selectionMeshRenderer.material.SetVector(SelectionColor, constrainedColor);
         }
@@ -291,16 +304,16 @@ public class GridManager : MonoBehaviour
         selectionObject.transform.position = new Vector3(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y), Mathf.RoundToInt(position.z));
         
         int index = posIndex.x * gridWidth + posIndex.y % gridHeight;
-        selectionColors[index].w = 0;
+        gridBufferArray[index].w = 0;
         
-        gridBuffer.SetData(selectionColors);
-        Array.Fill(selectionColors, Vector4.one);
+        gridBuffer.SetData(gridBufferArray);
+        Array.Fill(gridBufferArray, Vector4.one);
     }
     
     private void ChangeTile(Vector3 position, TileID tileID)
     {
-        Array.Fill(selectionColors, Vector4.one);
-        gridBuffer.SetData(selectionColors);
+        Array.Fill(gridBufferArray, Vector4.one);
+        gridBuffer.SetData(gridBufferArray);
         
         Vector2Int posIndex = GetTile(position);
         if(posIndex.x < 0 || posIndex.x >= gridWidth || posIndex.y < 0 || posIndex.y >= gridHeight)
@@ -380,6 +393,7 @@ public class GridManager : MonoBehaviour
         racoons.Add(Instantiate(racoonPrefab, racoonSpawnPoint.position, racoonSpawnPoint.rotation));
         EventSystem<int>.RaiseEvent(EventType.AMOUNT_RACCOONS, racoons.Count + 1);
     }
+    
     private void SpawnBeavor()
     {
         int amountDams = matricesList[(int)TileID.DAMM_WATER].Count;
@@ -444,35 +458,38 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private int amountDamsAgainstWall = 0;
+
     private void UpdateWall()
     {
+        bool hitDamm = false;
+        for (int x = 0; x < gridWidth; x++)
+        {
+            Vector2Int posIndex = new Vector2Int(x, wallDistance - 1);
+            int index = IndexPosToIndex(posIndex);
+            if ((tileIDs[index] == TileID.DAMM || tileIDs[index] == TileID.DAMM_WATER) && damms[index].progress < 1.5f && damms[index].buildDamm)
+            {
+                amountDamsAgainstWall++;
+                dammVFXPositions.Add(GetPosition(posIndex));
+                damms[index].progress = 2;
+                hitDamm = true;
+                lastTimeWallCycle += dammSlowDown;
+            }
+        }
+
+        if (hitDamm)
+        {
+            dammVFXBuffer.SetData(dammVFXPositions);
+            dammVFX.SetGraphicsBuffer("OffsetPositions", dammVFXBuffer);
+            dammVFX.SetInt("AmountDams", amountDamsAgainstWall);
+            bulldozerEffect.SetFloat("AmountDams01", (float)amountDamsAgainstWall / gridWidth);
+        }
+
+        bulldozerProgress += Time.deltaTime / (wallCycleInSeconds + amountDamsAgainstWall * dammSlowDown);
+        bulldozerPrefab.transform.position = new Vector3(0, 0, (2 - bulldozerProgress + wallDistance - gridHeight / 2) * tileSize);
+        
         if (Time.time > lastTimeWallCycle + wallCycleInSeconds)
         {
-            bool hitDamm = false;
-            for (int x = 0; x < gridWidth; x++)
-            {
-                Vector2Int posIndex = new Vector2Int(x, wallDistance - 1);
-                int index = IndexPosToIndex(posIndex);
-                if ((tileIDs[index] == TileID.DAMM || tileIDs[index] == TileID.DAMM_WATER) && damms[index].progress < 1.5f && damms[index].buildDamm)
-                {
-                    amountDamsAgainstWall++;
-                    dammVFXPositions.Add(GetPosition(posIndex));
-                    damms[index].progress = 2;
-                    hitDamm = true;
-                    lastTimeWallCycle += dammSlowDown;
-                }
-            }
-
-            if (hitDamm)
-            {
-                dammVFXBuffer.SetData(dammVFXPositions);
-                dammVFX.SetGraphicsBuffer("OffsetPositions", dammVFXBuffer);
-                dammVFX.SetInt("AmountDams", amountDamsAgainstWall);
-
-                return;
-            }
-
+            bulldozerProgress = 0;
             amountDamsAgainstWall = 0;
             dammVFXPositions.Clear();
             dammVFXBuffer.SetData(dammVFXPositions);
@@ -488,8 +505,6 @@ public class GridManager : MonoBehaviour
                 return;
             }
             
-            bulldozerPrefab.transform.position -= new Vector3(0, 0, tileSize);
-            bulldozerAnimation.Play("Move");
             
             if ((gridHeight - wallDistance) % 2 == 0 & (gridHeight - wallDistance) > 5)
             {
@@ -513,7 +528,6 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private int previousSkyscraperIndex = 0;
 
     private Vector2Int GetTile(Vector3 worldPos)
     {
