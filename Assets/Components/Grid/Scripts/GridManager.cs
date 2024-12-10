@@ -11,7 +11,6 @@ using VInspector;
 using EventType = Managers.EventType;
 using Random = UnityEngine.Random;
 
-
 public class GridManager : MonoBehaviour
 {
     private readonly static int GridBuffer = Shader.PropertyToID("gridBuffer");
@@ -78,7 +77,7 @@ public class GridManager : MonoBehaviour
     private ComputeBuffer gridBuffer;
     private Vector4[] gridBufferArray;
     private ComputeBuffer gridFloorBuffer;
-    private int[] gridFloorBufferArray;
+    private float[] gridFloorBufferArray;
     private GraphicsBuffer dammVFXBuffer;
     private MaterialPropertyBlock materialPropertyBlock;
     private TileID beforeSelectionTileID;
@@ -101,6 +100,7 @@ public class GridManager : MonoBehaviour
     {
         gridBuffer?.Release();
         dammVFXBuffer?.Release();
+        gridFloorBuffer?.Release();
         
         EventSystem<Vector3, TileID>.Unsubscribe(EventType.SELECT_TILE_DOWN, StartChangingTile);
         EventSystem<Vector3, TileID>.Unsubscribe(EventType.SELECT_TILE, PlacementSelection);
@@ -131,7 +131,7 @@ public class GridManager : MonoBehaviour
         dammVFXBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, gridWidth, sizeof(float) * 3);
         dammVFX.SetGraphicsBuffer("OffsetPositions", dammVFXBuffer);
         gridFloorBuffer = new ComputeBuffer(gridWidth * gridHeight, sizeof(int), ComputeBufferType.Structured);
-        gridFloorBufferArray = new int[gridWidth * gridHeight];
+        gridFloorBufferArray = new float[gridWidth * gridHeight];
 
         wallDistance = gridHeight;
         
@@ -206,11 +206,11 @@ public class GridManager : MonoBehaviour
         
         // materialPropertyBlock = new MaterialPropertyBlock();
         // renderParams.matProps = materialPropertyBlock;
-        // gridFloorBuffer.SetData(gridFloorBufferArray);
-        // floorMat.SetBuffer(GridFloorBuffer, gridFloorBuffer);
-        // floorMat.SetFloat(GridWidth, gridWidth);
-        // floorMat.SetFloat(GridHeight, gridHeight);
-        // floorMat.SetFloat(TileSize, tileSize);
+        gridFloorBuffer.SetData(gridFloorBufferArray);
+        floorMat.SetBuffer(GridFloorBuffer, gridFloorBuffer);
+        floorMat.SetFloat(GridWidth, gridWidth);
+        floorMat.SetFloat(GridHeight, gridHeight);
+        floorMat.SetFloat(TileSize, tileSize);
 
         Array.Fill(gridBufferArray, Vector4.one);
         gridBuffer.SetData(gridBufferArray);
@@ -407,6 +407,11 @@ public class GridManager : MonoBehaviour
     
     private void Update()
     {
+        floorMat.SetBuffer(GridFloorBuffer, gridFloorBuffer);
+        floorMat.SetFloat(GridWidth, gridWidth);
+        floorMat.SetFloat(GridHeight, gridHeight);
+        floorMat.SetFloat(TileSize, tileSize);
+
         for (int i = 0; i < tileObject.tileSettings.Length; i++)
         {
             if (matricesList[i].Count == 0)
