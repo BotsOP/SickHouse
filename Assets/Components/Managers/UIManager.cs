@@ -79,7 +79,7 @@ public class UIManager : MonoBehaviour
 
     public void ChangeBrush(int tileID)
     {
-        EventSystem<TileID>.RaiseEvent(EventType.CHANGE_BRUSH, (TileID)tileID);
+        EventSystem<EntityTileID>.RaiseEvent(EventType.CHANGE_BRUSH, (EntityTileID)tileID);
     }
     public void ChangeBrushUI(Image brushImage)
     {

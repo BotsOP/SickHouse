@@ -3,41 +3,45 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public enum TileID
+public enum EntityTileID
 {
-    DIRT,
-    GRASS,
-    TREE,
-    WATER,
-    WALL,
-    DAMM,
-    DAMM_WATER,
-}
-
-public enum TileFloorID
-{
-    DIRT,
-    GRASS,
-    WATER,
+    //Tiles
     EMPTY,
-}
-
-[CreateAssetMenu(fileName = "TileSettings", menuName = "Tiles/Settings")]
-public class TileObject : ScriptableObject
-{
-    public TileSettings[] tileSettings;
+    TREE,
+    DAMM,
+    CLIFF,
 }
 
 [Serializable]
-public struct TileSettings
+public enum FloorTileID
 {
-    [Header("Tile Settings")]
-    public Mesh mesh;
-    public Material material;
-    public Texture2D texture;
-    public TileID tileID;
-    public TileFloorID floorID;
+    //Floor Tiles
+    EMPTY,
+    DIRT,
+    GRASS,
+    WATER,
+    PAVEMENT,
+}
+
+[CreateAssetMenu(fileName = "TileWrapper", menuName = "Tiles/TileWrapper")]
+public class TileWrapper : ScriptableObject
+{
+    public FloorTileID floorID;
+    public TileRenderSettings renderSettings;
+    public TileGameSettings TileGameSettings;
+}
+
+[CreateAssetMenu(fileName = "FloorTileWrapper", menuName = "Tiles/FloorTileWrapper")]
+public class FloorTileWrapper : ScriptableObject
+{
+    public TileGameSettings TileGameSettings;
+}
+
+[CreateAssetMenu(fileName = "TileGameSettings", menuName = "Tiles/TileGameSettings")]
+public class TileGameSettings : ScriptableObject
+{
     public int appleCost;
+
     [Header("Selection")]
     public AreaSelection[] selection;
     [Header("Placement Constraints")]
@@ -46,11 +50,18 @@ public struct TileSettings
     public AreaRequirement[] placementRequirements;
 }
 
+[CreateAssetMenu(fileName = "TileRenderSettings", menuName = "Tiles/Rendering")]
+public class TileRenderSettings : ScriptableObject
+{
+    public Material material;
+    public TextureWtihReference[] textures;
+    public Mesh mesh;
+}
 
 [Serializable]
 public struct AreaSelection
 {
-    public TileID tileID;
+    public EntityTileID entityTileID;
     public float score;
     public SelectionBox[] selectionBoxes;
 }
@@ -58,14 +69,16 @@ public struct AreaSelection
 [Serializable]
 public struct AreaConstraint
 {
-    public TileID[] tileID;
+    public EntityTileID[] tileIDs;
+    public FloorTileID[] floorTileIDs;
     public SelectionBox[] selectionBoxes;
 }
 
 [Serializable]
 public struct AreaRequirement
 {
-    public TileID[] tileID;
+    public EntityTileID[] tileIDs;
+    public FloorTileID[] floorTileIDs;
     public int amountRequiredTiles;
     public SelectionBox[] selectionBoxes;
 }
@@ -76,10 +89,10 @@ public struct SelectionBox
     public Vector2Int position;
     public Vector2Int size;
 }
-    
-// [Serializable]
-// public struct SelectionSphere
-// {
-//     public Vector2Int position;
-//     public int size;
-// }
+
+[Serializable]
+public struct TextureWtihReference
+{
+    public string textureName;
+    public Texture2D texture;
+}

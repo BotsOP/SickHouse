@@ -15,7 +15,7 @@ public class CheckIfCloseToWall : Conditional
     {
         Vector2Int posIndex = GetTile(currentDammIndex.Value);
         int index = IndexPosToIndex(posIndex + new Vector2Int(0, amountTilesTooCloseToWall.Value));
-        if (gridInfo.Value.tileIDs[index] == TileID.WALL)
+        if (gridInfo.Value.floorTileIDs[index] == FloorTileID.PAVEMENT)
         {
             amountTilesDammFromWall.Value++;
             dammArray.Value.dammArray[currentDammIndex.Value].amountBeavorsWorking--;

@@ -12,7 +12,9 @@ public class EditGrid : MonoBehaviour
 {
     [SerializeField] private bool disableInput;
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private TileID tileID;
+    [SerializeField] private EntityTileID entityTileID;
+    [SerializeField] private FloorTileID floorTileID;
+    private bool activeEntityTileID;
     private Vector3 cachedPosition;
     private int UILayer;
     private bool didPressKeyDown = false;
@@ -22,17 +24,25 @@ public class EditGrid : MonoBehaviour
         UILayer = LayerMask.NameToLayer("UI");
         
         EventSystem<bool>.Subscribe(EventType.TOGGLE_INPUT, ToggleInput);
-        EventSystem<TileID>.Subscribe(EventType.CHANGE_BRUSH, ChangeTileID);
+        EventSystem<EntityTileID>.Subscribe(EventType.CHANGE_BRUSH, ChangeTileID);
+        EventSystem<FloorTileID>.Subscribe(EventType.CHANGE_BRUSH, ChangeTileID);
     }
     private void OnDisable()
     {
         EventSystem<bool>.Unsubscribe(EventType.TOGGLE_INPUT, ToggleInput);
-        EventSystem<TileID>.Unsubscribe(EventType.CHANGE_BRUSH, ChangeTileID);
+        EventSystem<EntityTileID>.Unsubscribe(EventType.CHANGE_BRUSH, ChangeTileID);
+        EventSystem<FloorTileID>.Unsubscribe(EventType.CHANGE_BRUSH, ChangeTileID);
     }
 
-    private void ChangeTileID(TileID tileID)
+    private void ChangeTileID(EntityTileID entityTileID)
     {
-        this.tileID = tileID;
+        activeEntityTileID = true;
+        this.entityTileID = entityTileID;
+    }
+    private void ChangeTileID(FloorTileID floorTileID)
+    {
+        activeEntityTileID = false;
+        this.floorTileID = floorTileID;
     }
 
     private void Update()
@@ -43,18 +53,18 @@ public class EditGrid : MonoBehaviour
         RaycastHit hit;
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
-        if (tileID == TileID.WATER || tileID == TileID.DIRT)
+        if ((floorTileID == FloorTileID.WATER || floorTileID == FloorTileID.DIRT) && !activeEntityTileID)
         {
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Default"))) {
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
                 cachedPosition = hit.point;
-                EventSystem<Vector3, TileID>.RaiseEvent(EventType.SELECT_TILE_DOWN, hit.point, tileID);
-                EventSystem<Vector3, TileID>.RaiseEvent(EventType.SELECT_TILE, hit.point, tileID);
+                EventSystem.RaiseEvent(EventType.SELECT_TILE_DOWN);
+                EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.SELECT_TILE, hit.point, entityTileID);
             }
             if (Input.GetMouseButton(0) && !IsPointerOverUIElement())
             {
                 if (Physics.Raycast(ray, out hit)) {
                     cachedPosition = hit.point;
-                    EventSystem<Vector3, TileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, tileID);
+                    EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
                 }
             }
             return;
@@ -64,7 +74,7 @@ public class EditGrid : MonoBehaviour
         {
             if (Physics.Raycast(ray, out hit)) {
                 cachedPosition = hit.point;
-                EventSystem<Vector3, TileID>.RaiseEvent(EventType.SELECT_TILE_DOWN, hit.point, tileID);
+                EventSystem.RaiseEvent(EventType.SELECT_TILE_DOWN);
                 didPressKeyDown = true;
             }
         }
@@ -72,15 +82,23 @@ public class EditGrid : MonoBehaviour
         {
             if (Physics.Raycast(ray, out hit)) {
                 cachedPosition = hit.point;
-                EventSystem<Vector3, TileID>.RaiseEvent(EventType.SELECT_TILE, hit.point, tileID);
+                EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.SELECT_TILE, hit.point, entityTileID);
             }
         }
         if (Input.GetMouseButtonUp(0))
         {
             didPressKeyDown = false;
-            EventSystem<Vector3, TileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, tileID);
+            ChangeTile();
             EventSystem.RaiseEvent(EventType.DISABLE_SELECTION_TEXT);
         }
+    }
+
+    private void ChangeTile()
+    {
+        if(activeEntityTileID)
+            EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
+        else
+            EventSystem<Vector3, FloorTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, floorTileID);
     }
 
     private void ToggleInput(bool value)
@@ -88,7 +106,7 @@ public class EditGrid : MonoBehaviour
         disableInput = value;
     }
     
-    public bool IsPointerOverUIElement()
+    private bool IsPointerOverUIElement()
     {
         return IsPointerOverUIElement(GetEventSystemRaycastResults());
     }

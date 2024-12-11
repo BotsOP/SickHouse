@@ -22,7 +22,7 @@ public class GoToWall : Conditional
             if(index >= gridInfo.Value.gridWidth * gridInfo.Value.gridHeight)
                 break;
             
-            if (gridInfo.Value.tileIDs[index] == TileID.WALL)
+            if (gridInfo.Value.floorTileIDs[index] == FloorTileID.PAVEMENT)
             {
             }
             int flip = 1;
@@ -42,7 +42,7 @@ public class GoToWall : Conditional
                 if(newIndex >= gridInfo.Value.gridWidth * gridInfo.Value.gridHeight)
                     continue;
                 
-                if (dammArray.Value.dammArray[newIndex].amountBeavorsWorking < 3 && !dammArray.Value.dammArray[newIndex].buildDamm && gridInfo.Value.tileIDs[newIndex] != TileID.DAMM_WATER && gridInfo.Value.tileIDs[newIndex] != TileID.DAMM)
+                if (dammArray.Value.dammArray[newIndex].amountBeavorsWorking < 3 && !dammArray.Value.dammArray[newIndex].buildDamm && gridInfo.Value.floorTileIDs[newIndex] != FloorTileID.WATER && gridInfo.Value.tileIDs[newIndex] != EntityTileID.DAMM)
                 {
                     dammArray.Value.dammArray[newIndex].amountBeavorsWorking++;
                     targetPosition.Value = GetPosition(new Vector2Int(dammIndex, localIndex.y));

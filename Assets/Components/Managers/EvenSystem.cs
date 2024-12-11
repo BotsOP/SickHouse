@@ -9,6 +9,7 @@ namespace Managers
         SELECT_TILE,
         CHANGE_TILE,
         FORCE_CHANGE_TILE,
+        FORCE_CHANGE_ENTITY_TILE,
         
         //GAME STATE
         AMOUNT_APPLES,

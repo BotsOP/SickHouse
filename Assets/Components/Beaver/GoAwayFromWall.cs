@@ -12,15 +12,14 @@ public class GoAwayFromWall : Conditional
     public SharedInt currentDammIndex;
     public override TaskStatus OnUpdate()
     {
-        for (int i = 0; i < gridInfo.Value.matricesList[(int)TileID.WATER].Count; i++)
+        for (int i = 0; i < gridInfo.Value.waterSpots.Count; i++)
         {
-            Matrix4x4 test = gridInfo.Value.matricesList[(int)TileID.WATER][i];
-            Vector2Int posIndex = GetTile(test);
+            Vector2Int posIndex = gridInfo.Value.waterSpots[i];
             int newIndex = IndexPosToIndex(posIndex);
             if (dammArray.Value.dammArray[newIndex].amountBeavorsWorking < 3 && !dammArray.Value.dammArray[newIndex].buildDamm)
             {
                 dammArray.Value.dammArray[newIndex].amountBeavorsWorking++;
-                targetPosition.Value = test.GetPosition();
+                targetPosition.Value = GetPosition(posIndex);
                 currentDammIndex.Value = newIndex;
                 return TaskStatus.Success;
             }

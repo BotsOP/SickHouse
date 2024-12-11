@@ -8,10 +8,11 @@ public class GridObject : ScriptableObject
 {
     public string fileName = "Level 1";
     public int[] tiles;
+    public int[] floorTiles;
     
     public void Save()
     {
-        string jsonArray = JsonUtility.ToJson(new GridLevel(tiles), true);
+        string jsonArray = JsonUtility.ToJson(new GridLevel(tiles, floorTiles), true);
         string path = Path.Combine(Path.Combine(Application.dataPath, "SaveFiles"), fileName);
         File.WriteAllText(path, jsonArray);
         Debug.Log($"Successfully saved grid tiles");
@@ -24,8 +25,8 @@ public class GridObject : ScriptableObject
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
-            
             tiles = JsonUtility.FromJson<GridLevel>(json).tiles;
+            floorTiles = JsonUtility.FromJson<GridLevel>(json).floorTiles;
         }
         else
         {
@@ -37,8 +38,10 @@ public class GridObject : ScriptableObject
 public class GridLevel
 {
     public int[] tiles;
-    public GridLevel(int[] tiles)
+    public int[] floorTiles;
+    public GridLevel(int[] tiles, int[] floorTiles)
     {
         this.tiles = tiles;
+        this.floorTiles = floorTiles;
     }
 }
