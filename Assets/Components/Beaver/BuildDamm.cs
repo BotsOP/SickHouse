@@ -17,7 +17,7 @@ public class BuildDamm : Conditional
     
     public override TaskStatus OnUpdate()
     {
-        if (gridInfo.Value.floorTileIDs[currentDammIndex.Value] == FloorTileID.PAVEMENT)
+        if (GridHelper.CheckIfTileMatches(currentDammIndex.Value, EntityTileID.PAVEMENT))
         {
             return TaskStatus.Failure;
         }

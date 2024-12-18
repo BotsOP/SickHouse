@@ -13,8 +13,6 @@ public class EditGrid : MonoBehaviour
     [SerializeField] private bool disableInput;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private EntityTileID entityTileID;
-    [SerializeField] private FloorTileID floorTileID;
-    private bool activeEntityTileID;
     private Vector3 cachedPosition;
     private int UILayer;
     private bool didPressKeyDown = false;
@@ -25,24 +23,16 @@ public class EditGrid : MonoBehaviour
         
         EventSystem<bool>.Subscribe(EventType.TOGGLE_INPUT, ToggleInput);
         EventSystem<EntityTileID>.Subscribe(EventType.CHANGE_BRUSH, ChangeTileID);
-        EventSystem<FloorTileID>.Subscribe(EventType.CHANGE_BRUSH, ChangeTileID);
     }
     private void OnDisable()
     {
         EventSystem<bool>.Unsubscribe(EventType.TOGGLE_INPUT, ToggleInput);
         EventSystem<EntityTileID>.Unsubscribe(EventType.CHANGE_BRUSH, ChangeTileID);
-        EventSystem<FloorTileID>.Unsubscribe(EventType.CHANGE_BRUSH, ChangeTileID);
     }
 
     private void ChangeTileID(EntityTileID entityTileID)
     {
-        activeEntityTileID = true;
         this.entityTileID = entityTileID;
-    }
-    private void ChangeTileID(FloorTileID floorTileID)
-    {
-        activeEntityTileID = false;
-        this.floorTileID = floorTileID;
     }
 
     private void Update()
@@ -53,7 +43,7 @@ public class EditGrid : MonoBehaviour
         RaycastHit hit;
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
-        if ((floorTileID == FloorTileID.WATER || floorTileID == FloorTileID.DIRT) && !activeEntityTileID)
+        if ((entityTileID == EntityTileID.WATER || entityTileID == EntityTileID.DIRT))
         {
             if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
                 cachedPosition = hit.point;
@@ -64,7 +54,11 @@ public class EditGrid : MonoBehaviour
             {
                 if (Physics.Raycast(ray, out hit)) {
                     cachedPosition = hit.point;
-                    EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
+                    
+                    if(entityTileID == EntityTileID.DIRT)
+                        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
+                    else
+                        EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
                 }
             }
             return;
@@ -78,14 +72,14 @@ public class EditGrid : MonoBehaviour
                 didPressKeyDown = true;
             }
         }
-        if (Input.GetMouseButton(0) && didPressKeyDown)
+        if (Input.GetMouseButton(0) && !IsPointerOverUIElement() && didPressKeyDown)
         {
             if (Physics.Raycast(ray, out hit)) {
                 cachedPosition = hit.point;
                 EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.SELECT_TILE, hit.point, entityTileID);
             }
         }
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && !IsPointerOverUIElement())
         {
             didPressKeyDown = false;
             ChangeTile();
@@ -95,10 +89,7 @@ public class EditGrid : MonoBehaviour
 
     private void ChangeTile()
     {
-        if(activeEntityTileID)
-            EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
-        else
-            EventSystem<Vector3, FloorTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, floorTileID);
+        EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
     }
 
     private void ToggleInput(bool value)
@@ -112,26 +103,26 @@ public class EditGrid : MonoBehaviour
     }
 
 
-    //Returns 'true' if we touched or hovering on Unity UI element.
-    private bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaysastResults)
-    {
-        for (int index = 0; index < eventSystemRaysastResults.Count; index++)
-        {
-            RaycastResult curRaysastResult = eventSystemRaysastResults[index];
-            if (curRaysastResult.gameObject.layer == UILayer)
-                return true;
-        }
-        return false;
-    }
+    // Returns 'true' if we touched or hovering on Unity UI element.
+     private bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaysastResults)
+     {
+         for (int index = 0; index < eventSystemRaysastResults.Count; index++)
+         {
+             RaycastResult curRaysastResult = eventSystemRaysastResults[index];
+             if (curRaysastResult.gameObject.layer == UILayer)
+                 return true;
+         }
+         return false;
+     }
 
 
-    //Gets all event system raycast results of current mouse or touch position.
-    static List<RaycastResult> GetEventSystemRaycastResults()
-    {
-        PointerEventData eventData = new PointerEventData(UnityEngine.EventSystems.EventSystem.current);
-        eventData.position = Input.mousePosition;
-        List<RaycastResult> raysastResults = new List<RaycastResult>();
-        UnityEngine.EventSystems.EventSystem.current.RaycastAll(eventData, raysastResults);
-        return raysastResults;
-    }
+    // Gets all event system raycast results of current mouse or touch position.
+     static List<RaycastResult> GetEventSystemRaycastResults()
+     {
+         PointerEventData eventData = new PointerEventData(UnityEngine.EventSystems.EventSystem.current);
+         eventData.position = Input.mousePosition;
+         List<RaycastResult> raysastResults = new List<RaycastResult>();
+         UnityEngine.EventSystems.EventSystem.current.RaycastAll(eventData, raysastResults);
+         return raysastResults;
+     }
 }

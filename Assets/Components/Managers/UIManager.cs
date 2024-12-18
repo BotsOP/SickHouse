@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text selectionText;
     
-    [SerializeField] private List<Image> brushUIImages;
+    [SerializeField] private List<RawImage> brushUIImages;
 
     [SerializeField] private Color selectedColor;
     [SerializeField] private Color notSelectedColor;
@@ -29,7 +29,7 @@ public class UIManager : MonoBehaviour
         EventSystem<int, int, Color, Vector3>.Subscribe(EventType.UPDATE_SELECTION_TEXT, UpdateSelectionText);
         EventSystem.Subscribe(EventType.DISABLE_SELECTION_TEXT, DisableSelectionText);
 
-        foreach (Image image in brushUIImages)
+        foreach (RawImage image in brushUIImages)
         {
             image.color = notSelectedColor;
         }
@@ -69,21 +69,21 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        scoreText.text = "Score: " + (int)(Time.timeSinceLevelLoad * 100) / 100.0f;
+        scoreText.text = ((int)(Time.timeSinceLevelLoad * 100) / 100.0f).ToString();
     }
 
     private void UpdateAppleAmount(int amountApples)
     {
-        appleText.text = "Amount Apples: " + amountApples;
+        appleText.text = amountApples.ToString();
     }
 
     public void ChangeBrush(int tileID)
     {
         EventSystem<EntityTileID>.RaiseEvent(EventType.CHANGE_BRUSH, (EntityTileID)tileID);
     }
-    public void ChangeBrushUI(Image brushImage)
+    public void ChangeBrushUI(RawImage brushImage)
     {
-        foreach (Image image in brushUIImages)
+        foreach (RawImage image in brushUIImages)
         {
             image.color = notSelectedColor;
         }
@@ -111,11 +111,11 @@ public class UIManager : MonoBehaviour
 
     private void UpdateBeaverText(int newAmount)
     {
-        beaverText.text = "Amount beavers: " + newAmount.ToString();
+        beaverText.text = newAmount.ToString();
     }
 
     private void UpdateRaccoonText(int newAmount)
     {
-        raccoonText.text = "Amount raccoons: " + newAmount.ToString();
+        raccoonText.text = newAmount.ToString();
     }
 }

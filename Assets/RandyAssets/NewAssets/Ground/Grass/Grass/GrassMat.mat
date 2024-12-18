@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-411152641606655409
+--- !u!114 &-6100219161003397582
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Shader Graphs_GridFloor
-  m_Shader: {fileID: -6465566751694194690, guid: 72cd74c6962d12a46b08f5a12ffd05ba, type: 3}
+  m_Name: GrassMat
+  m_Shader: {fileID: -6465566751694194690, guid: b91750979f95fdd4cbafddfbd3fe2b37, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -37,8 +37,24 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _SampleTexture2D_3a5d458ea7c54459bbaa35791de3403e_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: e291f0db960490544bed29cec683a2d4, type: 3}
+    - _Border:
+        m_Texture: {fileID: 2800000, guid: 08e159d9dbd2d254c9347632202f3d52, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxOcclusionMapping_42a67fb953aa48e6b3001a1ef0872ec0_Heightmap_2_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 9d1cf0dded11a954f9f87946675af9a6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_cce01e5626bb400eb5ef881eba2b585d_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 9d1cf0dded11a954f9f87946675af9a6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _mainTexture1:
+        m_Texture: {fileID: 2800000, guid: 77a979af9a3cc3042abf6abd27f912fc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _mainTexture2:
+        m_Texture: {fileID: 2800000, guid: 8b4769d1e210e4a42bd1738e34aff724, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -55,14 +71,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Float: 1
-    - _GridHeight: 50
-    - _GridWidth: 50
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _TextureSheetHeight: 2
-    - _TextureSheetWidth: 2
-    - _TileSize: 1
-    m_Colors: []
+    - _Saturation: 1.66
+    - _Steps: 0
+    - _Tiling: 0.07
+    - _gradientTiling: 0.01
+    - _parallaxAmplitude: 5
+    - _windStrength: 0
+    - _windTiling: 0.01
+    m_Colors:
+    - _windColor: {r: 0.5999999, g: 0.5999999, b: 0.5999999, a: 0}
+    - _windSpeed: {r: 0, g: 0.06, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
