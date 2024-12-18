@@ -1761,7 +1761,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.70710576, y: -0, z: -0, w: 0.70710784}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1000, y: 1000, z: 1000}
+  m_LocalScale: {x: 50, y: 50, z: 50}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -1987,9 +1987,57 @@ PrefabInstance:
       propertyPath: mainCamera
       value: 
       objectReference: {fileID: 1310180940}
+    - target: {fileID: 1970603905653394666, guid: b1a6cc1a0a917794bbd0370422f5cfa2, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1970603905653394666, guid: b1a6cc1a0a917794bbd0370422f5cfa2, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1970603905653394666, guid: b1a6cc1a0a917794bbd0370422f5cfa2, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1970603905653394666, guid: b1a6cc1a0a917794bbd0370422f5cfa2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4082670124126350439, guid: b1a6cc1a0a917794bbd0370422f5cfa2, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4082670124126350439, guid: b1a6cc1a0a917794bbd0370422f5cfa2, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4082670124126350439, guid: b1a6cc1a0a917794bbd0370422f5cfa2, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4082670124126350439, guid: b1a6cc1a0a917794bbd0370422f5cfa2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4230668309733088912, guid: b1a6cc1a0a917794bbd0370422f5cfa2, type: 3}
       propertyPath: m_Name
       value: Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 6304080789448474625, guid: b1a6cc1a0a917794bbd0370422f5cfa2, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6304080789448474625, guid: b1a6cc1a0a917794bbd0370422f5cfa2, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6304080789448474625, guid: b1a6cc1a0a917794bbd0370422f5cfa2, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6304080789448474625, guid: b1a6cc1a0a917794bbd0370422f5cfa2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8510531860925065967, guid: b1a6cc1a0a917794bbd0370422f5cfa2, type: 3}
       propertyPath: mainCamera

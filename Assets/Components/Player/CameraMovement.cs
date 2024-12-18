@@ -43,8 +43,12 @@ public class CameraMovement : MonoBehaviour
     {
         Move();
         Rotation();
-        HeightCalculation();
         LimitPosition();
+    }
+
+    private void FixedUpdate()
+    {
+        HeightCalculation();
     }
 
     private void Move()
