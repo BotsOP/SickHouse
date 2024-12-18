@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class GridInfoClass
 {
-    public TileID[] tilesFlattened;
+    public EntityTileID[] tilesFlattened;
     public List<List<Matrix4x4>> matricesList;
     public int gridWidth;
     public int gridHeight;

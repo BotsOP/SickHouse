@@ -42,40 +42,44 @@ public class CameraMovement : MonoBehaviour
     private void Update()
     {
         Move();
-        //Rotation();
-        HeightCalculation();
+        Rotation();
         LimitPosition();
     }
 
-    private void Move()
-        {
-            Vector3 desiredMove = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+    private void FixedUpdate()
+    {
+        HeightCalculation();
+    }
 
-            desiredMove *= keyboardMovementSpeed;
+    private void Move()
+    {
+        Vector3 desiredMove = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+
+        desiredMove *= keyboardMovementSpeed;
+        desiredMove *= Time.deltaTime;
+        desiredMove = Quaternion.Euler(new Vector3(0f, transform.eulerAngles.y, 0f)) * desiredMove;
+        desiredMove = transform.InverseTransformDirection(desiredMove);
+
+        transform.Translate(desiredMove, Space.Self);
+        
+        if(Input.GetKey(KeyCode.Mouse2) && MouseAxis != Vector2.zero)
+        {
+            desiredMove = new Vector3(-MouseAxis.x, 0, -MouseAxis.y);
+
+            desiredMove *= panningSpeed;
             desiredMove *= Time.deltaTime;
             desiredMove = Quaternion.Euler(new Vector3(0f, transform.eulerAngles.y, 0f)) * desiredMove;
             desiredMove = transform.InverseTransformDirection(desiredMove);
 
             transform.Translate(desiredMove, Space.Self);
-            
-            if(Input.GetKey(KeyCode.Mouse2) && MouseAxis != Vector2.zero)
-            {
-                desiredMove = new Vector3(-MouseAxis.x, 0, -MouseAxis.y);
-
-                desiredMove *= panningSpeed;
-                desiredMove *= Time.deltaTime;
-                desiredMove = Quaternion.Euler(new Vector3(0f, transform.eulerAngles.y, 0f)) * desiredMove;
-                desiredMove = transform.InverseTransformDirection(desiredMove);
-
-                transform.Translate(desiredMove, Space.Self);
-            }
         }
+    }
 
     private void Rotation()
     {
         transform.Rotate(Vector3.up, RotationDirection * Time.deltaTime * rotationSpeed, Space.World);
 
-        if (Input.GetKey(KeyCode.Mouse2))
+        if (Input.GetKey(KeyCode.Mouse1))
             transform.Rotate(Vector3.up, -MouseAxis.x * Time.deltaTime * mouseRotationSpeed, Space.World);
     }
 
