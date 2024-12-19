@@ -71,11 +71,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Brightness: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Saturation: 1.47
     - _Steps: 0
-    - _Tiling: 5.1
+    - _Tiling: 10.8
     - _gradientTiling: 0.01
     - _parallaxAmplitude: 5
     - _windStrength: 0
