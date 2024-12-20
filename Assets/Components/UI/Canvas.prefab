@@ -77,7 +77,7 @@ RectTransform:
   m_GameObject: {fileID: 114613498137474037}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1131, y: 1.1131, z: 1.1131}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1970603905653394666}
@@ -87,7 +87,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 83.58841}
+  m_AnchoredPosition: {x: 0, y: 111}
   m_SizeDelta: {x: 0, y: 167.17682}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &821383801054041077
@@ -108,7 +108,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
-  m_Spacing: 67.78
+  m_Spacing: 19.9
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -150,7 +150,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 258.4, y: -66.8}
+  m_AnchoredPosition: {x: 258.4, y: -94}
   m_SizeDelta: {x: 226.5598, y: 53.7358}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2138698751879248821
@@ -181,7 +181,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 15
+  m_text: 999
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9781f8f0f582d7a498e3b08c5aef37fa, type: 2}
   m_sharedMaterial: {fileID: 2465313268003819214, guid: 9781f8f0f582d7a498e3b08c5aef37fa, type: 2}
@@ -291,7 +291,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 121, y: 282.2}
+  m_AnchoredPosition: {x: 121, y: 251}
   m_SizeDelta: {x: 221.80658, y: 221.8131}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3061166084712894457
@@ -478,7 +478,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 76, y: -65.640015}
+  m_AnchoredPosition: {x: 76, y: -79.640015}
   m_SizeDelta: {x: 117.27649, y: 117.28003}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2343082812484069087
@@ -543,7 +543,7 @@ RectTransform:
   m_GameObject: {fileID: 2193777586896286984}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.95757, y: 0.95757, z: 0.95757}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7694459088958218417}
@@ -589,8 +589,8 @@ MonoBehaviour:
 
     Each tree requires 3 apples.'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 9781f8f0f582d7a498e3b08c5aef37fa, type: 2}
-  m_sharedMaterial: {fileID: 2465313268003819214, guid: 9781f8f0f582d7a498e3b08c5aef37fa, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 96c8879c2257fb14e8df5a0f50b5b478, type: 2}
+  m_sharedMaterial: {fileID: 2465313268003819214, guid: 96c8879c2257fb14e8df5a0f50b5b478, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -828,7 +828,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.5, y: -2}
+  m_AnchoredPosition: {x: 10, y: -21}
   m_SizeDelta: {x: 367, y: 240}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6875801808800925754
@@ -862,8 +862,8 @@ MonoBehaviour:
   m_text: Raccoons are great at gathering and sharing food. They'll collect apples
     and share them with anyone they share an environment with.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 9781f8f0f582d7a498e3b08c5aef37fa, type: 2}
-  m_sharedMaterial: {fileID: 2465313268003819214, guid: 9781f8f0f582d7a498e3b08c5aef37fa, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 96c8879c2257fb14e8df5a0f50b5b478, type: 2}
+  m_sharedMaterial: {fileID: 2465313268003819214, guid: 96c8879c2257fb14e8df5a0f50b5b478, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1249,7 +1249,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 121, y: 57.413147}
+  m_AnchoredPosition: {x: 121, y: 77}
   m_SizeDelta: {x: 221.80658, y: 221.8131}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7544309063877473580
@@ -1978,14 +1978,14 @@ RectTransform:
   m_GameObject: {fileID: 5871735924219001171}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9719199, y: 0.9719199, z: 0.9719199}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4543376501533484859}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.5, y: -2}
+  m_AnchoredPosition: {x: 1.5, y: -36}
   m_SizeDelta: {x: 367, y: 240}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5409142339869518300
@@ -2019,8 +2019,8 @@ MonoBehaviour:
   m_text: The shovel is great for clearing land. Just click and drag to dig it up!
     You'll even get the apples back.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 9781f8f0f582d7a498e3b08c5aef37fa, type: 2}
-  m_sharedMaterial: {fileID: 2465313268003819214, guid: 9781f8f0f582d7a498e3b08c5aef37fa, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 96c8879c2257fb14e8df5a0f50b5b478, type: 2}
+  m_sharedMaterial: {fileID: 2465313268003819214, guid: 96c8879c2257fb14e8df5a0f50b5b478, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2115,15 +2115,15 @@ RectTransform:
   m_GameObject: {fileID: 6137660230132427411}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.90809, y: 0.90809, z: 0.90809}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8695627399130002827}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.5, y: -2}
-  m_SizeDelta: {x: 367, y: 240}
+  m_AnchoredPosition: {x: 2.5, y: -2}
+  m_SizeDelta: {x: 376.9225, y: 240}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3558420309132781991
 CanvasRenderer:
@@ -2159,8 +2159,8 @@ MonoBehaviour:
     They even make dams in water to allow for more beavers to
     live there.'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 9781f8f0f582d7a498e3b08c5aef37fa, type: 2}
-  m_sharedMaterial: {fileID: 2465313268003819214, guid: 9781f8f0f582d7a498e3b08c5aef37fa, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 96c8879c2257fb14e8df5a0f50b5b478, type: 2}
+  m_sharedMaterial: {fileID: 2465313268003819214, guid: 96c8879c2257fb14e8df5a0f50b5b478, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2255,7 +2255,7 @@ RectTransform:
   m_GameObject: {fileID: 6349393065898078364}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9505, y: 0.9505, z: 0.9505}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6802432594179129807}
@@ -2301,8 +2301,8 @@ MonoBehaviour:
 
     Water tiles require 1 apple.'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 9781f8f0f582d7a498e3b08c5aef37fa, type: 2}
-  m_sharedMaterial: {fileID: 2465313268003819214, guid: 9781f8f0f582d7a498e3b08c5aef37fa, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 96c8879c2257fb14e8df5a0f50b5b478, type: 2}
+  m_sharedMaterial: {fileID: 2465313268003819214, guid: 96c8879c2257fb14e8df5a0f50b5b478, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2481,7 +2481,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 345.88516, y: 0}
+  m_AnchoredPosition: {x: 345.88516, y: -96}
   m_SizeDelta: {x: 470, y: 513}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4122344254702056296
@@ -2693,7 +2693,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 345.88516, y: 0}
+  m_AnchoredPosition: {x: 345.88516, y: -97}
   m_SizeDelta: {x: 470, y: 513}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1185857754312068712
