@@ -49,10 +49,10 @@ Material:
     - _QueueControl: 0
     m_Colors:
     - _Color: {r: 0.057404775, g: 0.19821382, b: 0.2830189, a: 0}
-    - _InsideColor: {r: 0.7264151, g: 0.4161198, b: 0.15419191, a: 0}
+    - _InsideColor: {r: 0, g: 0, b: 0, a: 0}
     - _LightAngle: {r: -202.1, g: -311.2, b: 117.1, a: 0}
     - _MiddlePosition: {r: 0, g: 0, b: 0, a: 0}
-    - _OutsideColor: {r: 0.034417626, g: 0.011764706, b: 0.09411765, a: 0}
+    - _OutsideColor: {r: 0.5245282, g: 0.19694544, b: 0.19694544, a: 0}
     - _Purple: {r: 0.4339623, g: 0.08802065, b: 0.35954455, a: 0}
     - _Vector2: {r: 0, g: 0, b: 0, a: 0}
     - _remap_in: {r: -1.58, g: -6.7, b: 0, a: 0}
