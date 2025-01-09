@@ -58,7 +58,7 @@ Material:
     - _HueShiftValue: 35
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _RandomRowValue: 0
+    - _RandomRowValue: 18
     - _XMask: 25
     m_Colors:
     - _BaseColorMultiply: {r: 0.84705883, g: 0.8627451, b: 0.96862745, a: 0}
