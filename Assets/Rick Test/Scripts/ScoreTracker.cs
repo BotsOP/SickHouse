@@ -6,7 +6,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using VInspector.Libs;
 using EventType = Managers.EventType;
 
 public class ScoreTracker : MonoBehaviour

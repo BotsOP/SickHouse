@@ -39,52 +39,58 @@ public class EditGrid : MonoBehaviour
     {
         if(disableInput)
             return;
-        
-        RaycastHit hit;
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
-        if ((entityTileID == EntityTileID.WATER || entityTileID == EntityTileID.DIRT))
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
+            return;
+        
+        if (IsPointerOverUIElement())
         {
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
-                cachedPosition = hit.point;
-                EventSystem.RaiseEvent(EventType.SELECT_TILE_DOWN);
-                EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.SELECT_TILE, hit.point, entityTileID);
-            }
-            if (Input.GetMouseButton(0) && !IsPointerOverUIElement())
-            {
-                if (Physics.Raycast(ray, out hit)) {
-                    cachedPosition = hit.point;
-                    
-                    if(entityTileID == EntityTileID.DIRT)
-                        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
-                    else
-                        EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
-                }
-            }
+            EventSystem.RaiseEvent(EventType.DISABLE_SELECTION_TEXT);
             return;
         }
         
-        if (Input.GetMouseButtonDown(0) && !IsPointerOverUIElement())
+        cachedPosition = hit.point;
+
+        EventSystem.RaiseEvent(EventType.SELECT_TILE_DOWN);
+        EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.SELECT_TILE, hit.point, entityTileID);
+
+        if (Input.GetMouseButton(0) && (entityTileID == EntityTileID.DIRT || entityTileID == EntityTileID.WATER))
         {
-            if (Physics.Raycast(ray, out hit)) {
-                cachedPosition = hit.point;
-                EventSystem.RaiseEvent(EventType.SELECT_TILE_DOWN);
-                didPressKeyDown = true;
+            if (entityTileID == EntityTileID.DIRT)
+            {
+                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
+                return;
             }
+            
+            EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
         }
-        if (Input.GetMouseButton(0) && !IsPointerOverUIElement() && didPressKeyDown)
+        if (Input.GetMouseButtonDown(0) && entityTileID == EntityTileID.TREE)
         {
-            if (Physics.Raycast(ray, out hit)) {
-                cachedPosition = hit.point;
-                EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.SELECT_TILE, hit.point, entityTileID);
-            }
+            EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
         }
-        if (Input.GetMouseButtonUp(0) && !IsPointerOverUIElement())
-        {
-            didPressKeyDown = false;
-            ChangeTile();
-            EventSystem.RaiseEvent(EventType.DISABLE_SELECTION_TEXT);
-        }
+        
+        // if (Input.GetMouseButtonDown(0) && !IsPointerOverUIElement())
+        // {
+        //     if (Physics.Raycast(ray, out hit)) {
+        //         cachedPosition = hit.point;
+        //         EventSystem.RaiseEvent(EventType.SELECT_TILE_DOWN);
+        //         didPressKeyDown = true;
+        //     }
+        // }
+        // if (Input.GetMouseButton(0) && !IsPointerOverUIElement() && didPressKeyDown)
+        // {
+        //     if (Physics.Raycast(ray, out hit)) {
+        //         cachedPosition = hit.point;
+        //         EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.SELECT_TILE, hit.point, entityTileID);
+        //     }
+        // }
+        // if (Input.GetMouseButtonUp(0) && !IsPointerOverUIElement())
+        // {
+        //     didPressKeyDown = false;
+        //     ChangeTile();
+        //     EventSystem.RaiseEvent(EventType.DISABLE_SELECTION_TEXT);
+        // }
     }
 
     private void ChangeTile()

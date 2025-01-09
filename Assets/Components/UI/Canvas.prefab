@@ -398,7 +398,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popup: {fileID: 7896426016264496202}
-  instance: {fileID: 0}
 --- !u!114 &3040715539900552776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -963,8 +962,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 6802432594179129807}
+  m_Children: []
   m_Father: {fileID: 1889322916429686736}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1088,7 +1086,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popup: {fileID: 2988239902911712035}
-  instance: {fileID: 0}
 --- !u!114 &8774551535844002066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1165,11 +1162,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3049624664332029694}
-  m_Father: {fileID: 6304080789448474625}
+  m_Father: {fileID: 134086420869366980}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 219.49637}
+  m_AnchoredPosition: {x: 0, y: -323.91525}
   m_SizeDelta: {x: 470, y: 513}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4316441869906852622
@@ -1356,7 +1353,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popup: {fileID: 7039347520558954026}
-  instance: {fileID: 0}
 --- !u!114 &8721044029335678965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1434,6 +1430,9 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7694459088958218417}
+  - {fileID: 6802432594179129807}
+  - {fileID: 4543376501533484859}
   - {fileID: 1889322916429686736}
   - {fileID: 3197353286452896074}
   - {fileID: 362074989543812507}
@@ -1526,8 +1525,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 0}
   appleText: {fileID: 3270381611579369448}
-  beaverText: {fileID: 7878839675311827122}
-  raccoonText: {fileID: 2491976281922226399}
   scoreText: {fileID: 8599340443557392463}
   selectionText: {fileID: 3070327393140135803}
   brushUIImages:
@@ -1567,11 +1564,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6810593016242188675}
-  m_Father: {fileID: 1970603905653394666}
+  m_Father: {fileID: 134086420869366980}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 219.49637}
+  m_AnchoredPosition: {x: -167.78003, y: -323.91525}
   m_SizeDelta: {x: 470, y: 513}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3339067296719956472
@@ -1644,8 +1641,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 7694459088958218417}
+  m_Children: []
   m_Father: {fileID: 1889322916429686736}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1769,7 +1765,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popup: {fileID: 5103996230577114894}
-  instance: {fileID: 0}
 --- !u!114 &7853194131780097107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2401,11 +2396,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8372490347063655441}
-  m_Father: {fileID: 4082670124126350439}
+  m_Father: {fileID: 134086420869366980}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 219.49637}
+  m_AnchoredPosition: {x: 167.78003, y: -323.91525}
   m_SizeDelta: {x: 470, y: 513}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2063481973996553772
@@ -2902,8 +2897,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 4543376501533484859}
+  m_Children: []
   m_Father: {fileID: 1889322916429686736}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3027,7 +3021,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popup: {fileID: 6520674123958247002}
-  instance: {fileID: 0}
 --- !u!114 &417021619730054964
 MonoBehaviour:
   m_ObjectHideFlags: 0
