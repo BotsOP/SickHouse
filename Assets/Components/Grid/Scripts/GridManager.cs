@@ -55,6 +55,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int appleCost = 5;
     [SerializeField] private int maxAmountApplesProduced = 10;
     [SerializeField] private Apple applePrefab;
+    [SerializeField] private VisualEffect treeDestructionEffect;
 
     [Foldout("Wall")]
     [SerializeField] private float wallCycleInSeconds = 10f;
@@ -92,6 +93,7 @@ public class GridManager : MonoBehaviour
     private ComputeBuffer gridSelectionBuffer;
     private Vector4[] gridSelectionBufferArray;
     private GraphicsBuffer dammVFXBuffer;
+    private GraphicsBuffer treeVFXBuffer;
     private List<Vector3> dammVFXPositions;
     
     private RenderParams[] renderParamsArray;
@@ -161,6 +163,7 @@ public class GridManager : MonoBehaviour
         appleTrees = new int[gridWidth * gridHeight];
         dammVFXPositions = new List<Vector3>(gridWidth);
         dammVFXBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, gridWidth, sizeof(float) * 3);
+        treeVFXBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, gridWidth, sizeof(float) * 3);
         dammVFX.SetGraphicsBuffer("OffsetPositions", dammVFXBuffer);
         tileIDToMatrixIndex = new List<int>();
         cachedEntityTileID = new GridTileStruct[AmountEntitiesOnOneTile];
@@ -282,7 +285,6 @@ public class GridManager : MonoBehaviour
         GlobalVariables.Instance.SetVariable("DammArray", dammArray);
     }
     
-    
     private void CacheTile(int index)
     {
         cachedIndex = index;
@@ -343,14 +345,12 @@ public class GridManager : MonoBehaviour
             {
                 gridSelectionBufferArray[index] = constrainedColor;
             }
-            float lockedX = position.x > 0 ? (int)(position.x + tileSize / 2) : (int)(position.x - tileSize / 2);
-            float lockedZ = position.z > 0 ? (int)(position.z + tileSize / 2) : (int)(position.z - tileSize / 2);
-            Vector3 lockedPosition = new Vector3(lockedX, 0, lockedZ);
+            Vector3 lockedPosition = GridHelper.GetPosition(posIndex);
             amountMatchingRequiredTiles = Mathf.Min(amountMatchingRequiredTiles, amountRequiredTiles);
             EventSystem<int, int, Color, Vector3>.RaiseEvent(EventType.UPDATE_SELECTION_TEXT, 
                                                              amountMatchingRequiredTiles, 
                                                              amountRequiredTiles, 
-                                                             amountMatchingRequiredTiles>=amountRequiredTiles?placeableColor:requirementColor, 
+                                                             amountMatchingRequiredTiles >= amountRequiredTiles ? placeableColor : constrainedColor, 
                                                              lockedPosition);
         }
         
@@ -373,6 +373,31 @@ public class GridManager : MonoBehaviour
         }
         
         int order = tiles[(int)entityTileID].order;
+        ChangeTile(position, entityTileID, posIndex, order);
+    }
+
+    private void TryChangeTile(Vector3 position, EntityTileID[] entityTileID)
+    {
+        Array.Fill(gridSelectionBufferArray, Vector4.one);
+        gridSelectionBuffer.SetData(gridSelectionBufferArray);
+        
+        Vector2Int posIndex = GridHelper.WorldPosToIndexPos(position);
+        if (posIndex.x < 0 || posIndex.x >= gridWidth || posIndex.y < 0 || posIndex.y >= gridHeight)
+        {
+            cachedIndex = -1;
+            return;
+        }
+
+        foreach (EntityTileID entity in entityTileID)
+        {
+            ChangeTile(position, entity, posIndex, tiles[(int)entity].order);
+        }
+        cachedIndex = -1;
+    }
+    
+    private void ChangeTile(Vector3 position, EntityTileID entityTileID, Vector2Int posIndex, int order)
+    {
+
         int index = GridHelper.IndexPosToIndex(posIndex);
         GridTileStruct oldGridTileStruct = cachedEntityTileID[order];
         
@@ -410,115 +435,6 @@ public class GridManager : MonoBehaviour
 
         GainApples(-tiles[(int)entityTileID].TileGameSettings.appleCost, position);
         EventSystem<int>.RaiseEvent(EventType.AMOUNT_APPLES, amountApples);
-        
-    }
-    
-    private void TryChangeTile(Vector3 position, EntityTileID[] entityTileID)
-    {
-        Array.Fill(gridSelectionBufferArray, Vector4.one);
-        gridSelectionBuffer.SetData(gridSelectionBufferArray);
-        
-        Vector2Int posIndex = GridHelper.WorldPosToIndexPos(position);
-        if (posIndex.x < 0 || posIndex.x >= gridWidth || posIndex.y < 0 || posIndex.y >= gridHeight)
-        {
-            cachedIndex = -1;
-            return;
-        }
-
-        for (int i = 0; i < entityTileID.Length; i++)
-        {
-            int index = GridHelper.IndexPosToIndex(posIndex);
-            GridTileStruct oldGridTileStruct = cachedEntityTileID[i];
-        
-            int amountMatchingRequiredTiles = 0;
-            bool requiredPlacement = true;
-            void RequiredSelection(int localIndex) 
-            {
-                gridSelectionBufferArray[localIndex] = requirementColor;
-                amountMatchingRequiredTiles++;
-            }
-            GetRequiredSelection(entityTileID[i], posIndex, RequiredSelection);
-            if (tiles[(int)entityTileID[i]].TileGameSettings.placementRequirements.Length > 0)
-            {
-                int amountRequiredTiles = tiles[(int)entityTileID[i]].TileGameSettings.placementRequirements[0].amountRequiredTiles;
-                requiredPlacement = amountMatchingRequiredTiles >= amountRequiredTiles;
-            }
-            bool constrained = GetConstraintSelection(entityTileID[i], posIndex);
-            bool hasEnoughApples = amountApples >= tiles[(int)entityTileID[i]].TileGameSettings.appleCost;
-
-            if (oldGridTileStruct.tileID == entityTileID[i] || !requiredPlacement || !constrained || !hasEnoughApples)
-            {
-                ChangeTile(cachedIndex, cachedEntityTileID[i].tileID);
-                continue;
-            }
-
-            if (entityTileID[i] == EntityTileID.WATER)
-            {            
-                waterSpots.Add(GridHelper.IndexToIndexPos(index));
-                waterSpots = waterSpots.OrderBy(x => x.y).ToList();
-            }
-        
-            ChangeTile(index, GetRandomTileStruct(entityTileID[i]), i);
-
-            GainApples(-tiles[(int)entityTileID[i]].TileGameSettings.appleCost, position);
-            EventSystem<int>.RaiseEvent(EventType.AMOUNT_APPLES, amountApples);
-        }
-        cachedIndex = -1;
-    }
-    
-    private void ChangeTile(int index, GridTileStruct[] entityTileID)
-    {
-        for (int i = 0; i < AmountEntitiesOnOneTile; i++)
-        {
-            GridTileStruct oldEntityTile = tileIDs[index, i];
-            Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(index);
-        
-            tileIDs[index, i] = entityTileID[i];
-            matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
-            matricesList[GetMatrixIndex(entityTileID[i])].Add(matrix4X4);
-        }
-    }
-    private void ChangeTile(Vector3 position, GridTileStruct entityTileID, int order)
-    {
-        int index = GridHelper.IndexPosToIndex(GridHelper.WorldPosToIndexPos(position));
-        ChangeTile(index, entityTileID, order);
-    }
-    private void ChangeTile(Vector2Int indexPos, GridTileStruct entityTileID, int order)
-    {
-        int index = GridHelper.IndexPosToIndex(indexPos);
-        ChangeTile(index, entityTileID, order);
-    }
-    private void ChangeTile(int index, GridTileStruct entityTileID, int order)
-    {
-        GridTileStruct oldEntityTile = tileIDs[index, order];
-        Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(index);
-        
-        tileIDs[index, order] = entityTileID;
-        matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
-        matricesList[GetMatrixIndex(entityTileID)].Add(matrix4X4);
-    }
-    private void ChangeTile(Vector3 position, EntityTileID entityTileID)
-    {
-        int index = GridHelper.IndexPosToIndex(GridHelper.WorldPosToIndexPos(position));
-        GridTileStruct newTile = GetRandomTileStruct(entityTileID);
-        int order = tiles[(int)entityTileID].order;
-        GridTileStruct oldEntityTile = tileIDs[index, order];
-        Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(index);
-        
-        tileIDs[index, order] = newTile;
-        matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
-        matricesList[GetMatrixIndex(newTile)].Add(matrix4X4);
-    }
-    private void ChangeTile(int index, EntityTileID entityTileID)
-    {
-        GridTileStruct newTile = GetRandomTileStruct(entityTileID);
-        int order = tiles[(int)entityTileID].order;
-        GridTileStruct oldEntityTile = tileIDs[index, order];
-        Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(index);
-        
-        tileIDs[index, order] = newTile;
-        matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
-        matricesList[GetMatrixIndex(newTile)].Add(matrix4X4);
     }
     
     private void SpawnRacoon()
@@ -798,6 +714,61 @@ public class GridManager : MonoBehaviour
             }
         }
         return meetsRequirements;
+    }
+    
+    private void ChangeTile(int index, GridTileStruct[] entityTileID)
+    {
+        for (int i = 0; i < AmountEntitiesOnOneTile; i++)
+        {
+            GridTileStruct oldEntityTile = tileIDs[index, i];
+            Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(index);
+        
+            tileIDs[index, i] = entityTileID[i];
+            matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
+            matricesList[GetMatrixIndex(entityTileID[i])].Add(matrix4X4);
+        }
+    }
+    private void ChangeTile(Vector3 position, GridTileStruct entityTileID, int order)
+    {
+        int index = GridHelper.IndexPosToIndex(GridHelper.WorldPosToIndexPos(position));
+        ChangeTile(index, entityTileID, order);
+    }
+    private void ChangeTile(Vector2Int indexPos, GridTileStruct entityTileID, int order)
+    {
+        int index = GridHelper.IndexPosToIndex(indexPos);
+        ChangeTile(index, entityTileID, order);
+    }
+    private void ChangeTile(int index, GridTileStruct entityTileID, int order)
+    {
+        GridTileStruct oldEntityTile = tileIDs[index, order];
+        Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(index);
+        
+        tileIDs[index, order] = entityTileID;
+        matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
+        matricesList[GetMatrixIndex(entityTileID)].Add(matrix4X4);
+    }
+    private void ChangeTile(Vector3 position, EntityTileID entityTileID)
+    {
+        int index = GridHelper.IndexPosToIndex(GridHelper.WorldPosToIndexPos(position));
+        GridTileStruct newTile = GetRandomTileStruct(entityTileID);
+        int order = tiles[(int)entityTileID].order;
+        GridTileStruct oldEntityTile = tileIDs[index, order];
+        Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(index);
+        
+        tileIDs[index, order] = newTile;
+        matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
+        matricesList[GetMatrixIndex(newTile)].Add(matrix4X4);
+    }
+    private void ChangeTile(int index, EntityTileID entityTileID)
+    {
+        GridTileStruct newTile = GetRandomTileStruct(entityTileID);
+        int order = tiles[(int)entityTileID].order;
+        GridTileStruct oldEntityTile = tileIDs[index, order];
+        Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(index);
+        
+        tileIDs[index, order] = newTile;
+        matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
+        matricesList[GetMatrixIndex(newTile)].Add(matrix4X4);
     }
 }
 

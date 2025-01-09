@@ -12,7 +12,7 @@ public static class GridHelper
 
     public static Vector2Int WorldPosToIndexPos(Vector3 worldPos)
     {
-        return new Vector2Int(Mathf.RoundToInt((worldPos.x / tileSize) + (gridWidth * tileSize / 2f)), Mathf.RoundToInt((worldPos.z / tileSize) + (gridHeight * tileSize / 2f)));
+        return new Vector2Int(Mathf.RoundToInt(((worldPos.x - tileSize / 2) / tileSize) + (gridWidth * tileSize / 2f)), Mathf.RoundToInt((worldPos.z / tileSize) + (gridHeight * tileSize / 2f)));
     }
     public static Vector2Int WorldPosToIndexPos(Matrix4x4 matrix)
     {
