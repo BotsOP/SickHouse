@@ -6,6 +6,7 @@ using Managers;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.VFX;
 using VInspector;
 using EventType = Managers.EventType;
@@ -254,6 +255,7 @@ public class GridManager : MonoBehaviour
             RenderParams renderParams = new RenderParams(tiles[i].renderSettings[j].material)
             {
                 matProps = new MaterialPropertyBlock(),
+                shadowCastingMode = ShadowCastingMode.On,
             };
             renderParamsArray[i] = renderParams;
         }
@@ -337,9 +339,14 @@ public class GridManager : MonoBehaviour
         if (entityTileID == EntityTileID.TREE)
         {
             int amountRequiredTiles = tiles[(int)EntityTileID.TREE].TileGameSettings.placementRequirements[0].amountRequiredTiles;
+            if (amountMatchingRequiredTiles < amountRequiredTiles)
+            {
+                gridSelectionBufferArray[index] = constrainedColor;
+            }
             float lockedX = position.x > 0 ? (int)(position.x + tileSize / 2) : (int)(position.x - tileSize / 2);
             float lockedZ = position.z > 0 ? (int)(position.z + tileSize / 2) : (int)(position.z - tileSize / 2);
             Vector3 lockedPosition = new Vector3(lockedX, 0, lockedZ);
+            amountMatchingRequiredTiles = Mathf.Min(amountMatchingRequiredTiles, amountRequiredTiles);
             EventSystem<int, int, Color, Vector3>.RaiseEvent(EventType.UPDATE_SELECTION_TEXT, 
                                                              amountMatchingRequiredTiles, 
                                                              amountRequiredTiles, 
@@ -403,6 +410,7 @@ public class GridManager : MonoBehaviour
 
         GainApples(-tiles[(int)entityTileID].TileGameSettings.appleCost, position);
         EventSystem<int>.RaiseEvent(EventType.AMOUNT_APPLES, amountApples);
+        
     }
     
     private void TryChangeTile(Vector3 position, EntityTileID[] entityTileID)
@@ -694,7 +702,7 @@ public class GridManager : MonoBehaviour
                 {
                     cachedIndex.x = Mathf.Clamp(posIndex.x + x, 0, gridWidth);
                     cachedIndex.y = Mathf.Clamp(posIndex.y + y, 0, gridHeight);
-                    int index = cachedIndex.x * gridWidth + cachedIndex.y % gridHeight;
+                    int index = GridHelper.IndexPosToIndex(cachedIndex);
                     callback?.Invoke(index);
                 }
             }
@@ -722,7 +730,9 @@ public class GridManager : MonoBehaviour
                     bool invoke = true;
                     for (int i = 0; i < AmountEntitiesOnOneTile; i++)
                     {
-                        EntityTileID tileID = tileIDs[GridHelper.IndexPosToIndex(cachedIndex), i].tileID;
+                        int index = GridHelper.IndexPosToIndex(cachedIndex);
+
+                        EntityTileID tileID = tileIDs[index, i].tileID;
                         if (x == 0 && y == 0)
                         {
                             tileID = cachedEntityTileID[i].tileID;
@@ -732,7 +742,6 @@ public class GridManager : MonoBehaviour
                             if (tileID != t)
                                 continue;
 
-                            int index = cachedIndex.x * gridWidth + cachedIndex.y % gridHeight;
                             callback?.Invoke(index);
                             meetsRequirements = false;
                             break;
@@ -765,7 +774,8 @@ public class GridManager : MonoBehaviour
                     cachedIndex.y = Mathf.Clamp(posIndex.y + y, 0, gridHeight);
                     for (int i = 0; i < AmountEntitiesOnOneTile; i++)
                     {
-                        EntityTileID tileID = tileIDs[GridHelper.IndexPosToIndex(cachedIndex), i].tileID;
+                        int index = GridHelper.IndexPosToIndex(cachedIndex);
+                        EntityTileID tileID = tileIDs[index, i].tileID;
                         if (x == 0 && y == 0)
                         {
                             tileID = cachedEntityTileID[i].tileID;
@@ -776,7 +786,6 @@ public class GridManager : MonoBehaviour
                                 continue;
 
                             requirementTileAmount++;
-                            int index = cachedIndex.x * gridWidth + cachedIndex.y % gridHeight;
                             callback?.Invoke(index);
                             break;
                         }

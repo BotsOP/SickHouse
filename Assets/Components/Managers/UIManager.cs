@@ -10,10 +10,11 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] private Camera mainCamera;
     [SerializeField] private TMP_Text appleText;
-    [SerializeField] private TMP_Text beaverText;
-    [SerializeField] private TMP_Text raccoonText;
+    // [SerializeField] private TMP_Text beaverText;
+    // [SerializeField] private TMP_Text raccoonText;
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text selectionText;
+    [SerializeField] private TMP_Text selectionTextCost;
     
     [SerializeField] private List<RawImage> brushUIImages;
 
@@ -23,8 +24,8 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         EventSystem<int>.Subscribe(EventType.AMOUNT_APPLES, UpdateAppleAmount);
-        EventSystem<int>.Subscribe(EventType.AMOUNT_BEAVERS, UpdateBeaverText);
-        EventSystem<int>.Subscribe(EventType.AMOUNT_RACCOONS, UpdateRaccoonText);
+        // EventSystem<int>.Subscribe(EventType.AMOUNT_BEAVERS, UpdateBeaverText);
+        // EventSystem<int>.Subscribe(EventType.AMOUNT_RACCOONS, UpdateRaccoonText);
         EventSystem<GameObject>.Subscribe(EventType.DESTROY_OBJECT, DestroyObject);
         EventSystem<int, int, Color, Vector3>.Subscribe(EventType.UPDATE_SELECTION_TEXT, UpdateSelectionText);
         EventSystem.Subscribe(EventType.DISABLE_SELECTION_TEXT, DisableSelectionText);
@@ -38,8 +39,8 @@ public class UIManager : MonoBehaviour
     private void OnDisable()
     {
         EventSystem<int>.Unsubscribe(EventType.AMOUNT_APPLES, UpdateAppleAmount);
-        EventSystem<int>.Unsubscribe(EventType.AMOUNT_BEAVERS, UpdateBeaverText);
-        EventSystem<int>.Unsubscribe(EventType.AMOUNT_RACCOONS, UpdateRaccoonText);
+        // EventSystem<int>.Unsubscribe(EventType.AMOUNT_BEAVERS, UpdateBeaverText);
+        // EventSystem<int>.Unsubscribe(EventType.AMOUNT_RACCOONS, UpdateRaccoonText);
         EventSystem<GameObject>.Subscribe(EventType.DESTROY_OBJECT, DestroyObject);
         EventSystem<int, int, Color, Vector3>.Unsubscribe(EventType.UPDATE_SELECTION_TEXT, UpdateSelectionText);
         EventSystem.Unsubscribe(EventType.DISABLE_SELECTION_TEXT, DisableSelectionText);
@@ -50,11 +51,17 @@ public class UIManager : MonoBehaviour
         selectionText.text = amount + " / " + max;
         selectionText.color = color;
         selectionText.transform.position = mainCamera.WorldToScreenPoint(position);
+        selectionTextCost.transform.position = mainCamera.WorldToScreenPoint(position);
+        Vector3 pos = selectionTextCost.transform.position;
+        pos.y -= 50;
+        selectionTextCost.transform.position = pos;
+        selectionTextCost.text = "Cost: 3";
     }
 
     private void DisableSelectionText()
     {
         selectionText.text = "";
+        selectionTextCost.text = "";
     }
 
     public void ToggleInput(bool value)
@@ -109,13 +116,13 @@ public class UIManager : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void UpdateBeaverText(int newAmount)
-    {
-        beaverText.text = newAmount.ToString();
-    }
-
-    private void UpdateRaccoonText(int newAmount)
-    {
-        raccoonText.text = newAmount.ToString();
-    }
+    // private void UpdateBeaverText(int newAmount)
+    // {
+    //     beaverText.text = newAmount.ToString();
+    // }
+    //
+    // private void UpdateRaccoonText(int newAmount)
+    // {
+    //     raccoonText.text = newAmount.ToString();
+    // }
 }
