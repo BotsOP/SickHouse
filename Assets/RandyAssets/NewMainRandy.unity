@@ -11189,11 +11189,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8f3d4ace38b28345b7e0ea0cb7a84f1, type: 3}
---- !u!2083052967 &426427344 stripped
-VisualEffect:
-  m_CorrespondingSourceObject: {fileID: 9033526030337813051, guid: 731cae8d4f131d14d9ac677ac41f0559, type: 3}
-  m_PrefabInstance: {fileID: 1150488018}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &458249265
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12294,7 +12289,7 @@ MonoBehaviour:
   - {fileID: 6762283960194072936, guid: 950faa8d497418745866505d4989600c, type: 3}
   - {fileID: 6346503654429699008, guid: 3ba78bd3e55cfcb4aa33358d8f5412c4, type: 3}
   bulldozerPrefab: {fileID: 839691185}
-  bulldozerEffect: {fileID: 426427344}
+  bulldozerEffect: {fileID: 0}
   racoonPrefab: {fileID: 1427630360002137444, guid: 2383c00566f39eb44b55cb041c8806fa, type: 3}
   racoonSpawnPoint: {fileID: 1709512890}
   racoonSpawnCost: 15
@@ -18673,7 +18668,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1181146598}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -19544,7 +19539,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5328c2f4bfed5e641b883613eeb54414, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.16
+      value: 11.76
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5328c2f4bfed5e641b883613eeb54414, type: 3}
       propertyPath: m_LocalRotation.w
@@ -20165,7 +20160,7 @@ VisualEffect:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1716631827}
   m_Enabled: 1
-  m_Asset: {fileID: 8926484042661614526, guid: 57936514908ba154fb66a9c2c8ff2575, type: 3}
+  m_Asset: {fileID: 0}
   m_InitialEventName: OnPlay
   m_InitialEventNameOverriden: 0
   m_StartSeed: 0
@@ -20291,7 +20286,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1746680671
 Transform:
   m_ObjectHideFlags: 0
