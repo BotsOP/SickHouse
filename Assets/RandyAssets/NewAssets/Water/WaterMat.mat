@@ -71,21 +71,22 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Highlights: 0.3
+    - _Highlights: 0.19
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Saturation: 0
-    - _Speed: 0.06
+    - _Speed: 0.009
     - _TextureSize: 0.1
-    - _Tiling: 0.7
+    - _Tiling: 1.23
     - _foamDetailScale: 3
     - _foamNoiseScale: 10
-    - _foamNoiseScale2: 20
+    - _foamNoiseScale2: 30
     - _foamOpacity: 0.8
-    - _foamTiling: 0.07
+    - _foamTiling: 11.8
     - _gradientTiling: 0.3
     - _loat: 0
     - _waterAmplitude: -20
-    m_Colors: []
+    m_Colors:
+    - _foamColor: {r: 0.5225177, g: 0.61064374, b: 1.0218982, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -16,7 +16,7 @@ MonoBehaviour:
   renderSettings:
   - material: {fileID: 2100000, guid: 82c0dc36b6097cd44a4bdbd9fbcf8b94, type: 2}
     textures: []
-    mesh: {fileID: -462981019419857548, guid: 95b5fbdb358f3f246a585fd58b819dfc, type: 3}
+    mesh: {fileID: 7478812045110041891, guid: c4c2be3ea5b1f1047b7a484ea8daa18b, type: 3}
   TileGameSettings:
     appleCost: 0
     selection: []

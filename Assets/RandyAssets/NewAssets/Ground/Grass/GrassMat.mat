@@ -57,6 +57,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 8b4769d1e210e4a42bd1738e34aff724, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _sideTexture:
+        m_Texture: {fileID: 2800000, guid: 094c7c0f991c8cf479aaa28f5cf01097, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -76,9 +80,10 @@ Material:
     - _QueueOffset: 0
     - _Saturation: 1.47
     - _Steps: 0
-    - _Tiling: 5.1
+    - _Tiling: 10.8
     - _gradientTiling: 0.01
     - _parallaxAmplitude: 5
+    - _sideTiling: 100
     - _windStrength: 0
     - _windTiling: 0.01
     m_Colors:

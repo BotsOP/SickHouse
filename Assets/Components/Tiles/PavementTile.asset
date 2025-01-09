@@ -14,11 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   order: 1
   renderSettings:
-  - material: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
-    textures:
-    - textureName: _AlbedoMap
-      texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
-    mesh: {fileID: -462981019419857548, guid: 95b5fbdb358f3f246a585fd58b819dfc, type: 3}
+  - material: {fileID: 2100000, guid: d98a464f87afbbb4da1f6043e31ffab2, type: 2}
+    textures: []
+    mesh: {fileID: 7478812045110041891, guid: c4c2be3ea5b1f1047b7a484ea8daa18b, type: 3}
   TileGameSettings:
     appleCost: 0
     selection: []
