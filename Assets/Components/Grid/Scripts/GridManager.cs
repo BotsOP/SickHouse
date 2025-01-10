@@ -102,11 +102,12 @@ public class GridManager : MonoBehaviour
     private float lastTimeAppleCycle;
     private float lastTimeWallCycle;
 
-    private float bulldozerProgress = 0;
-    private int amountDamsAgainstWall = 0;
-    private int previousSkyscraperIndex = 0;
+    private float bulldozerProgress;
+    private int amountDamsAgainstWall;
+    private int previousSkyscraperIndex;
     private Damm[] damms;
     private int[] appleTrees;
+    private List<Vector3> treeDestructionPositions;
 
     private List<int> tileIDToMatrixIndex;
     private int cachedIndex = -1;
@@ -168,7 +169,9 @@ public class GridManager : MonoBehaviour
         tileIDToMatrixIndex = new List<int>();
         cachedEntityTileID = new GridTileStruct[AmountEntitiesOnOneTile];
         waterSpots = new List<Vector2Int>();
-
+        treeDestructionPositions = new List<Vector3>();
+        treeDestructionEffect.SetGraphicsBuffer("PositionsBuffer", treeVFXBuffer);
+        
         wallDistance = gridHeight;
         
         // Vector3 middleGrid = new Vector3(gridWidth / 2f, 1, gridHeight / 2f);
@@ -353,10 +356,24 @@ public class GridManager : MonoBehaviour
                                                              amountMatchingRequiredTiles >= amountRequiredTiles ? placeableColor : constrainedColor, 
                                                              lockedPosition);
         }
-        
-        ChangeTile(index,  GetRandomTileStruct(entityTileID), tiles[(int)entityTileID].order);
-        
+        gridSelectionBufferArray[index].w = 0;
         gridSelectionBuffer.SetData(gridSelectionBufferArray);
+        // ChangeTile(index,  GetRandomTileStruct(entityTileID), tiles[(int)entityTileID].order);
+        
+        Matrix4x4[] matrix4X4s = new Matrix4x4[1];
+        matrix4X4s[0] = GridHelper.IndexToMatrix4x4(cachedIndex);
+        // GridTileStruct gridTileStruct = tileIDs[index, tiles[(int)entityTileID].order];
+        // Material tempMat = new Material(renderParamsArray[(int)entityTileID].material);
+        renderParamsArray[(int)entityTileID].matProps.SetFloat("_SelectedEntity", 1);
+        renderParamsArray[(int)entityTileID].matProps.SetBuffer("gridBuffer", gridSelectionBuffer);
+        // tempMat.SetBuffer("gridBuffer", gridSelectionBuffer);
+        foreach (TextureWtihReference textureWtihReference in tiles[(int)entityTileID].renderSettings[0].textures)
+        {
+            renderParamsArray[(int)entityTileID].matProps.SetTexture(textureWtihReference.textureName, textureWtihReference.texture);
+        }
+        Graphics.RenderMeshInstanced(renderParamsArray[(int)entityTileID], tiles[(int)entityTileID].renderSettings[0].mesh, 0, matrix4X4s);
+        // Graphics.RenderMeshInstanced(tiles[(int)entityTileID].renderSettings[0].mesh, 0, renderParamsArray[(int)entityTileID].material, matrix4X4s);
+        
         Array.Fill(gridSelectionBufferArray, Vector4.one);
     }
     
@@ -419,7 +436,7 @@ public class GridManager : MonoBehaviour
 
         if (oldGridTileStruct.tileID == entityTileID || !requiredPlacement || !constrained || !hasEnoughApples)
         {
-            ChangeTile(cachedIndex, cachedEntityTileID);
+            // ChangeTile(cachedIndex, cachedEntityTileID);
             cachedIndex = -1;
             return;
         }
@@ -576,9 +593,19 @@ public class GridManager : MonoBehaviour
             
             GridTileStruct[] cityGridTileStructs = new GridTileStruct[AmountEntitiesOnOneTile];
             cityGridTileStructs[tiles[(int)EntityTileID.PAVEMENT].order] = GetRandomTileStruct(EntityTileID.PAVEMENT);
+            bool destroyedTree = false;
+            int amountBrokenTrees = 0;
             for (int x = 0; x < gridWidth; x++)
             {
                 int dammIndex = GridHelper.IndexPosToIndex(new Vector2Int(x, wallDistance));
+                if (tileIDs[dammIndex, tiles[(int)EntityTileID.TREE].order].tileID == EntityTileID.TREE)
+                {
+                    Vector3 position = GridHelper.GetPosition(new Vector2Int(x, wallDistance));
+                    position.y += 4;
+                    treeDestructionPositions.Add(position);
+                    amountBrokenTrees++;
+                    destroyedTree = true;
+                }
                 if (damms[dammIndex].buildDamm && GridHelper.CheckIfTileMatches(dammIndex, EntityTileID.DAMM))
                 {
                     damms[dammIndex].amountBeavorsWorking = 0;
@@ -587,6 +614,13 @@ public class GridManager : MonoBehaviour
                 }
                 
                 ChangeTile(dammIndex, cityGridTileStructs);
+            }
+            if (destroyedTree)
+            {
+                treeVFXBuffer.SetData(treeDestructionPositions);
+                treeDestructionEffect.SetInt("AmountBrokenTrees", amountBrokenTrees);
+                treeDestructionEffect.SendEvent("Play");
+                treeDestructionPositions.Clear();
             }
         }
     }

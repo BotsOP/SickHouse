@@ -6,7 +6,6 @@ using Managers;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using VInspector;
 using EventType = Managers.EventType;
 using Random = UnityEngine.Random;
 
@@ -25,10 +24,9 @@ public class GridManagerPainter : MonoBehaviour
     [NonSerialized] public GridTileStruct[,] tileIDs;
     [NonSerialized] public List<List<Matrix4x4>> matricesList;
     
-    [Tab("Grid Settings")]
     [Header("Grid")]
-    public int gridWidth = 100;
-    public int gridHeight = 100;
+    public int gridWidth = 50;
+    public int gridHeight = 50;
     public float tileSize = 1;
     [SerializeField] private GridObject gridObject;
     [SerializeField] private Material instanceMat;
@@ -36,12 +34,11 @@ public class GridManagerPainter : MonoBehaviour
     [Header("Misc")]
     [SerializeField] private EntityTileID startFillEntityTileID;
 
-    [Tab("Tile Settings")]
+    [SerializeField] private TileWrapper emptyTile;
     [SerializeField] private TileWrapper dirtTile;
     [SerializeField] private TileWrapper grassTile;
     [SerializeField] private TileWrapper waterTile;
     [SerializeField] private TileWrapper pavementTile;
-    
     [SerializeField] private TileWrapper treeTile;
     [SerializeField] private TileWrapper damTile;
     [SerializeField] private TileWrapper cliffTile;
@@ -102,7 +99,9 @@ public class GridManagerPainter : MonoBehaviour
         tiles[(int)EntityTileID.GRASS] = grassTile;
         tiles[(int)EntityTileID.WATER] = waterTile;
         tiles[(int)EntityTileID.PAVEMENT] = pavementTile;
+        tiles[(int)EntityTileID.EMPTY] = emptyTile;
 
+        Debug.Log($"{gameObject.name}");
         matricesList = new List<List<Matrix4x4>>(tiles.Length);
         int counter = 0;
         for (int i = 0; i < tiles.Length; i++)
