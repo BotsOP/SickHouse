@@ -13,6 +13,8 @@ public class EditGrid : MonoBehaviour
     [SerializeField] private bool disableInput;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private EntityTileID entityTileID;
+    [SerializeField] private LayerMask droneLayer;
+    [SerializeField] private LayerMask gridLayer;
     private Vector3 cachedPosition;
     private int UILayer;
     private bool didPressKeyDown = false;
@@ -50,52 +52,39 @@ public class EditGrid : MonoBehaviour
             return;
         }
         
-        cachedPosition = hit.point;
-
-        EventSystem.RaiseEvent(EventType.SELECT_TILE_DOWN);
-        EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.SELECT_TILE, hit.point, entityTileID);
-
-        if (Input.GetMouseButton(0) && (entityTileID == EntityTileID.DIRT || entityTileID == EntityTileID.WATER))
+        if (IsInLayerMask(hit.transform, gridLayer))
         {
-            if (entityTileID == EntityTileID.DIRT)
+            cachedPosition = hit.point;
+
+            EventSystem.RaiseEvent(EventType.SELECT_TILE_DOWN);
+            EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.SELECT_TILE, hit.point, entityTileID);
+
+            if (Input.GetMouseButton(0) && entityTileID is EntityTileID.DIRT or EntityTileID.WATER)
             {
-                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
-                return;
-            }
+                if (entityTileID == EntityTileID.DIRT)
+                {
+                    EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
+                    return;
+                }
             
-            EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
+                EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
+            }
+            if (Input.GetMouseButtonDown(0) && entityTileID == EntityTileID.TREE)
+            {
+                EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
+            }
         }
-        if (Input.GetMouseButtonDown(0) && entityTileID == EntityTileID.TREE)
-        {
-            EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
-        }
-        
-        // if (Input.GetMouseButtonDown(0) && !IsPointerOverUIElement())
-        // {
-        //     if (Physics.Raycast(ray, out hit)) {
-        //         cachedPosition = hit.point;
-        //         EventSystem.RaiseEvent(EventType.SELECT_TILE_DOWN);
-        //         didPressKeyDown = true;
-        //     }
-        // }
-        // if (Input.GetMouseButton(0) && !IsPointerOverUIElement() && didPressKeyDown)
-        // {
-        //     if (Physics.Raycast(ray, out hit)) {
-        //         cachedPosition = hit.point;
-        //         EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.SELECT_TILE, hit.point, entityTileID);
-        //     }
-        // }
-        // if (Input.GetMouseButtonUp(0) && !IsPointerOverUIElement())
-        // {
-        //     didPressKeyDown = false;
-        //     ChangeTile();
-        //     EventSystem.RaiseEvent(EventType.DISABLE_SELECTION_TEXT);
-        // }
-    }
 
-    private void ChangeTile()
+        if (IsInLayerMask(hit.transform, droneLayer) && Input.GetMouseButtonDown(0))
+        {
+            EventSystem<GameObject>.RaiseEvent(EventType.HIT_DRONE, hit.transform.gameObject);
+        }
+    }
+    
+    
+    bool IsInLayerMask(Transform obj, LayerMask mask)
     {
-        EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
+        return (mask.value & (1 << obj.gameObject.layer)) != 0;
     }
 
     private void ToggleInput(bool value)
@@ -108,7 +97,6 @@ public class EditGrid : MonoBehaviour
         return IsPointerOverUIElement(GetEventSystemRaycastResults());
     }
 
-
     // Returns 'true' if we touched or hovering on Unity UI element.
      private bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaysastResults)
      {
@@ -120,7 +108,6 @@ public class EditGrid : MonoBehaviour
          }
          return false;
      }
-
 
     // Gets all event system raycast results of current mouse or touch position.
      static List<RaycastResult> GetEventSystemRaycastResults()

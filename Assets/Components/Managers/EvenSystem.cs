@@ -28,6 +28,7 @@ namespace Managers
         DESTROY_GAMEOBJECT,
         GAME_OVER,
         DESTROY_OBJECT,
+        HIT_DRONE,
         
         //SPAWNING
         SPAWN_RACOON,
