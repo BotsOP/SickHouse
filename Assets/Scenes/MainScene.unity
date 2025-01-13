@@ -5340,6 +5340,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 621535985597904532, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.878
+      objectReference: {fileID: 0}
+    - target: {fileID: 621535985597904532, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.887
+      objectReference: {fileID: 0}
     - target: {fileID: 2248239666919734536, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
       propertyPath: m_CastShadows
       value: 0
@@ -5351,6 +5359,30 @@ PrefabInstance:
     - target: {fileID: 5575191050971733678, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
       propertyPath: m_Name
       value: DroneView
+      objectReference: {fileID: 0}
+    - target: {fileID: 6635041616654499831, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.8747
+      objectReference: {fileID: 0}
+    - target: {fileID: 6635041616654499831, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.8828
+      objectReference: {fileID: 0}
+    - target: {fileID: 6936915301476945488, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.841
+      objectReference: {fileID: 0}
+    - target: {fileID: 6936915301476945488, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.897
+      objectReference: {fileID: 0}
+    - target: {fileID: 8333885205167576516, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.797
+      objectReference: {fileID: 0}
+    - target: {fileID: 8333885205167576516, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.894
       objectReference: {fileID: 0}
     - target: {fileID: 8894342618727194126, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
       propertyPath: m_LocalScale.x
