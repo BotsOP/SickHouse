@@ -4548,13 +4548,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridManager: {fileID: 777743094}
-  droneYPos: 5
+  droneYPos: 10
   minTimeBetweenSpawns: 1
   maxTimeBetweenSpawns: 2
   amountApplesUponDeath: 10
   speed: 5
   deadDroneSpeedX: 2
-  deadDroneSpeedY: 10
+  deadDroneSpeedY: 12
   dronePrefab: {fileID: 5575191050971733678, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
 --- !u!4 &1768142381
 Transform:
