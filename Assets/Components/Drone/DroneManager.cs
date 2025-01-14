@@ -46,14 +46,14 @@ public class DroneManager : MonoBehaviour
 
     private void Update()
     {
-        if (Time.time > cachedTime + timeBetweenSpawns)
+        if (Time.timeSinceLevelLoad > cachedTime + timeBetweenSpawns)
         {
-            cachedTime = Time.time;
+            cachedTime = Time.timeSinceLevelLoad;
             timeBetweenSpawns = math.lerp(Random.Range(0, 1), minTimeBetweenSpawns, maxTimeBetweenSpawns);
             
             drones.Add(Instantiate(dronePrefab, new Vector3(Random.Range(-25, 25), droneYPos, gridManager.wallDistance), quaternion.identity));
         }
-
+        
         for (int i = 0; i < drones.Count; i++)
         {
             GameObject drone = drones[i];
