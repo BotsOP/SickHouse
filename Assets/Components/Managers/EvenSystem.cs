@@ -8,12 +8,11 @@ namespace Managers
         SELECT_TILE_DOWN,
         SELECT_TILE,
         CHANGE_TILE,
+        CHANGED_TILE,
         FORCE_CHANGE_TILE,
         
         //GAME STATE
         AMOUNT_APPLES,
-        AMOUNT_BEAVERS,
-        AMOUNT_RACCOONS,
         CHANGE_AMOUNT_APPLES,
         GAIN_APPLES,
         COLLECTED_APPLE,
@@ -29,6 +28,7 @@ namespace Managers
         GAME_OVER,
         DESTROY_OBJECT,
         HIT_DRONE,
+        HIT_GIANT_BULLDOZER,
         
         //SPAWNING
         SPAWN_RACOON,

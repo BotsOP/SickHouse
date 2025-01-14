@@ -17,6 +17,7 @@ public enum EntityTileID
     PAVEMENT,
 }
 
+[Serializable]
 public struct GridTileStruct
 {
     public EntityTileID tileID;

@@ -20,5 +20,9 @@ MonoBehaviour:
   TileGameSettings:
     appleCost: 0
     selection: []
-    placementConstraints: []
+    placementConstraints:
+    - tileIDs: 07000000
+      selectionBoxes:
+      - position: {x: 0, y: 0}
+        size: {x: 1, y: 1}
     placementRequirements: []

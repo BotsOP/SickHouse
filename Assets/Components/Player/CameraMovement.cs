@@ -53,14 +53,15 @@ public class CameraMovement : MonoBehaviour
 
     private void Move()
     {
-        Vector3 desiredMove = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        // Vector3 desiredMove = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        Vector3 desiredMove = Vector3.zero;
 
-        desiredMove *= keyboardMovementSpeed;
-        desiredMove *= Time.deltaTime;
-        desiredMove = Quaternion.Euler(new Vector3(0f, transform.eulerAngles.y, 0f)) * desiredMove;
-        desiredMove = transform.InverseTransformDirection(desiredMove);
-
-        transform.Translate(desiredMove, Space.Self);
+        // desiredMove *= keyboardMovementSpeed;
+        // desiredMove *= Time.deltaTime;
+        // desiredMove = Quaternion.Euler(new Vector3(0f, transform.eulerAngles.y, 0f)) * desiredMove;
+        // desiredMove = transform.InverseTransformDirection(desiredMove);
+        //
+        // transform.Translate(desiredMove, Space.Self);
         
         if(Input.GetKey(KeyCode.Mouse2) && MouseAxis != Vector2.zero)
         {

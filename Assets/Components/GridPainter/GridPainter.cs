@@ -8,10 +8,11 @@ using Object = UnityEngine.Object;
 
 public class GridPainter : MonoBehaviour
 {
-    [SerializeField] private GridObject gridObject;
+    [SerializeField] private string fileName;
     
     [SerializeField] private Camera mainCamera;
     [SerializeField] private EntityTileID entityTileID;
+    
     private Vector3 cachedPosition;
 
     private void Update()
@@ -86,14 +87,7 @@ public class GridPainter : MonoBehaviour
     [Button]
     public void SaveGrid()
     {
-        if (gridObject == null)
-        {
-            Debug.LogError($"GridObject is empty");
-            return;
-        }
-        
         GridManagerPainter gridManager = FindFirstObjectByType<GridManagerPainter>();
-        gridObject.tiles = gridManager.tileIDs;
-        gridObject.Save();
+        GridObject.Save(gridManager.tileIDs, fileName);
     }
 }

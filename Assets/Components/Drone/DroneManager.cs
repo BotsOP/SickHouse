@@ -51,13 +51,19 @@ public class DroneManager : MonoBehaviour
             cachedTime = Time.time;
             timeBetweenSpawns = math.lerp(Random.Range(0, 1), minTimeBetweenSpawns, maxTimeBetweenSpawns);
             
-            Debug.Log(gridManager.wallDistance);
             drones.Add(Instantiate(dronePrefab, new Vector3(Random.Range(-25, 25), droneYPos, gridManager.wallDistance), quaternion.identity));
         }
 
-        foreach (GameObject drone in drones)
+        for (int i = 0; i < drones.Count; i++)
         {
+            GameObject drone = drones[i];
             drone.transform.Translate(Vector3.back * (Time.deltaTime * speed));
+
+            if (drone.transform.position.z < -50)
+            {
+                drones.Remove(drone);
+                Destroy(drone);
+            }
         }
 
         for (int i = 0; i < deadDrones.Count; i++)

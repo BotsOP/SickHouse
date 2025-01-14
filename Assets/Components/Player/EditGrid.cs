@@ -15,6 +15,7 @@ public class EditGrid : MonoBehaviour
     [SerializeField] private EntityTileID entityTileID;
     [SerializeField] private LayerMask droneLayer;
     [SerializeField] private LayerMask gridLayer;
+    [SerializeField] private LayerMask bulldozerLayer;
     private Vector3 cachedPosition;
     private int UILayer;
     private bool didPressKeyDown = false;
@@ -44,7 +45,12 @@ public class EditGrid : MonoBehaviour
 
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
+        {
+            EventSystem.RaiseEvent(EventType.DISABLE_SELECTION_TEXT);
             return;
+        }
+        
+        // return;
         
         if (IsPointerOverUIElement())
         {
@@ -55,10 +61,10 @@ public class EditGrid : MonoBehaviour
         if (IsInLayerMask(hit.transform, gridLayer))
         {
             cachedPosition = hit.point;
-
+        
             EventSystem.RaiseEvent(EventType.SELECT_TILE_DOWN);
             EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.SELECT_TILE, hit.point, entityTileID);
-
+        
             if (Input.GetMouseButton(0) && entityTileID is EntityTileID.DIRT or EntityTileID.WATER)
             {
                 if (entityTileID == EntityTileID.DIRT)
@@ -75,9 +81,16 @@ public class EditGrid : MonoBehaviour
             }
         }
 
-        if (IsInLayerMask(hit.transform, droneLayer) && Input.GetMouseButtonDown(0))
+        if (!Input.GetMouseButtonDown(0))
+            return;
+        
+        if (IsInLayerMask(hit.transform, droneLayer))
         {
             EventSystem<GameObject>.RaiseEvent(EventType.HIT_DRONE, hit.transform.gameObject);
+        }
+        if (IsInLayerMask(hit.transform, bulldozerLayer))
+        {
+            EventSystem.RaiseEvent(EventType.HIT_GIANT_BULLDOZER);
         }
     }
     
@@ -96,7 +109,7 @@ public class EditGrid : MonoBehaviour
     {
         return IsPointerOverUIElement(GetEventSystemRaycastResults());
     }
-
+    
     // Returns 'true' if we touched or hovering on Unity UI element.
      private bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaysastResults)
      {
@@ -108,7 +121,7 @@ public class EditGrid : MonoBehaviour
          }
          return false;
      }
-
+    
     // Gets all event system raycast results of current mouse or touch position.
      static List<RaycastResult> GetEventSystemRaycastResults()
      {
