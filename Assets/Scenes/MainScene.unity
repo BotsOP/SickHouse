@@ -2361,7 +2361,7 @@ MonoBehaviour:
   tileSize: 1
   racoons: []
   beavers: []
-  gridObject: {fileID: 11400000, guid: 1008d74c9d7a5c043a6fc94e197ba5de, type: 2}
+  level: {fileID: 4900000, guid: f544c2b241e45bb46853413e7f6b0ceb, type: 3}
   amountApples: 99999
   constrainedColor: {r: 1, g: 0, b: 0, a: 1}
   placeableColor: {r: 0.4206059, g: 1, b: 0, a: 1}
