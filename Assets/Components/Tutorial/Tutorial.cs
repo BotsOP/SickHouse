@@ -27,6 +27,8 @@ public class Tutorial : MonoBehaviour
     [SerializeField] private GridManager gridManager;
     [SerializeField] private Button raccoonButton;
     [SerializeField] private Button beaverButton;
+    [SerializeField] private RawImage raccoonImage;
+    [SerializeField] private RawImage beaverImage;
     [SerializeField] private Button treeButton;
     [SerializeField] private Button waterButton;
     [SerializeField] private Button dirtButton;
@@ -49,9 +51,10 @@ public class Tutorial : MonoBehaviour
     }
     private void Awake()
     {
+        gridManager.wallCycleInSeconds = float.MaxValue;
         EventSystem<EntityTileID>.Subscribe(EventType.CHANGED_TILE, PlacedTile);
         
-        DisableButton(beaverButton);
+        DisableRawImageButton(beaverButton, beaverImage);
         DisableButton(treeButton);
         DisableButton(waterButton);
         DisableButton(dirtButton);
@@ -86,7 +89,7 @@ public class Tutorial : MonoBehaviour
                 if (amountDirtPlaced >= amountDirtNeedToBePlaced)
                 {
                     DisableButton(dirtButton);
-                    EnableButton(beaverButton);
+                    EnableRawImageButton(beaverButton, beaverImage);
                     amountDirtNeedToBePlaced = int.MaxValue;
                 }
                 break;
@@ -96,7 +99,7 @@ public class Tutorial : MonoBehaviour
     private void DisableButton(Button button)
     {
         ColorBlock colorBlock = button.colors;
-        colorBlock.normalColor = disabledColor;
+        colorBlock.disabledColor = disabledColor;
         button.colors = colorBlock;
         button.interactable = false;
     }
@@ -109,19 +112,31 @@ public class Tutorial : MonoBehaviour
         button.interactable = true;
     }
 
+    private void DisableRawImageButton(Button button, RawImage rawImage)
+    {
+        rawImage.color = disabledColor;
+        button.interactable = false;
+    }
+    
+    private void EnableRawImageButton(Button button, RawImage rawImage)
+    {
+        rawImage.color = enabledColor;
+        button.interactable = true;
+    }
+
     public void ClickedRaccoon()
     {
-        DisableButton(raccoonButton);
+        DisableRawImageButton(raccoonButton, raccoonImage);
         EnableButton(treeButton);
     }
 
     public void ClickedBeaver()
     {
-        EnableButton(beaverButton);
+        EnableRawImageButton(beaverButton, beaverImage);
         EnableButton(treeButton);
         EnableButton(waterButton);
         EnableButton(dirtButton);
-        EnableButton(raccoonButton);
+        EnableRawImageButton(raccoonButton, raccoonImage);
 
         gridManager.wallCycleInSeconds = wallCycleInSeconds;
     }

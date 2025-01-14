@@ -43,7 +43,7 @@ public class Bulldozer : MonoBehaviour
 
     private void Update()
     {
-        if (Time.time > timeWhenToSpawn)
+        if (Time.timeSinceLevelLoad > timeWhenToSpawn)
         {
             float xPos = Mathf.RoundToInt(Random.Range(-25, 25)) + 0.5f;
             bulldozer = Instantiate(bulldozerPrefab, new Vector3(xPos, 0, gridManager.wallDistance - 25 + 4), Quaternion.identity);
