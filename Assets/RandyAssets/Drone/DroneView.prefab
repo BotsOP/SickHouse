@@ -121,6 +121,8 @@ MonoBehaviour:
   - {fileID: 3954909107477292246}
   <idleTrigger>k__BackingField: Idle
   <moveTrigger>k__BackingField: Move
+  <fallTrigger>k__BackingField: Fall
+  ExplosionVFXPrefab: {fileID: 6435198663370022358, guid: 0bb076978a6e5da4bb74fc5ce60a7791, type: 3}
 --- !u!65 &2811816205577825597
 BoxCollider:
   m_ObjectHideFlags: 0
