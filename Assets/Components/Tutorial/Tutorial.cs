@@ -21,18 +21,9 @@ using EventType = Managers.EventType;
     - When all of these buttons are available, accelerate the wall, enable everything, and reveal a button to head back to the main menu
 
  */
+
 public class Tutorial : MonoBehaviour
 {
-    private enum TutorialOrder
-    {
-        RACCOON,
-        TREE,
-        WATER,
-        DIRT,
-        BEAVER,
-        DONE,
-    }
-    
     [SerializeField] private GridManager gridManager;
     [SerializeField] private Button raccoonButton;
     [SerializeField] private Button beaverButton;
