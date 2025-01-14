@@ -26,7 +26,8 @@ public class DroneManager : MonoBehaviour
     [SerializeField] private float deadDroneSpeedX;
     [SerializeField] private float deadDroneSpeedY;
     [SerializeField] private GameObject dronePrefab;
-    
+    [SerializeField] private AudioClip droneDeath;
+
     private List<GameObject> drones = new List<GameObject>();
     private List<GameObject> deadDrones = new List<GameObject>();
     private float timeBetweenSpawns;
@@ -103,6 +104,7 @@ public class DroneManager : MonoBehaviour
             return;
         }
         deadDrones.Add(drone);
+        SoundManager.instance.PlaySoundClip(droneDeath, transform, 1f);
         Destroy(drone.GetComponent<BoxCollider>());
         EventSystem<int, Vector3>.RaiseEvent(EventType.GAIN_APPLES, amountApplesUponDeath, drone.transform.position);
     }

@@ -18,7 +18,9 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private Color selectedColor;
     [SerializeField] private Color notSelectedColor;
-    
+
+    [SerializeField] private AudioClip applesUp;
+    int previousApples = 0;
     private void OnEnable()
     {
         EventSystem<int>.Subscribe(EventType.AMOUNT_APPLES, UpdateAppleAmount);
@@ -78,6 +80,11 @@ public class UIManager : MonoBehaviour
     private void UpdateAppleAmount(int amountApples)
     {
         appleText.text = amountApples.ToString();
+        if (amountApples > previousApples)
+        {
+            SoundManager.instance.PlaySoundClip(applesUp, transform, 1f);
+        }
+        previousApples = amountApples;
     }
 
     public void ChangeBrush(int tileID)

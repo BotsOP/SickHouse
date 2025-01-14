@@ -87,7 +87,21 @@ public class GridManager : MonoBehaviour
     [SerializeField] private TileWrapper damTile;
     [SerializeField] private TileWrapper cliffTile;
     [SerializeField] private TileWrapper emptyTile;
-    
+
+    [Tab("Sounds")]
+    [Foldout("Placing")]
+    [SerializeField] private AudioClip tree;
+    [SerializeField] private AudioClip water;
+    [SerializeField] private AudioClip beaver;
+    [SerializeField] private AudioClip raccoon;
+    [SerializeField] private AudioClip buildings;
+    [SerializeField] private AudioClip dam;
+    [Foldout("Breaking")]
+    [SerializeField] private AudioClip treeBreak;
+    [SerializeField] private AudioClip waterBreak;
+    [SerializeField] private AudioClip damBreak;
+    [SerializeField] private AudioClip damStress;
+
     private TileWrapper[] tiles;
     
     private ComputeBuffer gridSelectionBuffer;
@@ -456,6 +470,14 @@ public class GridManager : MonoBehaviour
         GainApples(-tiles[(int)entityTileID].TileGameSettings.appleCost, position);
         EventSystem<int>.RaiseEvent(EventType.AMOUNT_APPLES, amountApples);
         EventSystem<EntityTileID>.RaiseEvent(EventType.CHANGED_TILE, entityTileID);
+        if (entityTileID == EntityTileID.TREE)
+        {
+            SoundManager.instance.PlaySoundClip(tree, transform, 1f);
+        }
+        else if (entityTileID == EntityTileID.WATER)
+        {
+            SoundManager.instance.PlaySoundClip(water, transform, 1f);
+        }
     }
     
     private void SpawnRacoon()
@@ -465,6 +487,7 @@ public class GridManager : MonoBehaviour
         
         GainApples(-racoonSpawnCost, racoonSpawnPoint.position);
         racoons.Add(Instantiate(racoonPrefab, racoonSpawnPoint.position, racoonSpawnPoint.rotation));
+        SoundManager.instance.PlaySoundClip(raccoon, transform, 1f);
     }
     
     private void SpawnBeavor()
@@ -476,6 +499,7 @@ public class GridManager : MonoBehaviour
         
         GainApples(-beavorSpawnCost, beavorSpawnPoint.position);
         beavers.Add(Instantiate(beavorPrefab, beavorSpawnPoint.position, beavorSpawnPoint.rotation));
+        SoundManager.instance.PlaySoundClip(beaver, transform, 1f);
     }
     
     private void Update()
@@ -556,6 +580,15 @@ public class GridManager : MonoBehaviour
             }
         }
 
+        if (amountDamsAgainstWall != 0)
+        {
+            //on
+        }
+        else
+        {
+            //off
+        }
+
         if (hitDamm)
         {
             dammVFXBuffer.SetData(dammVFXPositions);
@@ -592,6 +625,8 @@ public class GridManager : MonoBehaviour
                 GameObject building = Instantiate(wallPrefabs[(wallDistance / 2 + previousSkyscraperIndex) % wallPrefabs.Count], new Vector3(0, 0, wallDistance - (gridHeight * tileSize / 2f) + tileSize * 5), Quaternion.identity);
                 building.transform.GetChild(0).GetComponent<Animation>().Play();
                 building.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetFloat("_RandomRowValue", Random.Range(0f, 1f));
+
+                SoundManager.instance.PlaySoundClip(buildings, transform, 1f);
             }
             
             GridTileStruct[] cityGridTileStructs = new GridTileStruct[AmountEntitiesOnOneTile];
@@ -783,6 +818,14 @@ public class GridManager : MonoBehaviour
         tileIDs[index, order] = entityTileID;
         matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
         matricesList[GetMatrixIndex(entityTileID)].Add(matrix4X4);
+        if (oldEntityTile.tileID == EntityTileID.TREE)
+        {
+            SoundManager.instance.PlaySoundClip(treeBreak, transform, 1f);
+        }
+        else if (oldEntityTile.tileID == EntityTileID.WATER)
+        {
+            SoundManager.instance.PlaySoundClip(waterBreak, transform, 1f);
+        }
     }
     private void ChangeTile(Vector3 position, EntityTileID entityTileID)
     {
