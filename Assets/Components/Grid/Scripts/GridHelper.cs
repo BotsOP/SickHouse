@@ -28,7 +28,6 @@ public static class GridHelper
         indexPosToIndex = math.clamp(indexPosToIndex, 0, gridHeight * gridWidth - 1);
         return indexPosToIndex;
     }
-    
     public static Vector2Int IndexToIndexPos(int index)
     {
         return new Vector2Int(index / gridWidth, index % gridHeight);
@@ -46,7 +45,6 @@ public static class GridHelper
         Matrix4x4 matrix4X4 = Matrix4x4.Translate(position) * Matrix4x4.Scale(new Vector3(tileSize, tileSize, tileSize));
         return matrix4X4;
     }
-    
     public static bool CheckIfTileMatches(int index, EntityTileID tileID)
     {
         return tileIDs[index, tiles[(int)tileID].order].tileID == tileID;

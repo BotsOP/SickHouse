@@ -38,7 +38,7 @@ public class GridManager : MonoBehaviour
     public float tileSize = 1;
     public List<GameObject> racoons = new List<GameObject>();
     public List<GameObject> beavers = new List<GameObject>();
-    [SerializeField] private GridObject gridObject;
+    [SerializeField] private TextAsset level;
     [SerializeField] private int amountApples = 100;
 
     [Header("Selection")]
@@ -58,7 +58,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private VisualEffect treeDestructionEffect;
 
     [Foldout("Wall")]
-    [SerializeField] private float wallCycleInSeconds = 10f;
+    public float wallCycleInSeconds = 10f;
     [SerializeField] private List<GameObject> wallPrefabs;
     [SerializeField] private GameObject bulldozerPrefab;
     [SerializeField] private VisualEffect bulldozerEffect;
@@ -136,6 +136,7 @@ public class GridManager : MonoBehaviour
         EventSystem.Unsubscribe(EventType.SPAWN_BEAVOR, SpawnBeavor);
         EventSystem<int, Vector3>.Unsubscribe(EventType.GAIN_APPLES, GainApples);
         EventSystem<int>.Unsubscribe(EventType.COLLECTED_APPLE, collectedAppleFromTree);
+        EventSystem<EntityTileID>.Unsubscribe(EventType.CHANGED_TILE, DoNothing);
     }
 
     private void Awake()
@@ -158,6 +159,7 @@ public class GridManager : MonoBehaviour
         EventSystem.Subscribe(EventType.SPAWN_BEAVOR, SpawnBeavor);
         EventSystem<int, Vector3>.Subscribe(EventType.GAIN_APPLES, GainApples);
         EventSystem<int>.Subscribe(EventType.COLLECTED_APPLE, collectedAppleFromTree);
+        EventSystem<EntityTileID>.Subscribe(EventType.CHANGED_TILE, DoNothing);
         
         gridSelectionBuffer = new ComputeBuffer(gridWidth * gridHeight, sizeof(float) * 4);
         gridSelectionBufferArray = new Vector4[gridWidth * gridHeight];
@@ -198,12 +200,12 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        if (gridObject is null)
+        if (level is null)
         {
             Debug.LogError($"Grid Object is null!");
             return;
         }
-        gridObject.Load();
+        tileIDs = GridObject.Load(level);
         
         Vector2Int cachedIndex = new Vector2Int(0, 0);
         for (int x = 0; x < gridWidth; x++)
@@ -211,7 +213,7 @@ public class GridManager : MonoBehaviour
         for (int z = 0; z < AmountEntitiesOnOneTile; z++)
         {
             int indexPosToIndex = GridHelper.IndexPosToIndex(new Vector2Int(x, y));
-            GridTileStruct tileIDStruct = gridObject.tiles[indexPosToIndex, z];
+            GridTileStruct tileIDStruct = tileIDs[indexPosToIndex, z];
             
             cachedIndex.x = x;
             cachedIndex.y = y;
@@ -303,8 +305,10 @@ public class GridManager : MonoBehaviour
     }
 
     private void StartChangingTile()
-    {
-    }
+    {}
+    
+    private void DoNothing(EntityTileID tileID)
+    {}
 
     private void PlacementSelection(Vector3 position, EntityTileID entityTileID)
     {
@@ -414,7 +418,6 @@ public class GridManager : MonoBehaviour
     
     private void ChangeTile(Vector3 position, EntityTileID entityTileID, Vector2Int posIndex, int order)
     {
-
         int index = GridHelper.IndexPosToIndex(posIndex);
         GridTileStruct oldGridTileStruct = cachedEntityTileID[order];
         
@@ -452,6 +455,7 @@ public class GridManager : MonoBehaviour
 
         GainApples(-tiles[(int)entityTileID].TileGameSettings.appleCost, position);
         EventSystem<int>.RaiseEvent(EventType.AMOUNT_APPLES, amountApples);
+        EventSystem<EntityTileID>.RaiseEvent(EventType.CHANGED_TILE, entityTileID);
     }
     
     private void SpawnRacoon()
@@ -461,7 +465,6 @@ public class GridManager : MonoBehaviour
         
         GainApples(-racoonSpawnCost, racoonSpawnPoint.position);
         racoons.Add(Instantiate(racoonPrefab, racoonSpawnPoint.position, racoonSpawnPoint.rotation));
-        EventSystem<int>.RaiseEvent(EventType.AMOUNT_RACCOONS, racoons.Count + 1);
     }
     
     private void SpawnBeavor()
@@ -473,7 +476,6 @@ public class GridManager : MonoBehaviour
         
         GainApples(-beavorSpawnCost, beavorSpawnPoint.position);
         beavers.Add(Instantiate(beavorPrefab, beavorSpawnPoint.position, beavorSpawnPoint.rotation));
-        EventSystem<int>.RaiseEvent(EventType.AMOUNT_BEAVERS, beavers.Count + 1);
     }
     
     private void Update()
@@ -507,7 +509,6 @@ public class GridManager : MonoBehaviour
             Destroy(Instantiate(beavorGhostPrefab, beavers[0].transform.position, Quaternion.identity), 0.99f);
             Destroy(beavers[0]);
             beavers.RemoveAtSwapBack(0);
-            EventSystem<int>.RaiseEvent(EventType.AMOUNT_BEAVERS, beavers.Count + 1);
         }
         
         EventSystem<int>.RaiseEvent(EventType.AMOUNT_APPLES, amountApples);
@@ -588,7 +589,9 @@ public class GridManager : MonoBehaviour
             {
                 int skyscraperIndex = wallDistance / 2 % wallPrefabs.Count;
                 previousSkyscraperIndex = skyscraperIndex;
-                Instantiate(wallPrefabs[(wallDistance / 2 + previousSkyscraperIndex) % wallPrefabs.Count], new Vector3(0, 0, wallDistance - (gridHeight * tileSize / 2f) + tileSize * 5), Quaternion.identity).transform.GetChild(0).GetComponent<Animation>().Play();
+                GameObject building = Instantiate(wallPrefabs[(wallDistance / 2 + previousSkyscraperIndex) % wallPrefabs.Count], new Vector3(0, 0, wallDistance - (gridHeight * tileSize / 2f) + tileSize * 5), Quaternion.identity);
+                building.transform.GetChild(0).GetComponent<Animation>().Play();
+                building.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetFloat("_RandomRowValue", Random.Range(0f, 1f));
             }
             
             GridTileStruct[] cityGridTileStructs = new GridTileStruct[AmountEntitiesOnOneTile];

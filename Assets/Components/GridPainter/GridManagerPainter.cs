@@ -28,7 +28,7 @@ public class GridManagerPainter : MonoBehaviour
     public int gridWidth = 50;
     public int gridHeight = 50;
     public float tileSize = 1;
-    [SerializeField] private GridObject gridObject;
+    [SerializeField] private TextAsset json;
     [SerializeField] private Material instanceMat;
     
     [Header("Misc")]
@@ -114,7 +114,7 @@ public class GridManagerPainter : MonoBehaviour
             }
         }
 
-        if (gridObject is null)
+        if (json is null)
         {
             Debug.LogError($"Grid Object is null!");
             
@@ -142,7 +142,7 @@ public class GridManagerPainter : MonoBehaviour
         }
         else
         {
-            gridObject.Load();
+            tileIDs = GridObject.Load(json);
             
             Vector2Int cachedIndex = new Vector2Int(0, 0);
             for (int x = 0; x < gridWidth; x++)
@@ -150,7 +150,7 @@ public class GridManagerPainter : MonoBehaviour
             for (int z = 0; z < AmountEntitiesOnOneTile; z++)
             {
                 int indexPosToIndex = GridHelper.IndexPosToIndex(new Vector2Int(x, y));
-                GridTileStruct tileIDStruct = gridObject.tiles[indexPosToIndex, z];
+                GridTileStruct tileIDStruct = tileIDs[indexPosToIndex, z];
             
                 cachedIndex.x = x;
                 cachedIndex.y = y;

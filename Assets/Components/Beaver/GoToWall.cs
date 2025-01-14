@@ -42,7 +42,7 @@ public class GoToWall : Conditional
                 if(newIndex >= gridInfo.Value.gridWidth * gridInfo.Value.gridHeight)
                     continue;
                 
-                if (dammArray.Value.dammArray[newIndex].amountBeavorsWorking < 3 && !dammArray.Value.dammArray[newIndex].buildDamm && !GridHelper.CheckIfTileMatches(newIndex, EntityTileID.DAMM))
+                if (dammArray.Value.dammArray[newIndex].amountBeavorsWorking < 3 && !dammArray.Value.dammArray[newIndex].buildDamm && !GridHelper.CheckIfTileMatches(newIndex, EntityTileID.DAMM) && !GridHelper.CheckIfTileMatches(newIndex, EntityTileID.TREE))
                 {
                     dammArray.Value.dammArray[newIndex].amountBeavorsWorking++;
                     targetPosition.Value = GridHelper.GetPosition(new Vector2Int(dammIndex, localIndex.y));

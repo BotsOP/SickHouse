@@ -2,40 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using JsonReader = Newtonsoft.Json.JsonReader;
-using JsonSerializer = Newtonsoft.Json.JsonSerializer;
-using JsonWriter = Newtonsoft.Json.JsonWriter;
 
 [Serializable]
 [CreateAssetMenu(fileName = "TileSettings", menuName = "Grid/Level")]
 public class GridObject : ScriptableObject
 {
-    public string fileName = "Level 1";
-    public GridTileStruct[,] tiles;
-    
-    public void Save()
+    public static void Save(GridTileStruct[,] tiles, string fileName)
     {
         string jsonArray = GridTileArrayConverter.Serialize(tiles);
-        // string jsonArray = JsonUtility.ToJson(new GridLevel(tiles), true);
-        string path = Path.Combine(Path.Combine(Application.dataPath, "SaveFiles"), fileName);
+        string path = Path.Combine(Path.Combine(Application.dataPath, "Resources"), fileName + ".json");
         File.WriteAllText(path, jsonArray);
         Debug.Log($"Successfully saved grid tiles {jsonArray}");
     }
 
-    public void Load()
+    public static GridTileStruct[,] Load(TextAsset json)
     {
-        string path = Path.Combine(Path.Combine(Application.dataPath, "SaveFiles"), fileName);
-
-        if (File.Exists(path))
-        {
-            string json = File.ReadAllText(path);
-            tiles = GridTileArrayConverter.Deserialize(json);
-            // tiles = JsonUtility.FromJson<GridLevel>(json).tiles;
-        }
-        else
-        {
-            Debug.LogWarning("Save file not found");
-        }
+        return GridTileArrayConverter.Deserialize(json);
     }
 }
 
@@ -94,9 +76,9 @@ public static class GridTileArrayConverter
         return JsonUtility.ToJson(wrapper);
     }
 
-    public static GridTileStruct[,] Deserialize(string json)
+    public static GridTileStruct[,] Deserialize(TextAsset json)
     {
-        var wrapper = JsonUtility.FromJson<FlatGridTileWrapper>(json);
+        var wrapper = JsonUtility.FromJson<FlatGridTileWrapper>(json.text);
 
         if (wrapper.flatGridTileID == null || wrapper.flatGridTileID.Length == 0)
             return new GridTileStruct[0, 0];
