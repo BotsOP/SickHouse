@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: ebe07ad879e4ad54e9636046b23a1ed6, type: 2}
+    - target: {fileID: -5754084199372789682, guid: 724a6229327114f4bb96ebda314fd63b, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 692141430750012862, guid: c372299a5ee40044b8fbd40bb2ac141e, type: 3}
     - target: {fileID: 919132149155446097, guid: 724a6229327114f4bb96ebda314fd63b, type: 3}
       propertyPath: m_Name
       value: Racoon

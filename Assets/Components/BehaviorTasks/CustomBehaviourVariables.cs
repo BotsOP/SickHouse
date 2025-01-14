@@ -5,16 +5,16 @@ using UnityEngine;
 [System.Serializable]
 public class GridInfoClass
 {
-    public TileID[] tilesFlattened;
+    public EntityTileID[] tilesFlattened;
     public List<List<Matrix4x4>> matricesList;
     public int gridWidth;
     public int gridHeight;
     public float tileSize;
 }
 [System.Serializable]
-public class GridInfo : SharedVariable<GridInfoClass>
+public class GridInfo : SharedVariable<GridManager>
 {
-    public static implicit operator GridInfo(GridInfoClass value) { return new GridInfo { Value = value }; }
+    public static implicit operator GridInfo(GridManager value) { return new GridInfo { Value = value }; }
 }
 
 [System.Serializable]

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ec335e6ce825b44b9fa02ca6fe6f734, type: 3}
+  m_Name: PavementTile
+  m_EditorClassIdentifier: 
+  order: 1
+  renderSettings:
+  - material: {fileID: 2100000, guid: d98a464f87afbbb4da1f6043e31ffab2, type: 2}
+    textures: []
+    mesh: {fileID: 7478812045110041891, guid: c4c2be3ea5b1f1047b7a484ea8daa18b, type: 3}
+  TileGameSettings:
+    appleCost: 0
+    selection: []
+    placementConstraints: []
+    placementRequirements: []

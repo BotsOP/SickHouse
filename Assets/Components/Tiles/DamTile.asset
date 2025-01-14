@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ec335e6ce825b44b9fa02ca6fe6f734, type: 3}
+  m_Name: DamTile
+  m_EditorClassIdentifier: 
+  order: 0
+  renderSettings:
+  - material: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
+    textures:
+    - textureName: _AlbedoMap
+      texture: {fileID: 2800000, guid: d4ddd6ce606434848bddd7014e59d8bd, type: 3}
+    mesh: {fileID: 3323506845839024359, guid: 8a921c13811f5cd47996578282b45bcd, type: 3}
+  TileGameSettings:
+    appleCost: 0
+    selection: []
+    placementConstraints: []
+    placementRequirements: []

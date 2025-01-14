@@ -1,64 +1,105 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Managers;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using EventType = Managers.EventType;
 
 public class ScoreTracker : MonoBehaviour
 {
-    public GridManager gridManager;
-    public GameObject scoreUI;
-    public GameObject newHigh;
-    public Text score;
-    public Text highScore;
+    [SerializeField] private LeaderboardObject leaderboardObject;
+    [SerializeField] private GameObject scoreUI;
+    [SerializeField] private GameObject gameUI;
+    [SerializeField] private TMP_Text char1;
+    [SerializeField] private TMP_Text char2;
+    [SerializeField] private TMP_Text char3;
+    [SerializeField] private TMP_Text char4;
+    [SerializeField] private TMP_Text char5;
+    [SerializeField] private TMP_Text saveButtonText;
+    [SerializeField] private Text score;
+    [SerializeField] private TMP_Text leaderboardEntry;
+    [SerializeField] private RectTransform leaderboardContent;
+    [SerializeField] private Text highScore;
+    [SerializeField] private Text newRecord;
+    private List<LeaderboardRanking> leaderboard;
 
-    public float timeAlive;
-    bool gameHasBegun;
-    float finalScore = 0;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void OnDisable()
     {
-        Time.timeScale = 1.0f;
-        finalScore = 0;
-        newHigh.SetActive(false);
-        scoreUI.SetActive(false);
+        EventSystem.Unsubscribe(EventType.GAME_OVER, GameFinished);
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnEnable()
     {
-        if (gridManager.wallDistance > 0)
+        UpdateSaveButton(0);
+        EventSystem.Subscribe(EventType.GAME_OVER, GameFinished);
+        Time.timeScale = 1.0f;
+        // newHigh.SetActive(false);
+        // scoreUI.SetActive(false);
+        if (leaderboardObject.Load())
         {
-            //Start timer
-            timeAlive += Time.deltaTime;
-            gameHasBegun = true;
+            Debug.Log($"loaded leaderboard");
+            leaderboard = leaderboardObject.leaderboard.OrderByDescending(x => x.playerTime).ToList();
+            InstantiateAllLeaderboardEntries();
+            return;
         }
-        else
-        {
-            //This little situation is when the  game ends!
-            //Stop timer and if game has started, save the score
-            if (gameHasBegun)
-            {
-                //Save the score and wipe the timer
-                if (finalScore == 0)
-                {
-                    finalScore = timeAlive;
-                    scoreUI.SetActive(true);
-                    score.text = finalScore.ToString();
-                    highScore.text = PlayerPrefs.GetFloat("HighScore").ToString();
 
-                    if (PlayerPrefs.GetFloat("HighScore") < finalScore)
-                    {
-                        newHigh.SetActive(true);
-                        PlayerPrefs.GetFloat("HighScore", finalScore);
-                        PlayerPrefs.Save();
-                    }
-                    Time.timeScale = 0f;
-                }
-                timeAlive = 0;                
-            }
-            else
-            {
-                //If the game hasn't started yet
-                timeAlive = 0;
-            }
+        leaderboard = new List<LeaderboardRanking>();
+    }
+
+    private void InstantiateAllLeaderboardEntries()
+    {
+        for (int i = 0; i < leaderboardContent.childCount; i++)
+        {
+            Destroy(leaderboardContent.GetChild(i).GetComponent<TMP_Text>());
+            Destroy(leaderboardContent.GetChild(i).gameObject);
         }
+        for (int i = 0; i < leaderboard.Count; i++)
+        {
+            Instantiate(leaderboardEntry, leaderboardContent).text =
+                leaderboard[i].playerName + " - " + leaderboard[i].playerTime.ToString("#.##");
+        }
+    }
+
+    private void GameFinished()
+    {
+        Time.timeScale = 0f;
+        float finalScore = Time.timeSinceLevelLoad;
+        scoreUI.SetActive(true);
+        gameUI.SetActive(false);
+        score.text = finalScore.ToString();
+        highScore.text = leaderboard[0].playerTime.ToString("#.##");
+
+        if (leaderboard[0].playerTime < finalScore)
+        {
+            newRecord.gameObject.SetActive(true);
+        }
+    }
+
+    public void SaveScore()
+    {
+        leaderboard.Add(new LeaderboardRanking(GetPlayerName(), Time.timeSinceLevelLoad));
+        leaderboard = leaderboard.OrderByDescending(x => x.playerTime).ToList();
+        leaderboardObject.leaderboard = leaderboard;
+        leaderboardObject.Save();
+        InstantiateAllLeaderboardEntries();
+    }
+
+    public void UpdateSaveButton(int _)
+    {
+        saveButtonText.text = "Save score as: '" + GetPlayerName() + "'";
+    }
+    
+
+    private string GetPlayerName()
+    {
+        return char1.text + char2.text + char3.text + char4.text + char5.text;
+    }
+
+    public void BackToMainMenu()
+    {
+        SceneManager.LoadScene("MenuScene");
     }
 }

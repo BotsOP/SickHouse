@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ec335e6ce825b44b9fa02ca6fe6f734, type: 3}
+  m_Name: WaterTile
+  m_EditorClassIdentifier: 
+  order: 1
+  renderSettings:
+  - material: {fileID: 2100000, guid: 174e33faac3287f47b612646c562289b, type: 2}
+    textures: []
+    mesh: {fileID: 4952510593234050921, guid: 6c38ceda925ab4f48b46a344c2dbb30f, type: 3}
+  TileGameSettings:
+    appleCost: 0
+    selection: []
+    placementConstraints:
+    - tileIDs: 07000000
+      selectionBoxes:
+      - position: {x: 0, y: 0}
+        size: {x: 1, y: 1}
+    placementRequirements: []
