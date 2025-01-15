@@ -1,6 +1,7 @@
 using System;
 using Managers;
 using UnityEngine;
+using UnityEngine.VFX;
 using EventType = Managers.EventType;
 using Random = UnityEngine.Random;
 
@@ -28,6 +29,7 @@ public class Bulldozer : MonoBehaviour
     [SerializeField] private GameObject bulldozerPrefab;
     [SerializeField] private AudioClip megaDeath;
     [SerializeField] private AudioClip start;
+    [SerializeField] private VisualEffect vfxGraph;
 
     private GameObject bulldozer;
     private bool destroyed;
@@ -49,6 +51,13 @@ public class Bulldozer : MonoBehaviour
         {
             float xPos = Mathf.RoundToInt(Random.Range(-25, 25)) + 0.5f;
             bulldozer = Instantiate(bulldozerPrefab, new Vector3(xPos, 0, gridManager.wallDistance - 25 + 4), Quaternion.identity);
+
+            vfxGraph = bulldozer.GetComponentInChildren<VisualEffect>();
+            if (vfxGraph == null)
+            {
+                Debug.LogError("VFX Graph not found as a child of the bulldozer prefab.");
+            }
+
             SoundManager.instance.PlaySoundClip(start, transform, .4f);
             timeWhenToSpawn = float.MaxValue;
         }
@@ -99,6 +108,14 @@ public class Bulldozer : MonoBehaviour
     private void TookDamage()
     {
         health -= 1;
+
+        if (vfxGraph != null)
+        {
+            int currentTimesHit = vfxGraph.GetInt("TimesHit"); 
+            vfxGraph.SetInt("TimesHit", currentTimesHit + 1); 
+            vfxGraph.SendEvent("OnDamage");
+        }
+
         if (health <= 0)
         {
             destroyed = true;
