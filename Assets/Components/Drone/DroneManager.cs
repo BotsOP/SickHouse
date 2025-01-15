@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEditor;
 using EventType = Managers.EventType;
 using Random = UnityEngine.Random;
+using Unity.VisualScripting;
 
 /*
  * Spawns randomly from the city and flies south. Clicking on it will cause it to fall down and permanently destroy a + shaped set of 5 tiles where it lands. It gives you a considerable random amount of apples when destroyed.
@@ -89,6 +90,7 @@ public class DroneManager : MonoBehaviour
                 position.z -= 2;
                 EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
                 deadDrones.Remove(drone);
+                DroneExplodeEffect(drone);
                 Destroy(drone);
                 i--;
             }
@@ -103,7 +105,34 @@ public class DroneManager : MonoBehaviour
             return;
         }
         deadDrones.Add(drone);
+        DroneFallEffect(drone);
         Destroy(drone.GetComponent<BoxCollider>());
         EventSystem<int, Vector3>.RaiseEvent(EventType.GAIN_APPLES, amountApplesUponDeath, drone.transform.position);
+    }
+
+    private void DroneFallEffect(GameObject drone)
+    {
+        DroneAnimatorBehaviour component = drone.GetComponent<DroneAnimatorBehaviour>();
+        if (component != null)
+        {
+            component.DoFall();
+        }
+        else
+        {
+            Debug.LogWarning("no component found");
+        }
+    }
+
+    private void DroneExplodeEffect(GameObject drone)
+    {
+        DroneAnimatorBehaviour component = drone.GetComponent<DroneAnimatorBehaviour>();
+        if (component != null)
+        {
+            component.DoExplode();
+        }
+        else
+        {
+            Debug.LogWarning("no component found");
+        }
     }
 }
