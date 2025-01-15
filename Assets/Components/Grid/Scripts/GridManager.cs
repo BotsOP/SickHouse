@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BehaviorDesigner.Runtime;
@@ -126,6 +127,8 @@ public class GridManager : MonoBehaviour
     private List<int> tileIDToMatrixIndex;
     private int cachedIndex = -1;
     private GridTileStruct[] cachedEntityTileID;
+    private bool gameOver;
+    private IEnumerator coroutine;
 
     private void AddMatrix(GridTileStruct gridTileStruct, Matrix4x4 matrix)
     {
@@ -157,6 +160,15 @@ public class GridManager : MonoBehaviour
     {
         tiles = new TileWrapper[AmountTileIDs];
         tileIDs = new GridTileStruct[gridWidth * gridHeight, AmountEntitiesOnOneTile];
+        
+        tiles[(int)EntityTileID.TREE] = treeTile;
+        tiles[(int)EntityTileID.DAMM] = damTile;
+        tiles[(int)EntityTileID.CLIFF] = cliffTile;
+        tiles[(int)EntityTileID.DIRT] = dirtTile;
+        tiles[(int)EntityTileID.GRASS] = grassTile;
+        tiles[(int)EntityTileID.WATER] = waterTile;
+        tiles[(int)EntityTileID.PAVEMENT] = pavementTile;
+        tiles[(int)EntityTileID.EMPTY] = emptyTile;
 
         GridHelper.gridWidth = gridWidth;
         GridHelper.gridHeight = gridHeight;
@@ -192,15 +204,6 @@ public class GridManager : MonoBehaviour
         
         // Vector3 middleGrid = new Vector3(gridWidth / 2f, 1, gridHeight / 2f);
         // bounds = new Bounds(new Vector3(gridWidth / 2f, 0, gridHeight / 2f), middleGrid * 1000);
-        
-        tiles[(int)EntityTileID.TREE] = treeTile;
-        tiles[(int)EntityTileID.DAMM] = damTile;
-        tiles[(int)EntityTileID.CLIFF] = cliffTile;
-        tiles[(int)EntityTileID.DIRT] = dirtTile;
-        tiles[(int)EntityTileID.GRASS] = grassTile;
-        tiles[(int)EntityTileID.WATER] = waterTile;
-        tiles[(int)EntityTileID.PAVEMENT] = pavementTile;
-        tiles[(int)EntityTileID.EMPTY] = emptyTile;
 
         matricesList = new List<List<Matrix4x4>>(tiles.Length);
         int counter = 0;
@@ -522,6 +525,11 @@ public class GridManager : MonoBehaviour
             }
         }
 
+        if (gameOver)
+        {
+            return;
+        }
+
         UpdateApples();
         
         UpdateWall();
@@ -612,9 +620,11 @@ public class GridManager : MonoBehaviour
             lastTimeWallCycle = Time.time;
             wallDistance--;
 
-            if (wallDistance <= 0)
+
+            if (wallDistance <= 0 && !gameOver)
             {
-                EventSystem.RaiseEvent(EventType.GAME_OVER);
+                // EventSystem.RaiseEvent(EventType.GAME_OVER);
+                GameOver();
                 return;
             }
             
@@ -622,7 +632,8 @@ public class GridManager : MonoBehaviour
             {
                 int skyscraperIndex = wallDistance / 2 % wallPrefabs.Count;
                 previousSkyscraperIndex = skyscraperIndex;
-                GameObject building = Instantiate(wallPrefabs[(wallDistance / 2 + previousSkyscraperIndex) % wallPrefabs.Count], new Vector3(0, 0, wallDistance - (gridHeight * tileSize / 2f) + tileSize * 5), Quaternion.identity);
+                GameObject building = Instantiate(wallPrefabs[Random.Range(0, wallPrefabs.Count)], new Vector3(0, 0, wallDistance - (gridHeight * tileSize / 2f) + tileSize * 5), Quaternion.identity);
+                // GameObject building = Instantiate(wallPrefabs[(wallDistance / 2 + previousSkyscraperIndex) % wallPrefabs.Count], new Vector3(0, 0, wallDistance - (gridHeight * tileSize / 2f) + tileSize * 5), Quaternion.identity);
                 building.transform.GetChild(0).GetComponent<Animation>().Play();
                 building.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetFloat("_RandomRowValue", Random.Range(0f, 1f));
 
@@ -671,6 +682,22 @@ public class GridManager : MonoBehaviour
     private void collectedAppleFromTree(int treeIndex)
     {
         appleTrees[treeIndex]--;
+    }
+
+    private void GameOver()
+    {
+        if (coroutine == null)
+        {
+            coroutine = GameOverEvents(0.5f);
+            StartCoroutine(coroutine);
+        }
+    }
+
+    IEnumerator GameOverEvents(float time)
+    {
+        yield return new WaitForSeconds(time);
+        gameOver = true;
+        Debug.Log($"game over");
     }
     
     private void GetAreaSelection(EntityTileID entityTileID, Vector2Int posIndex, Action<int> callback)

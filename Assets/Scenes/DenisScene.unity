@@ -474,6 +474,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &219451428
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 219451429}
+  - component: {fileID: 219451430}
+  m_Layer: 0
+  m_Name: SoundManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &219451429
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219451428}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -50.009834, y: -618.1965, z: 748.7971}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &219451430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219451428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a3a3c7dfbd60fc4ea8aa7f8e0a5f2ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundObject: {fileID: 1631328359006506132, guid: e19feadf04b96544facb3225b4acc01b, type: 3}
 --- !u!1 &297416668
 GameObject:
   m_ObjectHideFlags: 0
@@ -968,6 +1013,8 @@ MonoBehaviour:
   health: 10
   amountApples: 50
   bulldozerPrefab: {fileID: 216843266694517702, guid: af540539dfcb5b941a2ad871b4b959dd, type: 3}
+  megaDeath: {fileID: 0}
+  start: {fileID: 0}
 --- !u!4 &374884305
 Transform:
   m_ObjectHideFlags: 0
@@ -1900,12 +1947,24 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2775209671943112328, guid: 7671fe9c4f9025d4c9b5e2a8c4d2aa11, type: 3}
+      propertyPath: zoomPos01
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2775209671943112328, guid: 7671fe9c4f9025d4c9b5e2a8c4d2aa11, type: 3}
+      propertyPath: mainCamera
+      value: 
+      objectReference: {fileID: 691913439}
+    - target: {fileID: 2775209671943112328, guid: 7671fe9c4f9025d4c9b5e2a8c4d2aa11, type: 3}
       propertyPath: panningSpeed
       value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 2775209671943112328, guid: 7671fe9c4f9025d4c9b5e2a8c4d2aa11, type: 3}
       propertyPath: maxZoomDistance
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2775209671943112328, guid: 7671fe9c4f9025d4c9b5e2a8c4d2aa11, type: 3}
+      propertyPath: gridLayer.m_Bits
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2851906993744850323, guid: 7671fe9c4f9025d4c9b5e2a8c4d2aa11, type: 3}
       propertyPath: m_Name
@@ -3499,7 +3558,7 @@ MonoBehaviour:
   racoons: []
   beavers: []
   level: {fileID: 4900000, guid: f544c2b241e45bb46853413e7f6b0ceb, type: 3}
-  amountApples: 99999
+  amountApples: 1
   constrainedColor: {r: 1, g: 0, b: 0, a: 1}
   placeableColor: {r: 0.4206059, g: 1, b: 0, a: 1}
   requirementColor: {r: 0.161767, g: 0, b: 1, a: 1}
@@ -3510,7 +3569,7 @@ MonoBehaviour:
   maxAmountApplesProduced: 2
   applePrefab: {fileID: 7945937796656539529, guid: 429d82b06bd47ba47bad0e3d1eda9d0e, type: 3}
   treeDestructionEffect: {fileID: 1165714950}
-  wallCycleInSeconds: 999
+  wallCycleInSeconds: 0.1
   wallPrefabs:
   - {fileID: 6922385585974127097, guid: a98006a2a83a13d499cadc8f9f7bd1bb, type: 3}
   - {fileID: 6762283960194072936, guid: 950faa8d497418745866505d4989600c, type: 3}
@@ -3535,6 +3594,16 @@ MonoBehaviour:
   damTile: {fileID: 11400000, guid: adbea8d54dc096c4d9a89d63720b9f0b, type: 2}
   cliffTile: {fileID: 11400000, guid: d8273c19e0c55a94aa346ab9608c30cc, type: 2}
   emptyTile: {fileID: 11400000, guid: 51f04e222197f414182eddf4da3f35f9, type: 2}
+  tree: {fileID: 0}
+  water: {fileID: 0}
+  beaver: {fileID: 0}
+  raccoon: {fileID: 0}
+  buildings: {fileID: 0}
+  dam: {fileID: 0}
+  treeBreak: {fileID: 0}
+  waterBreak: {fileID: 0}
+  damBreak: {fileID: 0}
+  damStress: {fileID: 0}
 --- !u!4 &1474309343
 Transform:
   m_ObjectHideFlags: 0
@@ -5106,6 +5175,7 @@ MonoBehaviour:
   deadDroneSpeedX: 1
   deadDroneSpeedY: 10
   dronePrefab: {fileID: 5575191050971733678, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
+  droneDeath: {fileID: 0}
 --- !u!4 &2051860470
 Transform:
   m_ObjectHideFlags: 0
@@ -5311,3 +5381,4 @@ SceneRoots:
   - {fileID: 1165714951}
   - {fileID: 2051860470}
   - {fileID: 374884305}
+  - {fileID: 219451429}

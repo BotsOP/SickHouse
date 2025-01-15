@@ -14,8 +14,12 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private float minZoomDistance = 5;
     [SerializeField] private float maxZoomDistance = 30;
     [SerializeField] private float zoomSmoothing = 30;
-    [SerializeField] private float zoomPos;
+    [SerializeField] private float zoomPos01;
+    [SerializeField] private LayerMask gridLayer;
+    [SerializeField] private Camera mainCamera;
     private float zoomPosCached;
+    private Vector3 cachedPos;
+    
 
     private Vector2 MouseAxis
     {
@@ -38,7 +42,6 @@ public class CameraMovement : MonoBehaviour
             return 0;
         }
     }
-
     private void Update()
     {
         Move();
@@ -49,26 +52,31 @@ public class CameraMovement : MonoBehaviour
 
     private void Move()
     {
-        // Vector3 desiredMove = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-        //
-        // desiredMove *= keyboardMovementSpeed;
-        // desiredMove *= Time.deltaTime;
-        // desiredMove = Quaternion.Euler(new Vector3(0f, transform.eulerAngles.y, 0f)) * desiredMove;
-        // desiredMove = transform.InverseTransformDirection(desiredMove);
-        //
-        // transform.Translate(desiredMove, Space.Self);
+        Vector3 desiredMove = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        
+        desiredMove *= keyboardMovementSpeed;
+        desiredMove *= Time.deltaTime;
+        desiredMove = Quaternion.Euler(new Vector3(0f, transform.eulerAngles.y, 0f)) * desiredMove;
+        desiredMove = transform.InverseTransformDirection(desiredMove);
+        
+        transform.Translate(desiredMove, Space.Self);
 
-        Vector3 desiredMove;
-        if (Input.GetKey(KeyCode.Mouse1) && MouseAxis != Vector2.zero)
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, gridLayer))
         {
-            desiredMove = new Vector3(-MouseAxis.x, 0, -MouseAxis.y);
-
-            desiredMove *= panningSpeed;
-            desiredMove *= Time.deltaTime;
-            desiredMove = Quaternion.Euler(new Vector3(0f, transform.eulerAngles.y, 0f)) * desiredMove;
-            desiredMove = transform.InverseTransformDirection(desiredMove);
-
-            transform.Translate(desiredMove, Space.Self);
+            return;
+        }
+        if (Input.GetMouseButtonDown(1))
+        {
+            Debug.Log($"down");
+            cachedPos = hit.point;
+        }
+        if (Input.GetMouseButton(1))
+        {
+            desiredMove = (cachedPos - hit.point) * (panningSpeed * Time.deltaTime);
+            Debug.Log($"{desiredMove}  {cachedPos}");
+            transform.Translate(desiredMove);
+            // cachedPos = hit.point;
         }
     }
 
@@ -83,20 +91,20 @@ public class CameraMovement : MonoBehaviour
     private float timeCached;
     private void HeightCalculation()
     {
-        zoomPos += Input.mouseScrollDelta.y * Time.deltaTime * scrollWheelZoomingSensitivity;
+        zoomPos01 += Input.mouseScrollDelta.y * Time.deltaTime * scrollWheelZoomingSensitivity;
         if (Input.mouseScrollDelta.y != 0)
         {
             timeCached = 0;
         }
-        zoomPos = Mathf.Clamp01(zoomPos);
+        zoomPos01 = Mathf.Clamp01(zoomPos01);
         timeCached = Mathf.Clamp01(timeCached);
-        zoomPosCached = Mathf.Lerp(zoomPosCached, zoomPos, timeCached);
+        zoomPosCached = Mathf.Lerp(zoomPosCached, zoomPos01, timeCached);
 
         float targetHeight = Mathf.Lerp(minZoomDistance, maxZoomDistance, zoomPosCached);
         Vector3 cameraDist = Vector3.Normalize(cameraTransform.localPosition) * targetHeight;
 
         cameraTransform.localPosition = cameraDist;
-        timeCached += Time.deltaTime * (Mathf.Abs(zoomPosCached - zoomPos)) * zoomSmoothing;
+        timeCached += Time.deltaTime * (Mathf.Abs(zoomPosCached - zoomPos01)) * zoomSmoothing;
     }
     
     private void LimitPosition()

@@ -15,6 +15,12 @@ public class SoundManager : MonoBehaviour
 
     public void PlaySoundClip(AudioClip clip, Transform spawnTransform, float volume)
     {
+        if (clip == null)
+        {
+            Debug.LogWarning($"{spawnTransform.gameObject.name} audio clip is null");
+            return;
+        }
+        
         AudioSource audiosource = Instantiate(soundObject, spawnTransform.position, Quaternion.identity);
         audiosource.clip = clip;
         audiosource.volume = volume;
