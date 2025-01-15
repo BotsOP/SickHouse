@@ -266,6 +266,7 @@ GameObject:
   - component: {fileID: 8370731855337074726}
   - component: {fileID: 3786711791010839830}
   - component: {fileID: 3040715539900552776}
+  - component: {fileID: 790762042488310080}
   m_Layer: 5
   m_Name: Beaver
   m_TagString: Untagged
@@ -385,6 +386,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 790762042488310080}
+        m_TargetAssemblyTypeName: InstantSound, Assembly-CSharp
+        m_MethodName: TriggerSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &3786711791010839830
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -444,6 +457,20 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &790762042488310080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 395832642309948886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4193f64b5a6a07e4b96012f9b85fc4dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dontPlayOnStart: 1
+  engines: {fileID: 8300000, guid: 2c782116a5b19e1469909ec121d28412, type: 3}
 --- !u!1 &1707201116180640209
 GameObject:
   m_ObjectHideFlags: 0
@@ -946,6 +973,7 @@ GameObject:
   - component: {fileID: 8864501305050363072}
   - component: {fileID: 2981867670706919735}
   - component: {fileID: 8774551535844002066}
+  - component: {fileID: 8521215347635335510}
   m_Layer: 5
   m_Name: Hole
   m_TagString: Untagged
@@ -1048,6 +1076,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 8521215347635335510}
+        m_TargetAssemblyTypeName: InstantSound, Assembly-CSharp
+        m_MethodName: TriggerSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &8864501305050363072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1134,6 +1174,20 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &8521215347635335510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2987767039268554385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4193f64b5a6a07e4b96012f9b85fc4dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dontPlayOnStart: 1
+  engines: {fileID: 8300000, guid: 2c782116a5b19e1469909ec121d28412, type: 3}
 --- !u!1 &2988239902911712035
 GameObject:
   m_ObjectHideFlags: 0
@@ -1224,6 +1278,7 @@ GameObject:
   - component: {fileID: 4405800603418621052}
   - component: {fileID: 2991791919983864180}
   - component: {fileID: 8721044029335678965}
+  - component: {fileID: 8665810963345055352}
   m_Layer: 5
   m_Name: Raccoon
   m_TagString: Untagged
@@ -1343,6 +1398,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 8665810963345055352}
+        m_TargetAssemblyTypeName: InstantSound, Assembly-CSharp
+        m_MethodName: TriggerSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2991791919983864180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1402,6 +1469,20 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &8665810963345055352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3543050258445506155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4193f64b5a6a07e4b96012f9b85fc4dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dontPlayOnStart: 1
+  engines: {fileID: 8300000, guid: 2c782116a5b19e1469909ec121d28412, type: 3}
 --- !u!1 &4230668309733088912
 GameObject:
   m_ObjectHideFlags: 0
@@ -1537,6 +1618,7 @@ MonoBehaviour:
   - {fileID: 3412001802277135039}
   selectedColor: {r: 1, g: 1, b: 1, a: 1}
   notSelectedColor: {r: 0.31132078, g: 0.31132078, b: 0.31132078, a: 1}
+  applesUp: {fileID: 8300000, guid: 6032a1e4e6dcc114891e33c15b303355, type: 3}
 --- !u!1 &5103996230577114894
 GameObject:
   m_ObjectHideFlags: 0
@@ -1627,6 +1709,7 @@ GameObject:
   - component: {fileID: 2477369390916837802}
   - component: {fileID: 8727273670146510858}
   - component: {fileID: 7853194131780097107}
+  - component: {fileID: 1097956971328380797}
   m_Layer: 5
   m_Name: Tree
   m_TagString: Untagged
@@ -1729,6 +1812,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1097956971328380797}
+        m_TargetAssemblyTypeName: InstantSound, Assembly-CSharp
+        m_MethodName: TriggerSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2477369390916837802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1815,6 +1910,20 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &1097956971328380797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5565509401141649984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4193f64b5a6a07e4b96012f9b85fc4dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dontPlayOnStart: 1
+  engines: {fileID: 8300000, guid: 2c782116a5b19e1469909ec121d28412, type: 3}
 --- !u!1 &5803587785201167040
 GameObject:
   m_ObjectHideFlags: 0
@@ -2884,6 +2993,7 @@ GameObject:
   - component: {fileID: 3412001802277135039}
   - component: {fileID: 6870157292607890478}
   - component: {fileID: 417021619730054964}
+  - component: {fileID: 4190151310354915461}
   m_Layer: 5
   m_Name: Button (2)
   m_TagString: Untagged
@@ -2986,6 +3096,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 4190151310354915461}
+        m_TargetAssemblyTypeName: InstantSound, Assembly-CSharp
+        m_MethodName: TriggerSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &3412001802277135039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3072,3 +3194,17 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &4190151310354915461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8727226787479545804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4193f64b5a6a07e4b96012f9b85fc4dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dontPlayOnStart: 1
+  engines: {fileID: 8300000, guid: 2c782116a5b19e1469909ec121d28412, type: 3}

@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEditor;
 using EventType = Managers.EventType;
 using Random = UnityEngine.Random;
-using Unity.VisualScripting;
 
 /*
  * Spawns randomly from the city and flies south. Clicking on it will cause it to fall down and permanently destroy a + shaped set of 5 tiles where it lands. It gives you a considerable random amount of apples when destroyed.
@@ -27,7 +26,8 @@ public class DroneManager : MonoBehaviour
     [SerializeField] private float deadDroneSpeedX;
     [SerializeField] private float deadDroneSpeedY;
     [SerializeField] private GameObject dronePrefab;
-    
+    [SerializeField] private AudioClip droneDeath;
+
     private List<GameObject> drones = new List<GameObject>();
     private List<GameObject> deadDrones = new List<GameObject>();
     private float timeBetweenSpawns;
@@ -106,6 +106,7 @@ public class DroneManager : MonoBehaviour
         }
         deadDrones.Add(drone);
         DroneFallEffect(drone);
+        SoundManager.instance.PlaySoundClip(droneDeath, transform, 1f);
         Destroy(drone.GetComponent<BoxCollider>());
         EventSystem<int, Vector3>.RaiseEvent(EventType.GAIN_APPLES, amountApplesUponDeath, drone.transform.position);
     }

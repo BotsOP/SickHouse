@@ -26,7 +26,9 @@ public class Bulldozer : MonoBehaviour
     [SerializeField] private int health = 10;
     [SerializeField] private float amountApples = 50;
     [SerializeField] private GameObject bulldozerPrefab;
-    
+    [SerializeField] private AudioClip megaDeath;
+    [SerializeField] private AudioClip start;
+
     private GameObject bulldozer;
     private bool destroyed;
     private int currentZPos;
@@ -47,6 +49,7 @@ public class Bulldozer : MonoBehaviour
         {
             float xPos = Mathf.RoundToInt(Random.Range(-25, 25)) + 0.5f;
             bulldozer = Instantiate(bulldozerPrefab, new Vector3(xPos, 0, gridManager.wallDistance - 25 + 4), Quaternion.identity);
+            SoundManager.instance.PlaySoundClip(start, transform, .4f);
             timeWhenToSpawn = float.MaxValue;
         }
 
@@ -99,6 +102,10 @@ public class Bulldozer : MonoBehaviour
         if (health <= 0)
         {
             destroyed = true;
+        }
+        else
+        {
+            SoundManager.instance.PlaySoundClip(megaDeath, transform, .5f);
         }
     }
 }
