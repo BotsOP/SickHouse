@@ -2398,6 +2398,16 @@ MonoBehaviour:
   damTile: {fileID: 11400000, guid: adbea8d54dc096c4d9a89d63720b9f0b, type: 2}
   cliffTile: {fileID: 11400000, guid: d8273c19e0c55a94aa346ab9608c30cc, type: 2}
   emptyTile: {fileID: 11400000, guid: 51f04e222197f414182eddf4da3f35f9, type: 2}
+  tree: {fileID: 0}
+  water: {fileID: 0}
+  beaver: {fileID: 0}
+  raccoon: {fileID: 0}
+  buildings: {fileID: 0}
+  dam: {fileID: 0}
+  treeBreak: {fileID: 0}
+  waterBreak: {fileID: 0}
+  damBreak: {fileID: 0}
+  damStress: {fileID: 0}
 --- !u!4 &777743095
 Transform:
   m_ObjectHideFlags: 0
@@ -4554,8 +4564,9 @@ MonoBehaviour:
   amountApplesUponDeath: 10
   speed: 5
   deadDroneSpeedX: 2
-  deadDroneSpeedY: 12
+  deadDroneSpeedY: 8
   dronePrefab: {fileID: 5575191050971733678, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
+  droneDeath: {fileID: 0}
 --- !u!4 &1768142381
 Transform:
   m_ObjectHideFlags: 0
@@ -5344,6 +5355,10 @@ PrefabInstance:
       propertyPath: bulldozerLayer.m_Bits
       value: 128
       objectReference: {fileID: 0}
+    - target: {fileID: 2775209671943112328, guid: 7671fe9c4f9025d4c9b5e2a8c4d2aa11, type: 3}
+      propertyPath: mainCamera
+      value: 
+      objectReference: {fileID: 1310180940}
     - target: {fileID: 2851906993744850323, guid: 7671fe9c4f9025d4c9b5e2a8c4d2aa11, type: 3}
       propertyPath: m_Name
       value: RTS_Camera
