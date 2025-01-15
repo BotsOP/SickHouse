@@ -49,7 +49,7 @@ public class Tutorial : MonoBehaviour
     {
         EventSystem<EntityTileID>.Unsubscribe(EventType.CHANGED_TILE, PlacedTile);
     }
-    private void Awake()
+    private void Start()
     {
         gridManager.wallCycleInSeconds = float.MaxValue;
         EventSystem<EntityTileID>.Subscribe(EventType.CHANGED_TILE, PlacedTile);
