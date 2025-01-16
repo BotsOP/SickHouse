@@ -6,6 +6,7 @@ using Managers;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
 using EventType = Managers.EventType;
 using Random = UnityEngine.Random;
 
@@ -29,7 +30,6 @@ public class GridManagerPainter : MonoBehaviour
     public int gridHeight = 50;
     public float tileSize = 1;
     [SerializeField] private TextAsset json;
-    [SerializeField] private Material instanceMat;
     
     [Header("Misc")]
     [SerializeField] private EntityTileID startFillEntityTileID;
@@ -73,6 +73,9 @@ public class GridManagerPainter : MonoBehaviour
 
     private void Awake()
     {
+        if(gameObject.name == "Dummy object for fetching default variable values for vInspector's resettable variables feature")
+            return;
+        
         tiles = new TileWrapper[AmountTileIDs];
         tileIDs = new GridTileStruct[gridWidth * gridHeight, AmountEntitiesOnOneTile];
         
@@ -82,10 +85,10 @@ public class GridManagerPainter : MonoBehaviour
         gridSelectionBufferArray = new Vector4[gridWidth * gridHeight];
         tileIDToMatrixIndex = new List<int>();
         cachedEntityTileID = new GridTileStruct[AmountEntitiesOnOneTile];
-
-        // Vector3 middleGrid = new Vector3(gridWidth / 2f, 1, gridHeight / 2f);
-        // bounds = new Bounds(new Vector3(gridWidth / 2f, 0, gridHeight / 2f), middleGrid * 1000);
         
+        Array.Fill(gridSelectionBufferArray, Vector4.one);
+        gridSelectionBuffer.SetData(gridSelectionBufferArray);
+
         tiles[(int)EntityTileID.TREE] = treeTile;
         tiles[(int)EntityTileID.DAMM] = damTile;
         tiles[(int)EntityTileID.CLIFF] = cliffTile;
@@ -95,7 +98,6 @@ public class GridManagerPainter : MonoBehaviour
         tiles[(int)EntityTileID.PAVEMENT] = pavementTile;
         tiles[(int)EntityTileID.EMPTY] = emptyTile;
 
-        Debug.Log($"{gameObject.name}");
         matricesList = new List<List<Matrix4x4>>(tiles.Length);
         int counter = 0;
         for (int i = 0; i < tiles.Length; i++)
@@ -111,13 +113,20 @@ public class GridManagerPainter : MonoBehaviour
         if (json is null)
         {
             Debug.LogError($"Grid Object is null!");
+            return;
+        }
+        
+
+        if (json is null)
+        {
+            Debug.LogError($"Grid Object is null!");
             
             Vector2Int cachedIndex = new Vector2Int(0, 0);
             for (int x = 0; x < gridWidth; x++)
             for (int y = 0; y < gridHeight; y++)
             for (int z = 0; z < AmountEntitiesOnOneTile; z++)
             {
-                int indexPosToIndex = GridManager.instance.IndexPosToIndex(new Vector2Int(x, y));
+                int indexPosToIndex = IndexPosToIndex(new Vector2Int(x, y));
                 GridTileStruct tileIDStruct = new GridTileStruct(EntityTileID.EMPTY, 0);
                 if (z == tiles[(int)startFillEntityTileID].order)
                 {
@@ -126,7 +135,7 @@ public class GridManagerPainter : MonoBehaviour
             
                 cachedIndex.x = x;
                 cachedIndex.y = y;
-                Matrix4x4 matrix4X4 = GridManager.instance.IndexToMatrix4x4(cachedIndex);
+                Matrix4x4 matrix4X4 = IndexToMatrix4x4(cachedIndex);
                 tileIDs[indexPosToIndex, z] = tileIDStruct;
             
                 if(tileIDStruct.tileID == 0)
@@ -143,22 +152,60 @@ public class GridManagerPainter : MonoBehaviour
             for (int y = 0; y < gridHeight; y++)
             for (int z = 0; z < AmountEntitiesOnOneTile; z++)
             {
-                int indexPosToIndex = GridManager.instance.IndexPosToIndex(new Vector2Int(x, y));
+                int indexPosToIndex = IndexPosToIndex(new Vector2Int(x, y));
                 GridTileStruct tileIDStruct = tileIDs[indexPosToIndex, z];
-            
+                
                 cachedIndex.x = x;
                 cachedIndex.y = y;
-                Matrix4x4 matrix4X4 = GridManager.instance.IndexToMatrix4x4(cachedIndex);
+                Matrix4x4 matrix4X4 = IndexToMatrix4x4(cachedIndex);
                 tileIDs[indexPosToIndex, z] = tileIDStruct;
-            
-                if(tileIDStruct.tileID == 0)
+                
+                if(tileIDStruct.tileID == EntityTileID.EMPTY)
                     continue;
+                
                 AddMatrix(tileIDStruct, matrix4X4);
             }
+
+            Array.Fill(gridSelectionBufferArray, Vector4.one);
+            gridSelectionBuffer.SetData(gridSelectionBufferArray);
+            
+            renderParamsArray = new RenderParams[tiles.Length];
+            for (int i = 0; i < tiles.Length; i++)
+            for (int j = 0; j < tiles[i].renderSettings.Length; j++)
+            {
+                bool copied = false;
+                for (int k = 0; k < tiles.Length; k++)
+                for (int l = 0; l < tiles[k].renderSettings.Length; l++)
+                {
+                    tiles[k].renderSettings[l].material.SetBuffer(GridBuffer, gridSelectionBuffer);
+            
+                    tiles[k].renderSettings[l].material.SetFloat(GridWidth, gridWidth);
+                    tiles[k].renderSettings[l].material.SetFloat(GridHeight, gridHeight);
+                    tiles[k].renderSettings[l].material.SetFloat(TileSize, tileSize);
+                    if (tiles[i].renderSettings[j].material == tiles[k].renderSettings[l].material && i > k)
+                    {
+                        renderParamsArray[i] = renderParamsArray[k];
+                        copied = true;
+                        break;
+                    }
+                }
+                
+                if(copied)
+                    continue;
+
+                if (tiles[i].renderSettings[j].material == null)
+                {
+                    Debug.LogError($"Material at index {i} in TileSettings is not set");
+                }
+                
+                RenderParams renderParams = new RenderParams(tiles[i].renderSettings[j].material)
+                {
+                    matProps = new MaterialPropertyBlock(),
+                    shadowCastingMode = ShadowCastingMode.On,
+                };
+                renderParamsArray[i] = renderParams;
+            }
         }
-        
-        
-        // waterSpots = waterSpots.OrderBy(x => x.y).ToList();
 
         renderParamsArray = new RenderParams[tiles.Length];
         for (int i = 0; i < tiles.Length; i++)
@@ -190,14 +237,6 @@ public class GridManagerPainter : MonoBehaviour
             };
             renderParamsArray[i] = renderParams;
         }
-
-        Array.Fill(gridSelectionBufferArray, Vector4.one);
-        gridSelectionBuffer.SetData(gridSelectionBufferArray);
-        instanceMat.SetBuffer(GridBuffer, gridSelectionBuffer);
-        
-        instanceMat.SetFloat(GridWidth, gridWidth);
-        instanceMat.SetFloat(GridHeight, gridHeight);
-        instanceMat.SetFloat(TileSize, tileSize);
     }
 
     private GridTileStruct GetRandomTileStruct(EntityTileID tileID)
@@ -208,7 +247,7 @@ public class GridManagerPainter : MonoBehaviour
     }
     private void ChangeTile(Vector3 position, EntityTileID entityTileID)
     {
-        int index = GridManager.instance.IndexPosToIndex(GridManager.instance.WorldPosToIndexPos(position));
+        int index = IndexPosToIndex(WorldPosToIndexPos(position));
         GridTileStruct newTile = GetRandomTileStruct(entityTileID);
         
         if (entityTileID != EntityTileID.EMPTY)
@@ -216,7 +255,7 @@ public class GridManagerPainter : MonoBehaviour
             int order = tiles[(int)entityTileID].order;
         
             GridTileStruct oldEntityTile = tileIDs[index, order];
-            Matrix4x4 matrix4X4 = GridManager.instance.IndexToMatrix4x4(index);
+            Matrix4x4 matrix4X4 = IndexToMatrix4x4(index);
         
             tileIDs[index, order] = newTile;
             matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
@@ -227,7 +266,7 @@ public class GridManagerPainter : MonoBehaviour
         for (int i = 0; i < AmountEntitiesOnOneTile; i++)
         {
             GridTileStruct oldEntityTile = tileIDs[index, i];
-            Matrix4x4 matrix4X4 = GridManager.instance.IndexToMatrix4x4(index);
+            Matrix4x4 matrix4X4 = IndexToMatrix4x4(index);
         
             tileIDs[index, i] = newTile;
             matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
@@ -239,8 +278,6 @@ public class GridManagerPainter : MonoBehaviour
         {
             if(i == matricesList.Count)
                 break;
-            if (matricesList[i].Count == 0)
-                continue;
 
             for (int j = 0; j < tiles[i].renderSettings.Length; j++)
             {
@@ -248,10 +285,121 @@ public class GridManagerPainter : MonoBehaviour
                 {
                     renderParamsArray[i].matProps.SetTexture(textureWtihReference.textureName, textureWtihReference.texture);
                 }
-            
-                Graphics.RenderMeshInstanced(renderParamsArray[i], tiles[i].renderSettings[j].mesh, 0, matricesList[GetMatrixIndex(new GridTileStruct((EntityTileID)i, j))]);
+
+                int index = GetMatrixIndex(new GridTileStruct((EntityTileID)i, j));
+                if (matricesList[index].Count == 0)
+                    continue;
+                
+                Graphics.RenderMeshInstanced(renderParamsArray[i], tiles[i].renderSettings[j].mesh, 0, matricesList[index]);
             }
         }
+    }
+    
+    private void ChangeTile(int index, GridTileStruct[] entityTileID)
+    {
+        for (int i = 0; i < AmountEntitiesOnOneTile; i++)
+        {
+            GridTileStruct oldEntityTile = tileIDs[index, i];
+            Matrix4x4 matrix4X4 = IndexToMatrix4x4(index);
+        
+            tileIDs[index, i] = entityTileID[i];
+            matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
+            matricesList[GetMatrixIndex(entityTileID[i])].Add(matrix4X4);
+        }
+    }
+    private void ChangeTile(Vector3 position, GridTileStruct entityTileID, int order)
+    {
+        int index = IndexPosToIndex(WorldPosToIndexPos(position));
+        ChangeTile(index, entityTileID, order);
+    }
+    private void ChangeTile(Vector2Int indexPos, GridTileStruct entityTileID, int order)
+    {
+        int index = IndexPosToIndex(indexPos);
+        ChangeTile(index, entityTileID, order);
+    }
+    private void ChangeTile(int index, GridTileStruct entityTileID, int order)
+    {
+        GridTileStruct oldEntityTile = tileIDs[index, order];
+        Matrix4x4 matrix4X4 = IndexToMatrix4x4(index);
+        
+        tileIDs[index, order] = entityTileID;
+        matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
+        matricesList[GetMatrixIndex(entityTileID)].Add(matrix4X4);
+
+    }
+    // private void ChangeTile(Vector3 position, EntityTileID entityTileID)
+    // {
+    //     int index = IndexPosToIndex(WorldPosToIndexPos(position));
+    //     GridTileStruct newTile = GetRandomTileStruct(entityTileID);
+    //     int order = tiles[(int)entityTileID].order;
+    //     GridTileStruct oldEntityTile = tileIDs[index, order];
+    //     Matrix4x4 matrix4X4 = IndexToMatrix4x4(index);
+    //
+    //     tileIDs[index, order] = newTile;
+    //     matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
+    //     matricesList[GetMatrixIndex(newTile)].Add(matrix4X4);
+    // }
+    private void ChangeTile(Vector3 position, EntityTileID[] entityTileID)
+    {
+        for (int i = 0; i < entityTileID.Length; i++)
+        {
+            ChangeTile(position, entityTileID[i]);
+        }
+    }
+    private void ChangeTile(int index, EntityTileID entityTileID)
+    {
+        GridTileStruct newTile = GetRandomTileStruct(entityTileID);
+        int order = tiles[(int)entityTileID].order;
+        GridTileStruct oldEntityTile = tileIDs[index, order];
+        Matrix4x4 matrix4X4 = IndexToMatrix4x4(index);
+        
+        tileIDs[index, order] = newTile;
+        matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
+        matricesList[GetMatrixIndex(newTile)].Add(matrix4X4);
+    }
+    
+    public Vector2Int WorldPosToIndexPos(Vector3 worldPos)
+    {
+        return new Vector2Int(Mathf.RoundToInt(((worldPos.x - tileSize / 2) / tileSize) + (gridWidth * tileSize / 2f)), Mathf.RoundToInt((worldPos.z / tileSize) + (gridHeight * tileSize / 2f)));
+    }
+    public Vector2Int WorldPosToIndexPos(Matrix4x4 matrix)
+    {
+        return WorldPosToIndexPos(new Vector3(matrix.GetRow(0).w, 0, matrix.GetRow(2).w));
+    }
+    public Vector3 GetPosition(Vector2Int index)
+    {
+        return new Vector3((index.x * tileSize) - (gridWidth / tileSize / 2f) + tileSize / 2, 0, (index.y * tileSize) - (gridHeight / tileSize / 2f));
+    }
+    public int IndexPosToIndex(Vector2Int index)
+    {
+        int indexPosToIndex = index.x * gridWidth + index.y % gridHeight;
+        indexPosToIndex = math.clamp(indexPosToIndex, 0, gridHeight * gridWidth - 1);
+        return indexPosToIndex;
+    }
+    public Vector2Int IndexToIndexPos(int index)
+    {
+        return new Vector2Int(index / gridWidth, index % gridHeight);
+    }
+    public Vector3 IndexToPos(int index)
+    {
+        return GetPosition(new Vector2Int(index / gridWidth, index % gridHeight));
+    }
+    public Matrix4x4 IndexToMatrix4x4(Vector2Int posIndex)
+    {
+        Vector3 position = new Vector3(posIndex.x * tileSize + tileSize / 2, 0.0f, posIndex.y * tileSize) - new Vector3(gridWidth * tileSize / 2f, 0, gridHeight * tileSize / 2f);
+        Matrix4x4 matrix4X4 = Matrix4x4.Translate(position) * Matrix4x4.Scale(new Vector3(tileSize, tileSize, tileSize));
+        return matrix4X4;
+    }
+    public Matrix4x4 IndexToMatrix4x4(int index)
+    {
+        Vector2Int posIndex = IndexToIndexPos(index);
+        Vector3 position = new Vector3(posIndex.x * tileSize + tileSize / 2, 0.0f, posIndex.y * tileSize) - new Vector3(gridWidth * tileSize / 2f, 0, gridHeight * tileSize / 2f);
+        Matrix4x4 matrix4X4 = Matrix4x4.Translate(position) * Matrix4x4.Scale(new Vector3(tileSize, tileSize, tileSize));
+        return matrix4X4;
+    }
+    public bool CheckIfTileMatches(int index, EntityTileID tileID)
+    {
+        return tileIDs[index, tiles[(int)tileID].order].tileID == tileID;
     }
 }
 
