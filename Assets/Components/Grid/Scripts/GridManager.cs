@@ -342,6 +342,7 @@ public class GridManager : MonoBehaviour
 
     private void PlacementSelection(Vector3 position, EntityTileID entityTileID)
     {
+        Array.Fill(gridSelectionBufferArray, Vector4.one);
         Vector2Int posIndex = WorldPosToIndexPos(position);
         if(posIndex.x < 0 || posIndex.x >= gridWidth || posIndex.y < 0 || posIndex.y >= gridHeight)
             return;
@@ -403,7 +404,7 @@ public class GridManager : MonoBehaviour
         }
         Graphics.RenderMeshInstanced(renderParamsArray[(int)entityTileID], tiles[(int)entityTileID].renderSettings[0].mesh, 0, matrix4X4s);
         
-        Array.Fill(gridSelectionBufferArray, Vector4.one);
+        // Array.Fill(gridSelectionBufferArray, Vector4.one);
     }
     
     private void TryChangeTile(Vector3 position, EntityTileID entityTileID)
@@ -859,6 +860,12 @@ public class GridManager : MonoBehaviour
         if (oldEntityTile.tileID == EntityTileID.TREE)
         {
             SoundManager.instance.PlaySoundClip(treeBreak, transform, 1f);
+            
+            treeDestructionPositions.Add(IndexToPos(index));
+            treeVFXBuffer.SetData(treeDestructionPositions);
+            treeDestructionEffect.SetInt("AmountBrokenTrees", 1);
+            treeDestructionEffect.SendEvent("Play");
+            treeDestructionPositions.Clear();
         }
         else if (oldEntityTile.tileID == EntityTileID.WATER)
         {
@@ -872,7 +879,16 @@ public class GridManager : MonoBehaviour
         int order = tiles[(int)entityTileID].order;
         GridTileStruct oldEntityTile = tileIDs[index, order];
         Matrix4x4 matrix4X4 = IndexToMatrix4x4(index);
-        
+
+        if (oldEntityTile.tileID == EntityTileID.TREE)
+        {
+            treeDestructionPositions.Add(IndexToPos(index));
+            treeVFXBuffer.SetData(treeDestructionPositions);
+            treeDestructionEffect.SetInt("AmountBrokenTrees", 1);
+            treeDestructionEffect.SendEvent("Play");
+            treeDestructionPositions.Clear();
+        }
+
         tileIDs[index, order] = newTile;
         matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
         matricesList[GetMatrixIndex(newTile)].Add(matrix4X4);
@@ -917,6 +933,10 @@ public class GridManager : MonoBehaviour
     public Vector2Int IndexToIndexPos(int index)
     {
         return new Vector2Int(index / gridWidth, index % gridHeight);
+    }
+    public Vector3 IndexToPos(int index)
+    {
+        return GetPosition(new Vector2Int(index / gridWidth, index % gridHeight));
     }
     public Matrix4x4 IndexToMatrix4x4(Vector2Int posIndex)
     {

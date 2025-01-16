@@ -30,8 +30,12 @@ public class Bulldozer : MonoBehaviour
     [SerializeField] private GameObject bulldozerPrefab;
     [SerializeField] private AudioClip megaDeath;
     [SerializeField] private AudioClip start;
-    [SerializeField] private VisualEffect vfxGraph;
+    [SerializeField] private GameObject cursorPrefab;
+    [SerializeField] private Transform canvasTransform;
+    [SerializeField] private Camera mainCamera;
 
+    private RectTransform cursor;
+    private VisualEffect vfxGraph;
     private GameObject bulldozer;
     private bool destroyed;
     private int currentZPos;
@@ -54,6 +58,7 @@ public class Bulldozer : MonoBehaviour
             float xPos = Mathf.RoundToInt(Random.Range(-25, 25)) + 0.5f;
             bulldozer = Instantiate(bulldozerPrefab, new Vector3(xPos, 0, gridManager.wallDistance - 25 + 10), Quaternion.identity);
             material = bulldozer.transform.GetChild(0).GetComponent<MeshRenderer>().material;
+            cursor = Instantiate(cursorPrefab, canvasTransform).GetComponent<RectTransform>();
 
             vfxGraph = bulldozer.GetComponentInChildren<VisualEffect>();
             if (vfxGraph == null)
@@ -76,6 +81,7 @@ public class Bulldozer : MonoBehaviour
             }
             pos.z -= speed * Time.deltaTime;
             bulldozer.transform.position = pos;
+            cursor.position = mainCamera.WorldToScreenPoint(pos);
         }
         
         if (currentZPos >= -30)
@@ -110,37 +116,20 @@ public class Bulldozer : MonoBehaviour
 
     private IEnumerator HandleBulldozerDestruction()
     {
-        GameObject bulldozerChild = bulldozer.transform.Find("BulldozerModel")?.gameObject;
-
         yield return new WaitForSeconds(0.5f);
-
-        if (bulldozerChild != null)
-        {
-            // bulldozerChild.SetActive(false); 
-        }
-        else
-        {
-            Debug.LogError("Bulldozer child GameObject not found!");
-        }
-
-
         if (vfxGraph != null)
         {
             vfxGraph.SendEvent("OnDestroyed"); 
-        }
-
- 
-        yield return new WaitForSeconds(2f);
-
-
-        if (bulldozer != null)
-        {
-            // Destroy(bulldozer);
         }
     }
 
     private void TookDamage()
     {
+        if(destroyed)
+            return;
+        
+        cursor.gameObject.SetActive(false);
+        
         health -= 1;
         material.SetFloat("_TimeWhenHit", Time.time);
 
