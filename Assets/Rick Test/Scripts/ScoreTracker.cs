@@ -26,6 +26,11 @@ public class ScoreTracker : MonoBehaviour
     [SerializeField] private Text newRecord;
     private List<LeaderboardRanking> leaderboard;
 
+    private void Start()
+    {
+        GameFinished();
+    }
+
     private void OnDisable()
     {
         EventSystem.Unsubscribe(EventType.GAME_OVER, GameFinished);
