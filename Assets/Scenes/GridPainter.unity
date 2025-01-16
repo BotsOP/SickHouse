@@ -250,7 +250,7 @@ GameObject:
   m_Component:
   - component: {fileID: 641072729}
   - component: {fileID: 641072726}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -341,8 +341,7 @@ MonoBehaviour:
   gridWidth: 50
   gridHeight: 50
   tileSize: 1
-  json: {fileID: 4900000, guid: f544c2b241e45bb46853413e7f6b0ceb, type: 3}
-  instanceMat: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
+  json: {fileID: 4900000, guid: e06f5b45be950f84b91cc232d02e07f8, type: 3}
   startFillEntityTileID: 5
   emptyTile: {fileID: 11400000, guid: 51f04e222197f414182eddf4da3f35f9, type: 2}
   dirtTile: {fileID: 11400000, guid: 1d46dd9285ece7a438098da41b863cbb, type: 2}
@@ -492,10 +491,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: RTS_Painter
       objectReference: {fileID: 0}
-    - target: {fileID: 3920518387961812012, guid: 6cc5d3964e48cd143886181f7586ea51, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4816821470765543921, guid: 6cc5d3964e48cd143886181f7586ea51, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -536,25 +531,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6999550111057210257, guid: 6cc5d3964e48cd143886181f7586ea51, type: 3}
-      propertyPath: gridObject
-      value: 
-      objectReference: {fileID: 11400000, guid: 1008d74c9d7a5c043a6fc94e197ba5de, type: 2}
-    - target: {fileID: 6999550111057210257, guid: 6cc5d3964e48cd143886181f7586ea51, type: 3}
-      propertyPath: mainCamera
-      value: 
-      objectReference: {fileID: 1489849733}
-    m_RemovedComponents:
-    - {fileID: 4099820501862305264, guid: 6cc5d3964e48cd143886181f7586ea51, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6cc5d3964e48cd143886181f7586ea51, type: 3}
---- !u!20 &1489849733 stripped
-Camera:
-  m_CorrespondingSourceObject: {fileID: 5627437131852757795, guid: 6cc5d3964e48cd143886181f7586ea51, type: 3}
-  m_PrefabInstance: {fileID: 1299663406}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
