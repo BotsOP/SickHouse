@@ -27,9 +27,14 @@ public class DroneManager : MonoBehaviour
     [SerializeField] private float deadDroneSpeedY;
     [SerializeField] private GameObject dronePrefab;
     [SerializeField] private AudioClip droneDeath;
+    [SerializeField] private RectTransform cursorPrefab;
+    [SerializeField] private RectTransform canvasTransform;
+    [SerializeField] private Camera mainCamera;
 
+    private bool hasClicked;
     private List<GameObject> drones = new List<GameObject>();
     private List<GameObject> deadDrones = new List<GameObject>();
+    private Dictionary<GameObject, RectTransform> droneCursors = new Dictionary<GameObject, RectTransform>();
     private float timeBetweenSpawns;
     private float cachedTime;
     private void Awake()
@@ -53,6 +58,13 @@ public class DroneManager : MonoBehaviour
             timeBetweenSpawns = math.lerp(minTimeBetweenSpawns, maxTimeBetweenSpawns, Random.Range(0, 1));
             
             drones.Add(Instantiate(dronePrefab, new Vector3(Mathf.RoundToInt(Random.Range(-25, 25)) + 0.5f, droneYPos, gridManager.wallDistance), quaternion.identity));
+            if(!hasClicked)
+                droneCursors.Add(drones[^1], Instantiate(cursorPrefab, canvasTransform));
+        }
+
+        foreach (KeyValuePair<GameObject,RectTransform> keyValuePair in droneCursors)
+        {
+            keyValuePair.Value.position = mainCamera.WorldToScreenPoint(keyValuePair.Key.transform.position);
         }
         
         for (int i = 0; i < drones.Count; i++)
@@ -100,6 +112,12 @@ public class DroneManager : MonoBehaviour
 
     private void RemoveDrone(GameObject drone)
     {
+        hasClicked = true;
+        foreach (KeyValuePair<GameObject,RectTransform> keyValuePair in droneCursors)
+        {
+            Destroy(keyValuePair.Value.gameObject);
+        }
+        droneCursors.Clear();
         if (!drones.Remove(drone))
         {
             Debug.LogError($"drone: {drone.name} was not found");
