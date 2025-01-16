@@ -20,26 +20,28 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Color notSelectedColor;
 
     [SerializeField] private AudioClip applesUp;
+
+    private RawImage selectedBrushImage;
+    private bool nothingSelected = true;
     int previousApples = 0;
     private void OnEnable()
     {
         EventSystem<int>.Subscribe(EventType.AMOUNT_APPLES, UpdateAppleAmount);
         EventSystem<GameObject>.Subscribe(EventType.DESTROY_OBJECT, DestroyObject);
         EventSystem<int, int, Color, Vector3>.Subscribe(EventType.UPDATE_SELECTION_TEXT, UpdateSelectionText);
-        EventSystem.Subscribe(EventType.DISABLE_SELECTION_TEXT, DisableSelectionText);
+        EventSystem.Subscribe(EventType.DISABLE_SELECTION, DisableSelectionText);
 
         foreach (RawImage image in brushUIImages)
         {
             image.color = notSelectedColor;
         }
-        brushUIImages[0].color = selectedColor;
     }
     private void OnDisable()
     {
         EventSystem<int>.Unsubscribe(EventType.AMOUNT_APPLES, UpdateAppleAmount);
         EventSystem<GameObject>.Subscribe(EventType.DESTROY_OBJECT, DestroyObject);
         EventSystem<int, int, Color, Vector3>.Unsubscribe(EventType.UPDATE_SELECTION_TEXT, UpdateSelectionText);
-        EventSystem.Unsubscribe(EventType.DISABLE_SELECTION_TEXT, DisableSelectionText);
+        EventSystem.Unsubscribe(EventType.DISABLE_SELECTION, DisableSelectionText);
     }
 
     private void UpdateSelectionText(int amount, int max, Color color, Vector3 position)
@@ -98,6 +100,16 @@ public class UIManager : MonoBehaviour
             image.color = notSelectedColor;
         }
         brushImage.color = selectedColor;
+        if (selectedBrushImage == brushImage)
+        {
+            nothingSelected = !nothingSelected;
+            brushImage.color = nothingSelected ? notSelectedColor : selectedColor;
+        }
+        else
+        {
+            nothingSelected = false;
+        }
+        selectedBrushImage = brushImage;
     }
 
     public void SpawnRacoon()

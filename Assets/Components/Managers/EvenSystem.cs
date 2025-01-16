@@ -20,7 +20,7 @@ namespace Managers
         
         //UI
         UPDATE_SELECTION_TEXT,
-        DISABLE_SELECTION_TEXT,
+        DISABLE_SELECTION,
         
         //GAME MANAGEMENT
         TOGGLE_INPUT,

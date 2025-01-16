@@ -75,12 +75,6 @@ public class GridManagerPainter : MonoBehaviour
     {
         tiles = new TileWrapper[AmountTileIDs];
         tileIDs = new GridTileStruct[gridWidth * gridHeight, AmountEntitiesOnOneTile];
-
-        GridHelper.gridWidth = gridWidth;
-        GridHelper.gridHeight = gridHeight;
-        GridHelper.tileSize = tileSize;
-        GridHelper.tiles = tiles;
-        GridHelper.tileIDs = tileIDs;
         
         EventSystem<Vector3, EntityTileID>.Subscribe(EventType.FORCE_CHANGE_TILE, ChangeTile);
         
@@ -123,7 +117,7 @@ public class GridManagerPainter : MonoBehaviour
             for (int y = 0; y < gridHeight; y++)
             for (int z = 0; z < AmountEntitiesOnOneTile; z++)
             {
-                int indexPosToIndex = GridHelper.IndexPosToIndex(new Vector2Int(x, y));
+                int indexPosToIndex = GridManager.instance.IndexPosToIndex(new Vector2Int(x, y));
                 GridTileStruct tileIDStruct = new GridTileStruct(EntityTileID.EMPTY, 0);
                 if (z == tiles[(int)startFillEntityTileID].order)
                 {
@@ -132,7 +126,7 @@ public class GridManagerPainter : MonoBehaviour
             
                 cachedIndex.x = x;
                 cachedIndex.y = y;
-                Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(cachedIndex);
+                Matrix4x4 matrix4X4 = GridManager.instance.IndexToMatrix4x4(cachedIndex);
                 tileIDs[indexPosToIndex, z] = tileIDStruct;
             
                 if(tileIDStruct.tileID == 0)
@@ -149,12 +143,12 @@ public class GridManagerPainter : MonoBehaviour
             for (int y = 0; y < gridHeight; y++)
             for (int z = 0; z < AmountEntitiesOnOneTile; z++)
             {
-                int indexPosToIndex = GridHelper.IndexPosToIndex(new Vector2Int(x, y));
+                int indexPosToIndex = GridManager.instance.IndexPosToIndex(new Vector2Int(x, y));
                 GridTileStruct tileIDStruct = tileIDs[indexPosToIndex, z];
             
                 cachedIndex.x = x;
                 cachedIndex.y = y;
-                Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(cachedIndex);
+                Matrix4x4 matrix4X4 = GridManager.instance.IndexToMatrix4x4(cachedIndex);
                 tileIDs[indexPosToIndex, z] = tileIDStruct;
             
                 if(tileIDStruct.tileID == 0)
@@ -214,7 +208,7 @@ public class GridManagerPainter : MonoBehaviour
     }
     private void ChangeTile(Vector3 position, EntityTileID entityTileID)
     {
-        int index = GridHelper.IndexPosToIndex(GridHelper.WorldPosToIndexPos(position));
+        int index = GridManager.instance.IndexPosToIndex(GridManager.instance.WorldPosToIndexPos(position));
         GridTileStruct newTile = GetRandomTileStruct(entityTileID);
         
         if (entityTileID != EntityTileID.EMPTY)
@@ -222,7 +216,7 @@ public class GridManagerPainter : MonoBehaviour
             int order = tiles[(int)entityTileID].order;
         
             GridTileStruct oldEntityTile = tileIDs[index, order];
-            Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(index);
+            Matrix4x4 matrix4X4 = GridManager.instance.IndexToMatrix4x4(index);
         
             tileIDs[index, order] = newTile;
             matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
@@ -233,7 +227,7 @@ public class GridManagerPainter : MonoBehaviour
         for (int i = 0; i < AmountEntitiesOnOneTile; i++)
         {
             GridTileStruct oldEntityTile = tileIDs[index, i];
-            Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(index);
+            Matrix4x4 matrix4X4 = GridManager.instance.IndexToMatrix4x4(index);
         
             tileIDs[index, i] = newTile;
             matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);

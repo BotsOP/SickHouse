@@ -68,13 +68,11 @@ public class CameraMovement : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(1))
         {
-            Debug.Log($"down");
             cachedPos = hit.point;
         }
         if (Input.GetMouseButton(1))
         {
             desiredMove = (cachedPos - hit.point) * (panningSpeed * Time.deltaTime);
-            Debug.Log($"{desiredMove}  {cachedPos}");
             transform.Translate(desiredMove);
             // cachedPos = hit.point;
         }

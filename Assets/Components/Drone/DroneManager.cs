@@ -52,7 +52,7 @@ public class DroneManager : MonoBehaviour
             cachedTime = Time.timeSinceLevelLoad;
             timeBetweenSpawns = math.lerp(Random.Range(0, 1), minTimeBetweenSpawns, maxTimeBetweenSpawns);
             
-            drones.Add(Instantiate(dronePrefab, new Vector3(Random.Range(-25, 25), droneYPos, gridManager.wallDistance), quaternion.identity));
+            drones.Add(Instantiate(dronePrefab, new Vector3(Mathf.RoundToInt(Random.Range(-25, 25)) + 0.5f, droneYPos, gridManager.wallDistance), quaternion.identity));
         }
         
         for (int i = 0; i < drones.Count; i++)
@@ -75,22 +75,23 @@ public class DroneManager : MonoBehaviour
 
             if (drone.transform.position.y < 0)
             {
-                Vector3 position = GridHelper.GetPosition(GridHelper.WorldPosToIndexPos(drone.transform.position));
+                Vector3 position = GridManager.instance.GetPosition(GridManager.instance.WorldPosToIndexPos(drone.transform.position));
                 
-                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
+                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
                 
                 position.x += 1;
-                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
+                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
                 position.x -= 2;
-                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
+                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
                 position.x += 1;
                 
                 position.z += 1;
-                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
+                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
                 position.z -= 2;
-                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
+                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
                 deadDrones.Remove(drone);
                 DroneExplodeEffect(drone);
+                EventSystem<int, Vector3>.RaiseEvent(EventType.GAIN_APPLES, amountApplesUponDeath, drone.transform.position);
                 Destroy(drone);
                 i--;
             }
@@ -108,7 +109,6 @@ public class DroneManager : MonoBehaviour
         DroneFallEffect(drone);
         SoundManager.instance.PlaySoundClip(droneDeath, transform, 1f);
         Destroy(drone.GetComponent<BoxCollider>());
-        EventSystem<int, Vector3>.RaiseEvent(EventType.GAIN_APPLES, amountApplesUponDeath, drone.transform.position);
     }
 
     private void DroneFallEffect(GameObject drone)

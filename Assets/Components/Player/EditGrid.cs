@@ -17,8 +17,8 @@ public class EditGrid : MonoBehaviour
     [SerializeField] private LayerMask gridLayer;
     [SerializeField] private LayerMask bulldozerLayer;
     private Vector3 cachedPosition;
+    private bool nothingSelected = true;
     private int UILayer;
-    private bool didPressKeyDown = false;
 
     private void OnEnable()
     {
@@ -35,6 +35,14 @@ public class EditGrid : MonoBehaviour
 
     private void ChangeTileID(EntityTileID entityTileID)
     {
+        if (this.entityTileID == entityTileID)
+        {
+            nothingSelected = !nothingSelected;
+        }
+        else
+        {
+            nothingSelected = false;
+        }
         this.entityTileID = entityTileID;
     }
 
@@ -46,7 +54,7 @@ public class EditGrid : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
         {
-            EventSystem.RaiseEvent(EventType.DISABLE_SELECTION_TEXT);
+            EventSystem.RaiseEvent(EventType.DISABLE_SELECTION);
             return;
         }
         
@@ -54,11 +62,11 @@ public class EditGrid : MonoBehaviour
         
         if (IsPointerOverUIElement())
         {
-            EventSystem.RaiseEvent(EventType.DISABLE_SELECTION_TEXT);
+            EventSystem.RaiseEvent(EventType.DISABLE_SELECTION);
             return;
         }
         
-        if (IsInLayerMask(hit.transform, gridLayer))
+        if (IsInLayerMask(hit.transform, gridLayer) && !nothingSelected)
         {
             cachedPosition = hit.point;
         
@@ -79,6 +87,10 @@ public class EditGrid : MonoBehaviour
             {
                 EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.CHANGE_TILE, cachedPosition, entityTileID);
             }
+        }
+        else
+        {
+            EventSystem.RaiseEvent(EventType.DISABLE_SELECTION);
         }
 
         if (!Input.GetMouseButtonDown(0))
