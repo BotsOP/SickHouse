@@ -561,22 +561,26 @@ public class GridManager : MonoBehaviour
         if (Time.time > lastTimeAppleCycle + appleCycleInSeconds)
         {
             lastTimeAppleCycle = Time.time;
-            for (int i = 0; i < matricesList[(int)EntityTileID.TREE].Count; i++)
+            for (int k = 0; k < tiles[(int)EntityTileID.TREE].renderSettings.Length; k++)
             {
-                Vector3 position = matricesList[(int)EntityTileID.TREE][i].GetPosition();
-                int index = IndexPosToIndex(WorldPosToIndexPos(position));
-                
-                if(appleTrees[index] >= maxAmountApplesProduced || index == cachedIndex)
-                    continue;
-                
-                for (int j = 0; j < amountApplesPerCycle; j++)
+                int matricesIndex = GetMatrixIndex(new GridTileStruct(EntityTileID.TREE, k));
+                for (int i = 0; i < matricesList[matricesIndex].Count; i++)
                 {
-                    if(appleTrees[index] >= maxAmountApplesProduced)
-                        break;
+                    Vector3 position = matricesList[matricesIndex][i].GetPosition();
+                    int index = IndexPosToIndex(WorldPosToIndexPos(position));
+                
+                    if(appleTrees[index] >= maxAmountApplesProduced || index == cachedIndex)
+                        continue;
+                
+                    for (int j = 0; j < amountApplesPerCycle; j++)
+                    {
+                        if(appleTrees[index] >= maxAmountApplesProduced)
+                            break;
                     
-                    appleTrees[index]++;
-                    Vector3 randomOffset = new Vector3(Random.Range(-2f, 2f), 0, Random.Range(-2f, 2f));
-                    Instantiate(applePrefab, position + randomOffset, Quaternion.identity).treeIndex = index;
+                        appleTrees[index]++;
+                        Vector3 randomOffset = new Vector3(Random.Range(-2f, 2f), 0, Random.Range(-2f, 2f));
+                        Instantiate(applePrefab, position + randomOffset, Quaternion.identity).treeIndex = index;
+                    }
                 }
             }
         }

@@ -990,7 +990,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f75502876e624414dbb299dca8230472, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainSceneName: DenisScene
+  mainSceneName: MainScene
   leaderboardObject: {fileID: 11400000, guid: 4d60ea8d044366a46b0096cba03e2aaa, type: 2}
   leaderboardEntry: {fileID: 5849161728353032274, guid: eb8b2a5007ca7904cb97c1d914d0420f, type: 3}
   leaderboardContent: {fileID: 627537290}

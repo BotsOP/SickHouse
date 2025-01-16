@@ -29,7 +29,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void LoadMainScene()
     {
-        SceneManager.LoadScene("DenisScene");
+        SceneManager.LoadScene(mainSceneName);
     }
 
     public void flipShowRanking()

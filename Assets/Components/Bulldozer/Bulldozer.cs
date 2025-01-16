@@ -83,11 +83,12 @@ public class Bulldozer : MonoBehaviour
             bulldozer.transform.position = pos;
             cursor.position = mainCamera.WorldToScreenPoint(pos);
         }
-        
-        if (currentZPos >= -30)
+
+        if (currentZPos >= -30 || destroyed)
             return;
-            
+        
         destroyed = true;
+        Destroy(cursor.gameObject);
         Destroy(bulldozer);
     }
     
@@ -110,8 +111,6 @@ public class Bulldozer : MonoBehaviour
         EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
         tempPos.x -= 1;
         EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
-        // tempPos.x -= 1;
-        // EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
     }
 
     private IEnumerator HandleBulldozerDestruction()

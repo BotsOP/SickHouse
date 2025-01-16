@@ -78,6 +78,11 @@ public class DroneManager : MonoBehaviour
 
             if (drone.transform.position.z < -50)
             {
+                if (!hasClicked)
+                {
+                    Destroy(droneCursors[drone].gameObject);
+                }
+                
                 droneCursors.Remove(drone);
                 drones.Remove(drone);
                 Destroy(drone);

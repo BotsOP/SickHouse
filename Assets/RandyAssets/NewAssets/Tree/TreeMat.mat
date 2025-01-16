@@ -60,7 +60,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _HueShiftValue: 360
-    - _NoiseScale: 1
+    - _NoiseScale: 0.38
     - _QueueControl: 0
     - _QueueOffset: 0
     - _SelectedEntity: 1

@@ -74,7 +74,6 @@ public class CameraMovement : MonoBehaviour
         {
             desiredMove = (cachedPos - hit.point) * (panningSpeed * Time.deltaTime);
             transform.Translate(desiredMove);
-            // cachedPos = hit.point;
         }
     }
 
