@@ -104,8 +104,8 @@ public class Bulldozer : MonoBehaviour
         EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
         tempPos.x -= 1;
         EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
-        tempPos.x -= 1;
-        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
+        // tempPos.x -= 1;
+        // EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
     }
 
     private IEnumerator HandleBulldozerDestruction()
@@ -116,7 +116,7 @@ public class Bulldozer : MonoBehaviour
 
         if (bulldozerChild != null)
         {
-            bulldozerChild.SetActive(false); 
+            // bulldozerChild.SetActive(false); 
         }
         else
         {
@@ -135,7 +135,7 @@ public class Bulldozer : MonoBehaviour
 
         if (bulldozer != null)
         {
-            Destroy(bulldozer);
+            // Destroy(bulldozer);
         }
     }
 
