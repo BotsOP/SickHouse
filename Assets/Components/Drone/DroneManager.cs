@@ -62,10 +62,14 @@ public class DroneManager : MonoBehaviour
                 droneCursors.Add(drones[^1], Instantiate(cursorPrefab, canvasTransform));
         }
 
-        foreach (KeyValuePair<GameObject,RectTransform> keyValuePair in droneCursors)
+        if (!hasClicked)
         {
-            keyValuePair.Value.position = mainCamera.WorldToScreenPoint(keyValuePair.Key.transform.position);
+            foreach (KeyValuePair<GameObject,RectTransform> keyValuePair in droneCursors)
+            {
+                keyValuePair.Value.position = mainCamera.WorldToScreenPoint(keyValuePair.Key.transform.position);
+            }
         }
+        
         
         for (int i = 0; i < drones.Count; i++)
         {
@@ -74,6 +78,7 @@ public class DroneManager : MonoBehaviour
 
             if (drone.transform.position.z < -50)
             {
+                droneCursors.Remove(drone);
                 drones.Remove(drone);
                 Destroy(drone);
             }
