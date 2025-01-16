@@ -1015,6 +1015,7 @@ MonoBehaviour:
   bulldozerPrefab: {fileID: 216843266694517702, guid: af540539dfcb5b941a2ad871b4b959dd, type: 3}
   megaDeath: {fileID: 0}
   start: {fileID: 0}
+  vfxGraph: {fileID: 0}
 --- !u!4 &374884305
 Transform:
   m_ObjectHideFlags: 0
@@ -3594,6 +3595,8 @@ MonoBehaviour:
   damTile: {fileID: 11400000, guid: adbea8d54dc096c4d9a89d63720b9f0b, type: 2}
   cliffTile: {fileID: 11400000, guid: d8273c19e0c55a94aa346ab9608c30cc, type: 2}
   emptyTile: {fileID: 11400000, guid: 51f04e222197f414182eddf4da3f35f9, type: 2}
+  scoreTracker: {fileID: 0}
+  scoreScreen: {fileID: 0}
   tree: {fileID: 0}
   water: {fileID: 0}
   beaver: {fileID: 0}
@@ -5168,8 +5171,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridManager: {fileID: 1474309342}
   droneYPos: 5
-  minTimeBetweenSpawns: 1
-  maxTimeBetweenSpawns: 2
+  minTimeBetweenSpawns: 11
+  maxTimeBetweenSpawns: 15
   amountApplesUponDeath: 10
   speed: 10
   deadDroneSpeedX: 1

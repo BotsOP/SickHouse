@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using Managers;
 using UnityEngine;
+using UnityEngine.VFX;
 using EventType = Managers.EventType;
 using Random = UnityEngine.Random;
 
@@ -28,10 +30,12 @@ public class Bulldozer : MonoBehaviour
     [SerializeField] private GameObject bulldozerPrefab;
     [SerializeField] private AudioClip megaDeath;
     [SerializeField] private AudioClip start;
+    [SerializeField] private VisualEffect vfxGraph;
 
     private GameObject bulldozer;
     private bool destroyed;
     private int currentZPos;
+    private Material material;
 
     private void OnDisable()
     {
@@ -48,7 +52,15 @@ public class Bulldozer : MonoBehaviour
         if (Time.timeSinceLevelLoad > timeWhenToSpawn)
         {
             float xPos = Mathf.RoundToInt(Random.Range(-25, 25)) + 0.5f;
-            bulldozer = Instantiate(bulldozerPrefab, new Vector3(xPos, 0, gridManager.wallDistance - 25 + 4), Quaternion.identity);
+            bulldozer = Instantiate(bulldozerPrefab, new Vector3(xPos, 0, gridManager.wallDistance - 25 + 10), Quaternion.identity);
+            material = bulldozer.transform.GetChild(0).GetComponent<MeshRenderer>().material;
+
+            vfxGraph = bulldozer.GetComponentInChildren<VisualEffect>();
+            if (vfxGraph == null)
+            {
+                Debug.LogError("VFX Graph not found as a child of the bulldozer prefab.");
+            }
+
             SoundManager.instance.PlaySoundClip(start, transform, .4f);
             timeWhenToSpawn = float.MaxValue;
         }
@@ -96,12 +108,53 @@ public class Bulldozer : MonoBehaviour
         EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
     }
 
+    private IEnumerator HandleBulldozerDestruction()
+    {
+        GameObject bulldozerChild = bulldozer.transform.Find("BulldozerModel")?.gameObject;
+
+        yield return new WaitForSeconds(0.5f);
+
+        if (bulldozerChild != null)
+        {
+            bulldozerChild.SetActive(false); 
+        }
+        else
+        {
+            Debug.LogError("Bulldozer child GameObject not found!");
+        }
+
+
+        if (vfxGraph != null)
+        {
+            vfxGraph.SendEvent("OnDestroyed"); 
+        }
+
+ 
+        yield return new WaitForSeconds(2f);
+
+
+        if (bulldozer != null)
+        {
+            Destroy(bulldozer);
+        }
+    }
+
     private void TookDamage()
     {
         health -= 1;
+        material.SetFloat("_TimeWhenHit", Time.time);
+
+        if (vfxGraph != null)
+        {
+            int currentTimesHit = vfxGraph.GetInt("TimesHit"); 
+            vfxGraph.SetInt("TimesHit", currentTimesHit + 1); 
+            vfxGraph.SendEvent("OnDamage");
+        }
+
         if (health <= 0)
         {
             destroyed = true;
+            StartCoroutine(HandleBulldozerDestruction());
         }
         else
         {
