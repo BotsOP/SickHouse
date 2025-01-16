@@ -160,7 +160,7 @@ GameObject:
   - component: {fileID: 954617989433344577}
   - component: {fileID: 2688946296080538802}
   m_Layer: 7
-  m_Name: bulldozer
+  m_Name: BulldozerModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

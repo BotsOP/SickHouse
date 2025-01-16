@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Managers;
 using UnityEngine;
 using UnityEngine.VFX;
@@ -105,6 +106,37 @@ public class Bulldozer : MonoBehaviour
         EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
     }
 
+    private IEnumerator HandleBulldozerDestruction()
+    {
+        GameObject bulldozerChild = bulldozer.transform.Find("BulldozerModel")?.gameObject;
+
+        yield return new WaitForSeconds(0.5f);
+
+        if (bulldozerChild != null)
+        {
+            bulldozerChild.SetActive(false); 
+        }
+        else
+        {
+            Debug.LogError("Bulldozer child GameObject not found!");
+        }
+
+
+        if (vfxGraph != null)
+        {
+            vfxGraph.SendEvent("OnDestroyed"); 
+        }
+
+ 
+        yield return new WaitForSeconds(2f);
+
+
+        if (bulldozer != null)
+        {
+            Destroy(bulldozer);
+        }
+    }
+
     private void TookDamage()
     {
         health -= 1;
@@ -119,6 +151,7 @@ public class Bulldozer : MonoBehaviour
         if (health <= 0)
         {
             destroyed = true;
+            StartCoroutine(HandleBulldozerDestruction());
         }
         else
         {
