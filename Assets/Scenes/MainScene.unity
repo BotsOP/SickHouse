@@ -1793,7 +1793,9 @@ MonoBehaviour:
   bulldozerPrefab: {fileID: 216843266694517702, guid: af540539dfcb5b941a2ad871b4b959dd, type: 3}
   megaDeath: {fileID: 0}
   start: {fileID: 0}
-  vfxGraph: {fileID: 0}
+  cursorPrefab: {fileID: 0}
+  canvasTransform: {fileID: 0}
+  mainCamera: {fileID: 0}
 --- !u!4 &416631955
 Transform:
   m_ObjectHideFlags: 0
@@ -5452,6 +5454,9 @@ MonoBehaviour:
   deadDroneSpeedY: 12
   dronePrefab: {fileID: 5575191050971733678, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
   droneDeath: {fileID: 0}
+  cursorPrefab: {fileID: 0}
+  canvasTransform: {fileID: 0}
+  mainCamera: {fileID: 0}
 --- !u!4 &1768142381
 Transform:
   m_ObjectHideFlags: 0
