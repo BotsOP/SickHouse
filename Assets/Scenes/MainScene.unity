@@ -1756,6 +1756,59 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
+--- !u!1 &416631953
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 416631955}
+  - component: {fileID: 416631954}
+  m_Layer: 0
+  m_Name: BulldozerManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &416631954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 416631953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28ad0e42e5dba5140b7b4e9cee971cc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridManager: {fileID: 777743094}
+  speed: 4
+  timeWhenToSpawn: 70
+  health: 15
+  amountApples: 50
+  bulldozerPrefab: {fileID: 216843266694517702, guid: af540539dfcb5b941a2ad871b4b959dd, type: 3}
+  megaDeath: {fileID: 0}
+  start: {fileID: 0}
+  vfxGraph: {fileID: 0}
+--- !u!4 &416631955
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 416631953}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &416847034 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2588497907538331275, guid: c8f3d4ace38b28345b7e0ea0cb7a84f1, type: 3}
@@ -2964,7 +3017,7 @@ MonoBehaviour:
   beavorGhostPrefab: {fileID: 4327260596315858872, guid: 72486a0aa514ca148b590e7554dab112, type: 3}
   beavorSpawnPoint: {fileID: 288050427}
   beavorSpawnCost: 18
-  dammSlowDown: 0.4
+  dammSlowDown: 0.3
   checkAmountTilesInfrontOfWall: 2
   dammVFX: {fileID: 1622249559}
   dirtTile: {fileID: 11400000, guid: 1d46dd9285ece7a438098da41b863cbb, type: 2}
@@ -5392,7 +5445,7 @@ MonoBehaviour:
   gridManager: {fileID: 777743094}
   droneYPos: 10
   minTimeBetweenSpawns: 10
-  maxTimeBetweenSpawns: 11
+  maxTimeBetweenSpawns: 15
   amountApplesUponDeath: 10
   speed: 5
   deadDroneSpeedX: 2
@@ -6532,3 +6585,4 @@ SceneRoots:
   - {fileID: 67426753}
   - {fileID: 1440899284}
   - {fileID: 477848750}
+  - {fileID: 416631955}

@@ -18,7 +18,7 @@ MonoBehaviour:
     textures: []
     mesh: {fileID: 4952510593234050921, guid: 6c38ceda925ab4f48b46a344c2dbb30f, type: 3}
   TileGameSettings:
-    appleCost: 0
+    appleCost: 1
     selection: []
     placementConstraints:
     - tileIDs: 07000000
