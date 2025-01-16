@@ -196,7 +196,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &57549188
 Transform:
   m_ObjectHideFlags: 0
@@ -1942,6 +1942,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8f3d4ace38b28345b7e0ea0cb7a84f1, type: 3}
+--- !u!1001 &477848750
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1427630360002137444, guid: 2383c00566f39eb44b55cb041c8806fa, type: 3}
+      propertyPath: m_Name
+      value: Racoon
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766579366718724062, guid: 2383c00566f39eb44b55cb041c8806fa, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766579366718724062, guid: 2383c00566f39eb44b55cb041c8806fa, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766579366718724062, guid: 2383c00566f39eb44b55cb041c8806fa, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766579366718724062, guid: 2383c00566f39eb44b55cb041c8806fa, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766579366718724062, guid: 2383c00566f39eb44b55cb041c8806fa, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766579366718724062, guid: 2383c00566f39eb44b55cb041c8806fa, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766579366718724062, guid: 2383c00566f39eb44b55cb041c8806fa, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766579366718724062, guid: 2383c00566f39eb44b55cb041c8806fa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766579366718724062, guid: 2383c00566f39eb44b55cb041c8806fa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766579366718724062, guid: 2383c00566f39eb44b55cb041c8806fa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2383c00566f39eb44b55cb041c8806fa, type: 3}
 --- !u!1001 &499530418
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2882,18 +2939,18 @@ MonoBehaviour:
   racoons: []
   beavers: []
   level: {fileID: 4900000, guid: f544c2b241e45bb46853413e7f6b0ceb, type: 3}
-  amountApples: 99999
+  amountApples: 30
   constrainedColor: {r: 1, g: 0, b: 0, a: 1}
   placeableColor: {r: 0.4206059, g: 1, b: 0, a: 1}
   requirementColor: {r: 0.161767, g: 0, b: 1, a: 1}
   startFillEntityTileID: 0
   amountApplesPerCycle: 1
-  appleCycleInSeconds: 1
-  appleCost: 5
-  maxAmountApplesProduced: 2
+  appleCycleInSeconds: 3
+  appleCost: 3
+  maxAmountApplesProduced: 3
   applePrefab: {fileID: 7945937796656539529, guid: 429d82b06bd47ba47bad0e3d1eda9d0e, type: 3}
   treeDestructionEffect: {fileID: 1558945474}
-  wallCycleInSeconds: 0.1
+  wallCycleInSeconds: 4.8
   wallPrefabs:
   - {fileID: 6922385585974127097, guid: a98006a2a83a13d499cadc8f9f7bd1bb, type: 3}
   - {fileID: 6762283960194072936, guid: 950faa8d497418745866505d4989600c, type: 3}
@@ -2906,8 +2963,8 @@ MonoBehaviour:
   beavorPrefab: {fileID: 2929558080248765489, guid: c8f3d4ace38b28345b7e0ea0cb7a84f1, type: 3}
   beavorGhostPrefab: {fileID: 4327260596315858872, guid: 72486a0aa514ca148b590e7554dab112, type: 3}
   beavorSpawnPoint: {fileID: 288050427}
-  beavorSpawnCost: 15
-  dammSlowDown: 0.1
+  beavorSpawnCost: 18
+  dammSlowDown: 0.4
   checkAmountTilesInfrontOfWall: 2
   dammVFX: {fileID: 1622249559}
   dirtTile: {fileID: 11400000, guid: 1d46dd9285ece7a438098da41b863cbb, type: 2}
@@ -5334,8 +5391,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridManager: {fileID: 777743094}
   droneYPos: 10
-  minTimeBetweenSpawns: 1
-  maxTimeBetweenSpawns: 2
+  minTimeBetweenSpawns: 10
+  maxTimeBetweenSpawns: 11
   amountApplesUponDeath: 10
   speed: 5
   deadDroneSpeedX: 2
@@ -6389,6 +6446,10 @@ PrefabInstance:
       value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 2775209671943112328, guid: 7671fe9c4f9025d4c9b5e2a8c4d2aa11, type: 3}
+      propertyPath: zoomPos01
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2775209671943112328, guid: 7671fe9c4f9025d4c9b5e2a8c4d2aa11, type: 3}
       propertyPath: mainCamera
       value: 
       objectReference: {fileID: 1310180940}
@@ -6470,3 +6531,4 @@ SceneRoots:
   - {fileID: 112118150}
   - {fileID: 67426753}
   - {fileID: 1440899284}
+  - {fileID: 477848750}
