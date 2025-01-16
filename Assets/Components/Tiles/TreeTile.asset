@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TileWrapper
   order: 0
   renderSettings:
-  - material: {fileID: 2100000, guid: 6394f70bc6e6ad3458e40decb702dfba, type: 2}
+  - material: {fileID: 2100000, guid: ee806c7d4dddd62469cd8eb87bda38eb, type: 2}
     textures:
     - textureName: _AlbedoMap
       texture: {fileID: 2800000, guid: dd0c9d00632f88b4a84703ee8090b690, type: 3}
