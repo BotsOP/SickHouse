@@ -158,7 +158,7 @@ GameObject:
   - component: {fileID: 3773702398832508504}
   - component: {fileID: 4941111860334197714}
   - component: {fileID: 954617989433344577}
-  - component: {fileID: 2688946296080538802}
+  - component: {fileID: 3797169566242670730}
   m_Layer: 7
   m_Name: BulldozerModel
   m_TagString: Untagged
@@ -234,8 +234,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &2688946296080538802
-BoxCollider:
+--- !u!64 &3797169566242670730
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -252,6 +252,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2.8955595, y: 1.6268024, z: 4.88225}
-  m_Center: {x: 0, y: -0.44144964, z: 0}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 5179368066505695252, guid: 5328c2f4bfed5e641b883613eeb54414, type: 3}
