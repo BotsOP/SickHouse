@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX; 
 
 public class DroneAnimatorBehaviour : MonoBehaviour {
     [field: SerializeField] private List<Animator> animators { get; set; }
@@ -8,7 +9,8 @@ public class DroneAnimatorBehaviour : MonoBehaviour {
 
     [field: SerializeField] private string fallTrigger { get; set; }
 
-    [SerializeField] private GameObject ExplosionVFXPrefab; 
+    [SerializeField] private GameObject ExplosionVFXPrefab;
+    [SerializeField] private VisualEffect Smoke;
 
     private void Awake() {
         //DoIdle();
@@ -31,6 +33,9 @@ public class DroneAnimatorBehaviour : MonoBehaviour {
     public void DoExplode()
     {
         Instantiate(ExplosionVFXPrefab, transform.position, Quaternion.identity);
+        Smoke.transform.parent = null;
+        Smoke.Stop();
+        Destroy(Smoke.gameObject, 2f);
     }
     private void SetAnimatorTriggers(string trigger) {
         foreach (var animator in animators) {
