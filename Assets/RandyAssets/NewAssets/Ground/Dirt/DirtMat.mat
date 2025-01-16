@@ -79,6 +79,7 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Saturation: 1.47
+    - _SelectedEntity: 0
     - _Steps: 0
     - _Tiling: 20
     - _gradientTiling: 0.07

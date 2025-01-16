@@ -75,6 +75,7 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Saturation: 0
+    - _SelectedEntity: 0
     - _Speed: 0.009
     - _TextureSize: 0.1
     - _Tiling: 1.23

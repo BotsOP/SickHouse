@@ -13,16 +13,16 @@ public class GoToWall : Conditional
     public SharedInt currentDammIndex;
     public override TaskStatus OnUpdate()
     {
-        Vector2Int posIndex = GridHelper.WorldPosToIndexPos(transform.position);
+        Vector2Int posIndex = GridManager.instance.WorldPosToIndexPos(transform.position);
         for (int i = gridInfo.Value.wallDistance - amountTilesDammFromWall.Value; i >= 0; i--)
         {
             Vector2Int localIndex = new Vector2Int(posIndex.x, i);
-            int index = GridHelper.IndexPosToIndex(localIndex);
+            int index = GridManager.instance.IndexPosToIndex(localIndex);
             
             if(index >= gridInfo.Value.gridWidth * gridInfo.Value.gridHeight)
                 break;
             
-            if (GridHelper.CheckIfTileMatches(index, EntityTileID.PAVEMENT))
+            if (GridManager.instance.CheckIfTileMatches(index, EntityTileID.PAVEMENT))
             {
             }
             int flip = 1;
@@ -37,15 +37,15 @@ public class GoToWall : Conditional
                     continue;
                 }
                 
-                int newIndex = GridHelper.IndexPosToIndex(new Vector2Int(dammIndex, localIndex.y));
+                int newIndex = GridManager.instance.IndexPosToIndex(new Vector2Int(dammIndex, localIndex.y));
                 
                 if(newIndex >= gridInfo.Value.gridWidth * gridInfo.Value.gridHeight)
                     continue;
                 
-                if (dammArray.Value.dammArray[newIndex].amountBeavorsWorking < 3 && !dammArray.Value.dammArray[newIndex].buildDamm && !GridHelper.CheckIfTileMatches(newIndex, EntityTileID.DAMM) && !GridHelper.CheckIfTileMatches(newIndex, EntityTileID.TREE))
+                if (dammArray.Value.dammArray[newIndex].amountBeavorsWorking < 3 && !dammArray.Value.dammArray[newIndex].buildDamm && !GridManager.instance.CheckIfTileMatches(newIndex, EntityTileID.DAMM) && !GridManager.instance.CheckIfTileMatches(newIndex, EntityTileID.TREE))
                 {
                     dammArray.Value.dammArray[newIndex].amountBeavorsWorking++;
-                    targetPosition.Value = GridHelper.GetPosition(new Vector2Int(dammIndex, localIndex.y));
+                    targetPosition.Value = GridManager.instance.GetPosition(new Vector2Int(dammIndex, localIndex.y));
                     currentDammIndex.Value = newIndex;
                     return TaskStatus.Success;
                 }

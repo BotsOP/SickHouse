@@ -77,23 +77,23 @@ public class Bulldozer : MonoBehaviour
     {
         Vector3 tempPos = pos;
         tempPos.z -= 4;
-        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
+        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
         tempPos.x += 1;
-        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
+        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
         tempPos.x += 1;
-        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
+        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
         tempPos.x += 1;
-        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
+        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
         tempPos.x -= 3;
                 
         tempPos.x -= 1;
-        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
+        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
         tempPos.x -= 1;
-        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
+        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
         tempPos.x -= 1;
-        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
+        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
         tempPos.x -= 1;
-        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
+        EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, tempPos, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
     }
 
     private void TookDamage()

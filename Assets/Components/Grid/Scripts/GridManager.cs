@@ -130,6 +130,8 @@ public class GridManager : MonoBehaviour
     private bool gameOver;
     private IEnumerator coroutine;
 
+    public static GridManager instance;
+
     private void AddMatrix(GridTileStruct gridTileStruct, Matrix4x4 matrix)
     {
         matricesList[GetMatrixIndex(gridTileStruct)].Add(matrix);
@@ -149,11 +151,13 @@ public class GridManager : MonoBehaviour
         EventSystem<Vector3, EntityTileID>.Unsubscribe(EventType.CHANGE_TILE, TryChangeTile);
         EventSystem<Vector3, EntityTileID[]>.Unsubscribe(EventType.CHANGE_TILE, TryChangeTile);
         EventSystem<Vector3, EntityTileID>.Unsubscribe(EventType.FORCE_CHANGE_TILE, ChangeTile);
+        EventSystem<Vector3, EntityTileID[]>.Unsubscribe(EventType.FORCE_CHANGE_TILE, ChangeTile);
         EventSystem.Unsubscribe(EventType.SPAWN_RACOON, SpawnRacoon);
         EventSystem.Unsubscribe(EventType.SPAWN_BEAVOR, SpawnBeavor);
         EventSystem<int, Vector3>.Unsubscribe(EventType.GAIN_APPLES, GainApples);
         EventSystem<int>.Unsubscribe(EventType.COLLECTED_APPLE, collectedAppleFromTree);
         EventSystem<EntityTileID>.Unsubscribe(EventType.CHANGED_TILE, DoNothing);
+        EventSystem.Unsubscribe(EventType.DISABLE_SELECTION, DisableSelection);
     }
 
     private void Awake()
@@ -170,22 +174,20 @@ public class GridManager : MonoBehaviour
         tiles[(int)EntityTileID.PAVEMENT] = pavementTile;
         tiles[(int)EntityTileID.EMPTY] = emptyTile;
 
-        GridHelper.gridWidth = gridWidth;
-        GridHelper.gridHeight = gridHeight;
-        GridHelper.tileSize = tileSize;
-        GridHelper.tiles = tiles;
-        GridHelper.tileIDs = tileIDs;
+        instance = this;
         
         EventSystem.Subscribe(EventType.SELECT_TILE_DOWN, StartChangingTile);
         EventSystem<Vector3, EntityTileID>.Subscribe(EventType.SELECT_TILE, PlacementSelection);
         EventSystem<Vector3, EntityTileID>.Subscribe(EventType.CHANGE_TILE, TryChangeTile);
         EventSystem<Vector3, EntityTileID[]>.Subscribe(EventType.CHANGE_TILE, TryChangeTile);
         EventSystem<Vector3, EntityTileID>.Subscribe(EventType.FORCE_CHANGE_TILE, ChangeTile);
+        EventSystem<Vector3, EntityTileID[]>.Subscribe(EventType.FORCE_CHANGE_TILE, ChangeTile);
         EventSystem.Subscribe(EventType.SPAWN_RACOON, SpawnRacoon);
         EventSystem.Subscribe(EventType.SPAWN_BEAVOR, SpawnBeavor);
         EventSystem<int, Vector3>.Subscribe(EventType.GAIN_APPLES, GainApples);
         EventSystem<int>.Subscribe(EventType.COLLECTED_APPLE, collectedAppleFromTree);
         EventSystem<EntityTileID>.Subscribe(EventType.CHANGED_TILE, DoNothing);
+        EventSystem.Subscribe(EventType.DISABLE_SELECTION, DisableSelection);
         
         gridSelectionBuffer = new ComputeBuffer(gridWidth * gridHeight, sizeof(float) * 4);
         gridSelectionBufferArray = new Vector4[gridWidth * gridHeight];
@@ -229,12 +231,12 @@ public class GridManager : MonoBehaviour
         for (int y = 0; y < gridHeight; y++)
         for (int z = 0; z < AmountEntitiesOnOneTile; z++)
         {
-            int indexPosToIndex = GridHelper.IndexPosToIndex(new Vector2Int(x, y));
+            int indexPosToIndex = IndexPosToIndex(new Vector2Int(x, y));
             GridTileStruct tileIDStruct = tileIDs[indexPosToIndex, z];
             
             cachedIndex.x = x;
             cachedIndex.y = y;
-            Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(cachedIndex);
+            Matrix4x4 matrix4X4 = IndexToMatrix4x4(cachedIndex);
             tileIDs[indexPosToIndex, z] = tileIDStruct;
             
             if(tileIDStruct.tileID == EntityTileID.EMPTY)
@@ -327,9 +329,15 @@ public class GridManager : MonoBehaviour
     private void DoNothing(EntityTileID tileID)
     {}
 
+    private void DisableSelection()
+    {
+        Array.Fill(gridSelectionBufferArray, Vector4.one);
+        gridSelectionBuffer.SetData(gridSelectionBufferArray);
+    }
+
     private void PlacementSelection(Vector3 position, EntityTileID entityTileID)
     {
-        Vector2Int posIndex = GridHelper.WorldPosToIndexPos(position);
+        Vector2Int posIndex = WorldPosToIndexPos(position);
         if(posIndex.x < 0 || posIndex.x >= gridWidth || posIndex.y < 0 || posIndex.y >= gridHeight)
             return;
 
@@ -338,7 +346,7 @@ public class GridManager : MonoBehaviour
             ChangeTile(cachedIndex, cachedEntityTileID);
         }
 
-        int index = GridHelper.IndexPosToIndex(posIndex);
+        int index = IndexPosToIndex(posIndex);
         CacheTile(index);
 
         void AreaSelection(int localIndex)
@@ -353,7 +361,7 @@ public class GridManager : MonoBehaviour
             gridSelectionBufferArray[localIndex] = requirementColor;
             amountMatchingRequiredTiles++;
         }
-        GetRequiredSelection(entityTileID, posIndex, RequiredSelection);
+        bool requiredSelection = GetRequiredSelection(entityTileID, posIndex, RequiredSelection);
 
         void ConstraintSelection(int localIndex) 
         { 
@@ -365,35 +373,30 @@ public class GridManager : MonoBehaviour
         if (entityTileID == EntityTileID.TREE)
         {
             int amountRequiredTiles = tiles[(int)EntityTileID.TREE].TileGameSettings.placementRequirements[0].amountRequiredTiles;
-            if (amountMatchingRequiredTiles < amountRequiredTiles)
+            if (requiredSelection)
             {
                 gridSelectionBufferArray[index] = constrainedColor;
             }
-            Vector3 lockedPosition = GridHelper.GetPosition(posIndex);
+            Vector3 lockedPosition = GetPosition(posIndex);
             amountMatchingRequiredTiles = Mathf.Min(amountMatchingRequiredTiles, amountRequiredTiles);
             EventSystem<int, int, Color, Vector3>.RaiseEvent(EventType.UPDATE_SELECTION_TEXT, 
                                                              amountMatchingRequiredTiles, 
                                                              amountRequiredTiles, 
-                                                             amountMatchingRequiredTiles >= amountRequiredTiles ? placeableColor : constrainedColor, 
+                                                             !requiredSelection ? placeableColor : constrainedColor, 
                                                              lockedPosition);
         }
         gridSelectionBufferArray[index].w = 0;
         gridSelectionBuffer.SetData(gridSelectionBufferArray);
-        // ChangeTile(index,  GetRandomTileStruct(entityTileID), tiles[(int)entityTileID].order);
         
         Matrix4x4[] matrix4X4s = new Matrix4x4[1];
-        matrix4X4s[0] = GridHelper.IndexToMatrix4x4(cachedIndex);
-        // GridTileStruct gridTileStruct = tileIDs[index, tiles[(int)entityTileID].order];
-        // Material tempMat = new Material(renderParamsArray[(int)entityTileID].material);
+        matrix4X4s[0] = IndexToMatrix4x4(cachedIndex);
         renderParamsArray[(int)entityTileID].matProps.SetFloat("_SelectedEntity", 1);
         renderParamsArray[(int)entityTileID].matProps.SetBuffer("gridBuffer", gridSelectionBuffer);
-        // tempMat.SetBuffer("gridBuffer", gridSelectionBuffer);
         foreach (TextureWtihReference textureWtihReference in tiles[(int)entityTileID].renderSettings[0].textures)
         {
             renderParamsArray[(int)entityTileID].matProps.SetTexture(textureWtihReference.textureName, textureWtihReference.texture);
         }
         Graphics.RenderMeshInstanced(renderParamsArray[(int)entityTileID], tiles[(int)entityTileID].renderSettings[0].mesh, 0, matrix4X4s);
-        // Graphics.RenderMeshInstanced(tiles[(int)entityTileID].renderSettings[0].mesh, 0, renderParamsArray[(int)entityTileID].material, matrix4X4s);
         
         Array.Fill(gridSelectionBufferArray, Vector4.one);
     }
@@ -403,7 +406,7 @@ public class GridManager : MonoBehaviour
         Array.Fill(gridSelectionBufferArray, Vector4.one);
         gridSelectionBuffer.SetData(gridSelectionBufferArray);
         
-        Vector2Int posIndex = GridHelper.WorldPosToIndexPos(position);
+        Vector2Int posIndex = WorldPosToIndexPos(position);
         if (posIndex.x < 0 || posIndex.x >= gridWidth || posIndex.y < 0 || posIndex.y >= gridHeight)
         {
             cachedIndex = -1;
@@ -419,7 +422,7 @@ public class GridManager : MonoBehaviour
         Array.Fill(gridSelectionBufferArray, Vector4.one);
         gridSelectionBuffer.SetData(gridSelectionBufferArray);
         
-        Vector2Int posIndex = GridHelper.WorldPosToIndexPos(position);
+        Vector2Int posIndex = WorldPosToIndexPos(position);
         if (posIndex.x < 0 || posIndex.x >= gridWidth || posIndex.y < 0 || posIndex.y >= gridHeight)
         {
             cachedIndex = -1;
@@ -435,7 +438,7 @@ public class GridManager : MonoBehaviour
     
     private void ChangeTile(Vector3 position, EntityTileID entityTileID, Vector2Int posIndex, int order)
     {
-        int index = GridHelper.IndexPosToIndex(posIndex);
+        int index = IndexPosToIndex(posIndex);
         GridTileStruct oldGridTileStruct = cachedEntityTileID[order];
         
         int amountMatchingRequiredTiles = 0;
@@ -464,7 +467,7 @@ public class GridManager : MonoBehaviour
 
         if (entityTileID == EntityTileID.WATER)
         {            
-            waterSpots.Add(GridHelper.IndexToIndexPos(index));
+            waterSpots.Add(IndexToIndexPos(index));
             waterSpots = waterSpots.OrderBy(x => x.y).ToList();
         }
         
@@ -511,8 +514,6 @@ public class GridManager : MonoBehaviour
         {
             if(i == matricesList.Count)
                 break;
-            if (matricesList[i].Count == 0)
-                continue;
 
             for (int j = 0; j < tiles[i].renderSettings.Length; j++)
             {
@@ -520,8 +521,12 @@ public class GridManager : MonoBehaviour
                 {
                     renderParamsArray[i].matProps.SetTexture(textureWtihReference.textureName, textureWtihReference.texture);
                 }
-            
-                Graphics.RenderMeshInstanced(renderParamsArray[i], tiles[i].renderSettings[j].mesh, 0, matricesList[GetMatrixIndex(new GridTileStruct((EntityTileID)i, j))]);
+
+                int index = GetMatrixIndex(new GridTileStruct((EntityTileID)i, j));
+                if (matricesList[index].Count == 0)
+                    continue;
+                
+                Graphics.RenderMeshInstanced(renderParamsArray[i], tiles[i].renderSettings[j].mesh, 0, matricesList[index]);
             }
         }
 
@@ -553,7 +558,7 @@ public class GridManager : MonoBehaviour
             for (int i = 0; i < matricesList[(int)EntityTileID.TREE].Count; i++)
             {
                 Vector3 position = matricesList[(int)EntityTileID.TREE][i].GetPosition();
-                int index = GridHelper.IndexPosToIndex(GridHelper.WorldPosToIndexPos(position));
+                int index = IndexPosToIndex(WorldPosToIndexPos(position));
                 
                 if(appleTrees[index] >= maxAmountApplesProduced || index == cachedIndex)
                     continue;
@@ -577,24 +582,16 @@ public class GridManager : MonoBehaviour
         for (int x = 0; x < gridWidth; x++)
         {
             Vector2Int posIndex = new Vector2Int(x, wallDistance - 1);
-            int index = GridHelper.IndexPosToIndex(posIndex);
-            if (GridHelper.CheckIfTileMatches(index, EntityTileID.DAMM) && damms[index].progress < 1.5f && damms[index].buildDamm)
+            int index = IndexPosToIndex(posIndex);
+            bool checkIfTileMatches = CheckIfTileMatches(index, EntityTileID.DAMM);
+            if (checkIfTileMatches && damms[index].progress < 1.5f && damms[index].progress >= 1f)
             {
                 amountDamsAgainstWall++;
-                dammVFXPositions.Add(GridHelper.GetPosition(posIndex));
+                dammVFXPositions.Add(GetPosition(posIndex));
                 damms[index].progress = 2;
                 hitDamm = true;
                 lastTimeWallCycle += dammSlowDown;
             }
-        }
-
-        if (amountDamsAgainstWall != 0)
-        {
-            //on
-        }
-        else
-        {
-            //off
         }
 
         if (hitDamm)
@@ -641,21 +638,25 @@ public class GridManager : MonoBehaviour
             }
             
             GridTileStruct[] cityGridTileStructs = new GridTileStruct[AmountEntitiesOnOneTile];
+            for (int i = 0; i < AmountEntitiesOnOneTile; i++)
+            {
+                cityGridTileStructs[i] = new GridTileStruct(EntityTileID.EMPTY, 0);
+            }
             cityGridTileStructs[tiles[(int)EntityTileID.PAVEMENT].order] = GetRandomTileStruct(EntityTileID.PAVEMENT);
             bool destroyedTree = false;
             int amountBrokenTrees = 0;
             for (int x = 0; x < gridWidth; x++)
             {
-                int dammIndex = GridHelper.IndexPosToIndex(new Vector2Int(x, wallDistance));
+                int dammIndex = IndexPosToIndex(new Vector2Int(x, wallDistance));
                 if (tileIDs[dammIndex, tiles[(int)EntityTileID.TREE].order].tileID == EntityTileID.TREE)
                 {
-                    Vector3 position = GridHelper.GetPosition(new Vector2Int(x, wallDistance));
+                    Vector3 position = GetPosition(new Vector2Int(x, wallDistance));
                     position.y += 4;
                     treeDestructionPositions.Add(position);
                     amountBrokenTrees++;
                     destroyedTree = true;
                 }
-                if (damms[dammIndex].buildDamm && GridHelper.CheckIfTileMatches(dammIndex, EntityTileID.DAMM))
+                if (damms[dammIndex].buildDamm && CheckIfTileMatches(dammIndex, EntityTileID.DAMM))
                 {
                     damms[dammIndex].amountBeavorsWorking = 0;
                     damms[dammIndex].progress = 0;
@@ -717,7 +718,7 @@ public class GridManager : MonoBehaviour
                 {
                     cachedIndex.x = Mathf.Clamp(posIndex.x + x, 0, gridWidth);
                     cachedIndex.y = Mathf.Clamp(posIndex.y + y, 0, gridHeight);
-                    int index = GridHelper.IndexPosToIndex(cachedIndex);
+                    int index = IndexPosToIndex(cachedIndex);
                     callback?.Invoke(index);
                 }
             }
@@ -745,7 +746,7 @@ public class GridManager : MonoBehaviour
                     bool invoke = true;
                     for (int i = 0; i < AmountEntitiesOnOneTile; i++)
                     {
-                        int index = GridHelper.IndexPosToIndex(cachedIndex);
+                        int index = IndexPosToIndex(cachedIndex);
 
                         EntityTileID tileID = tileIDs[index, i].tileID;
                         if (x == 0 && y == 0)
@@ -771,7 +772,7 @@ public class GridManager : MonoBehaviour
     private bool GetRequiredSelection(EntityTileID entityTileID, Vector2Int posIndex, Action<int> callback = null)
     {
         Vector2Int cachedIndex = new Vector2Int();
-        bool meetsRequirements = true;
+        bool meetsRequirements = false;
         foreach (AreaRequirement areaRequirement in tiles[(int)entityTileID].TileGameSettings.placementRequirements)
         {
             int requirementTileAmount = 0;
@@ -789,7 +790,7 @@ public class GridManager : MonoBehaviour
                     cachedIndex.y = Mathf.Clamp(posIndex.y + y, 0, gridHeight);
                     for (int i = 0; i < AmountEntitiesOnOneTile; i++)
                     {
-                        int index = GridHelper.IndexPosToIndex(cachedIndex);
+                        int index = IndexPosToIndex(cachedIndex);
                         EntityTileID tileID = tileIDs[index, i].tileID;
                         if (x == 0 && y == 0)
                         {
@@ -798,7 +799,9 @@ public class GridManager : MonoBehaviour
                         foreach (EntityTileID t in areaRequirement.tileIDs)
                         {
                             if (tileID != t)
+                            {
                                 continue;
+                            }
 
                             requirementTileAmount++;
                             callback?.Invoke(index);
@@ -809,7 +812,7 @@ public class GridManager : MonoBehaviour
             }
             if (requirementTileAmount < areaRequirement.amountRequiredTiles)
             {
-                meetsRequirements = false;
+                meetsRequirements = true;
             }
         }
         return meetsRequirements;
@@ -820,7 +823,7 @@ public class GridManager : MonoBehaviour
         for (int i = 0; i < AmountEntitiesOnOneTile; i++)
         {
             GridTileStruct oldEntityTile = tileIDs[index, i];
-            Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(index);
+            Matrix4x4 matrix4X4 = IndexToMatrix4x4(index);
         
             tileIDs[index, i] = entityTileID[i];
             matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
@@ -829,18 +832,18 @@ public class GridManager : MonoBehaviour
     }
     private void ChangeTile(Vector3 position, GridTileStruct entityTileID, int order)
     {
-        int index = GridHelper.IndexPosToIndex(GridHelper.WorldPosToIndexPos(position));
+        int index = IndexPosToIndex(WorldPosToIndexPos(position));
         ChangeTile(index, entityTileID, order);
     }
     private void ChangeTile(Vector2Int indexPos, GridTileStruct entityTileID, int order)
     {
-        int index = GridHelper.IndexPosToIndex(indexPos);
+        int index = IndexPosToIndex(indexPos);
         ChangeTile(index, entityTileID, order);
     }
     private void ChangeTile(int index, GridTileStruct entityTileID, int order)
     {
         GridTileStruct oldEntityTile = tileIDs[index, order];
-        Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(index);
+        Matrix4x4 matrix4X4 = IndexToMatrix4x4(index);
         
         tileIDs[index, order] = entityTileID;
         matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
@@ -856,26 +859,73 @@ public class GridManager : MonoBehaviour
     }
     private void ChangeTile(Vector3 position, EntityTileID entityTileID)
     {
-        int index = GridHelper.IndexPosToIndex(GridHelper.WorldPosToIndexPos(position));
+        int index = IndexPosToIndex(WorldPosToIndexPos(position));
         GridTileStruct newTile = GetRandomTileStruct(entityTileID);
         int order = tiles[(int)entityTileID].order;
         GridTileStruct oldEntityTile = tileIDs[index, order];
-        Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(index);
+        Matrix4x4 matrix4X4 = IndexToMatrix4x4(index);
         
         tileIDs[index, order] = newTile;
         matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
         matricesList[GetMatrixIndex(newTile)].Add(matrix4X4);
+    }
+    private void ChangeTile(Vector3 position, EntityTileID[] entityTileID)
+    {
+        for (int i = 0; i < entityTileID.Length; i++)
+        {
+            ChangeTile(position, entityTileID[i]);
+        }
     }
     private void ChangeTile(int index, EntityTileID entityTileID)
     {
         GridTileStruct newTile = GetRandomTileStruct(entityTileID);
         int order = tiles[(int)entityTileID].order;
         GridTileStruct oldEntityTile = tileIDs[index, order];
-        Matrix4x4 matrix4X4 = GridHelper.IndexToMatrix4x4(index);
+        Matrix4x4 matrix4X4 = IndexToMatrix4x4(index);
         
         tileIDs[index, order] = newTile;
         matricesList[GetMatrixIndex(oldEntityTile)].RemoveSwapBack(matrix4X4);
         matricesList[GetMatrixIndex(newTile)].Add(matrix4X4);
+    }
+    
+    public Vector2Int WorldPosToIndexPos(Vector3 worldPos)
+    {
+        return new Vector2Int(Mathf.RoundToInt(((worldPos.x - tileSize / 2) / tileSize) + (gridWidth * tileSize / 2f)), Mathf.RoundToInt((worldPos.z / tileSize) + (gridHeight * tileSize / 2f)));
+    }
+    public Vector2Int WorldPosToIndexPos(Matrix4x4 matrix)
+    {
+        return WorldPosToIndexPos(new Vector3(matrix.GetRow(0).w, 0, matrix.GetRow(2).w));
+    }
+    public Vector3 GetPosition(Vector2Int index)
+    {
+        return new Vector3((index.x * tileSize) - (gridWidth / tileSize / 2f) + tileSize / 2, 0, (index.y * tileSize) - (gridHeight / tileSize / 2f));
+    }
+    public int IndexPosToIndex(Vector2Int index)
+    {
+        int indexPosToIndex = index.x * gridWidth + index.y % gridHeight;
+        indexPosToIndex = math.clamp(indexPosToIndex, 0, gridHeight * gridWidth - 1);
+        return indexPosToIndex;
+    }
+    public Vector2Int IndexToIndexPos(int index)
+    {
+        return new Vector2Int(index / gridWidth, index % gridHeight);
+    }
+    public Matrix4x4 IndexToMatrix4x4(Vector2Int posIndex)
+    {
+        Vector3 position = new Vector3(posIndex.x * tileSize + tileSize / 2, 0.0f, posIndex.y * tileSize) - new Vector3(gridWidth * tileSize / 2f, 0, gridHeight * tileSize / 2f);
+        Matrix4x4 matrix4X4 = Matrix4x4.Translate(position) * Matrix4x4.Scale(new Vector3(tileSize, tileSize, tileSize));
+        return matrix4X4;
+    }
+    public Matrix4x4 IndexToMatrix4x4(int index)
+    {
+        Vector2Int posIndex = IndexToIndexPos(index);
+        Vector3 position = new Vector3(posIndex.x * tileSize + tileSize / 2, 0.0f, posIndex.y * tileSize) - new Vector3(gridWidth * tileSize / 2f, 0, gridHeight * tileSize / 2f);
+        Matrix4x4 matrix4X4 = Matrix4x4.Translate(position) * Matrix4x4.Scale(new Vector3(tileSize, tileSize, tileSize));
+        return matrix4X4;
+    }
+    public bool CheckIfTileMatches(int index, EntityTileID tileID)
+    {
+        return tileIDs[index, tiles[(int)tileID].order].tileID == tileID;
     }
 }
 

@@ -17,7 +17,7 @@ public class BuildDamm : Conditional
     
     public override TaskStatus OnUpdate()
     {
-        if (GridHelper.CheckIfTileMatches(currentDammIndex.Value, EntityTileID.PAVEMENT))
+        if (GridManager.instance.CheckIfTileMatches(currentDammIndex.Value, EntityTileID.PAVEMENT))
         {
             return TaskStatus.Failure;
         }
@@ -27,8 +27,10 @@ public class BuildDamm : Conditional
             dammArray.Value.dammArray[currentDammIndex.Value].progress += Time.deltaTime * dammBuildProgress.Value;
             return TaskStatus.Running;
         }
-        EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.FORCE_CHANGE_TILE, targetPosition.Value, EntityTileID.DAMM);
+
+        dammArray.Value.dammArray[currentDammIndex.Value].progress = 1f;
         dammArray.Value.dammArray[currentDammIndex.Value].buildDamm = true;
+        EventSystem<Vector3, EntityTileID>.RaiseEvent(EventType.FORCE_CHANGE_TILE, targetPosition.Value, EntityTileID.DAMM);
         amountTilesDammFromWall.Value = Mathf.Max(amountTilesDammFromWall.Value - 1, 2);
         return TaskStatus.Success;
     }
