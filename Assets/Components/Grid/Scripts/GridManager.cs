@@ -89,6 +89,11 @@ public class GridManager : MonoBehaviour
     [SerializeField] private TileWrapper cliffTile;
     [SerializeField] private TileWrapper emptyTile;
 
+    [SerializeField] private ScoreTracker scoreTracker;
+
+    [SerializeField] private GameObject scoreScreen;
+    private GameObject scoreInstance;
+
     [Tab("Sounds")]
     [Foldout("Placing")]
     [SerializeField] private AudioClip tree;
@@ -699,6 +704,9 @@ public class GridManager : MonoBehaviour
         yield return new WaitForSeconds(time);
         gameOver = true;
         Debug.Log($"game over");
+        scoreScreen.SetActive(true);
+        //scoreInstance = Instantiate(scoreScreen, Vector3.zero, quaternion.identity);
+        //Time.timeScale = 0;
     }
     
     private void GetAreaSelection(EntityTileID entityTileID, Vector2Int posIndex, Action<int> callback)
