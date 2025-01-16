@@ -35,6 +35,7 @@ public class Bulldozer : MonoBehaviour
     private GameObject bulldozer;
     private bool destroyed;
     private int currentZPos;
+    private Material material;
 
     private void OnDisable()
     {
@@ -51,7 +52,8 @@ public class Bulldozer : MonoBehaviour
         if (Time.timeSinceLevelLoad > timeWhenToSpawn)
         {
             float xPos = Mathf.RoundToInt(Random.Range(-25, 25)) + 0.5f;
-            bulldozer = Instantiate(bulldozerPrefab, new Vector3(xPos, 0, gridManager.wallDistance - 25 + 4), Quaternion.identity);
+            bulldozer = Instantiate(bulldozerPrefab, new Vector3(xPos, 0, gridManager.wallDistance - 25 + 10), Quaternion.identity);
+            material = bulldozer.transform.GetChild(0).GetComponent<MeshRenderer>().material;
 
             vfxGraph = bulldozer.GetComponentInChildren<VisualEffect>();
             if (vfxGraph == null)
@@ -140,6 +142,7 @@ public class Bulldozer : MonoBehaviour
     private void TookDamage()
     {
         health -= 1;
+        material.SetFloat("_TimeWhenHit", Time.time);
 
         if (vfxGraph != null)
         {
