@@ -420,7 +420,7 @@ public class GridManager : MonoBehaviour
         }
         
         int order = tiles[(int)entityTileID].order;
-        ChangeTile(position, entityTileID, posIndex, order);
+        ChangeTile(position, entityTileID, posIndex, order, entityTileID == EntityTileID.DIRT);
     }
 
     private void TryChangeTile(Vector3 position, EntityTileID[] entityTileID)
@@ -437,12 +437,12 @@ public class GridManager : MonoBehaviour
 
         foreach (EntityTileID entity in entityTileID)
         {
-            ChangeTile(position, entity, posIndex, tiles[(int)entity].order);
+            ChangeTile(position, entity, posIndex, tiles[(int)entity].order, entityTileID[1] == EntityTileID.DIRT);
         }
         cachedIndex = -1;
     }
     
-    private void ChangeTile(Vector3 position, EntityTileID entityTileID, Vector2Int posIndex, int order)
+    private void ChangeTile(Vector3 position, EntityTileID entityTileID, Vector2Int posIndex, int order, bool getApplesBack)
     {
         int index = IndexPosToIndex(posIndex);
         GridTileStruct oldGridTileStruct = cachedEntityTileID[order];
@@ -475,6 +475,11 @@ public class GridManager : MonoBehaviour
         {            
             waterSpots.Add(IndexToIndexPos(index));
             waterSpots = waterSpots.OrderBy(x => x.y).ToList();
+        }
+
+        if (getApplesBack)
+        {
+            GainApples(tiles[(int)oldGridTileStruct.tileID].TileGameSettings.appleCost, position);
         }
         
         ChangeTile(index, GetRandomTileStruct(entityTileID), order);

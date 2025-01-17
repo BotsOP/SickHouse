@@ -100,18 +100,18 @@ public class DroneManager : MonoBehaviour
             {
                 Vector3 position = GridManager.instance.GetPosition(GridManager.instance.WorldPosToIndexPos(drone.transform.position));
                 
-                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
+                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
                 
                 position.x += 1;
-                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
+                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
                 position.x -= 2;
-                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
+                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
                 position.x += 1;
                 
                 position.z += 1;
-                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
+                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
                 position.z -= 2;
-                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.DIRT, EntityTileID.EMPTY });
+                EventSystem<Vector3, EntityTileID[]>.RaiseEvent(EventType.FORCE_CHANGE_TILE, position, new[] { EntityTileID.EMPTY, EntityTileID.PAVEMENT, EntityTileID.EMPTY });
                 deadDrones.Remove(drone);
                 DroneExplodeEffect(drone);
                 EventSystem<int, Vector3>.RaiseEvent(EventType.GAIN_APPLES, amountApplesUponDeath, drone.transform.position);
