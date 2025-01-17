@@ -895,8 +895,8 @@ MonoBehaviour:
   health: 15
   amountApples: 50
   bulldozerPrefab: {fileID: 216843266694517702, guid: af540539dfcb5b941a2ad871b4b959dd, type: 3}
-  megaDeath: {fileID: 0}
-  start: {fileID: 0}
+  megaDeath: {fileID: 8300000, guid: c6ef980b334e607499cd3f32fad6c187, type: 3}
+  start: {fileID: 8300000, guid: 981d7720320bf8b478d99ddb13444906, type: 3}
   cursorPrefab: {fileID: 8707132528564774719, guid: 496950f5c2f729b4e807c85a10501a84, type: 3}
   canvasTransform: {fileID: 902928657}
   mainCamera: {fileID: 1310180940}
@@ -1406,7 +1406,7 @@ MonoBehaviour:
   maxAmountApplesProduced: 3
   applePrefab: {fileID: 7945937796656539529, guid: 429d82b06bd47ba47bad0e3d1eda9d0e, type: 3}
   treeDestructionEffect: {fileID: 1558945474}
-  wallCycleInSeconds: 4
+  wallCycleInSeconds: 4.8
   wallPrefabs:
   - {fileID: 6922385585974127097, guid: a98006a2a83a13d499cadc8f9f7bd1bb, type: 3}
   - {fileID: 6762283960194072936, guid: 950faa8d497418745866505d4989600c, type: 3}
@@ -2480,7 +2480,7 @@ MonoBehaviour:
   deadDroneSpeedX: 2
   deadDroneSpeedY: 12
   dronePrefab: {fileID: 5575191050971733678, guid: 713d1f486e940a743a52267c1f3bb73f, type: 3}
-  droneDeath: {fileID: 0}
+  droneDeath: {fileID: 8300000, guid: 5f90de2dd820caf47ae1ea2660c4d664, type: 3}
   cursorPrefab: {fileID: 3949454248940646892, guid: 496950f5c2f729b4e807c85a10501a84, type: 3}
   canvasTransform: {fileID: 902928657}
   mainCamera: {fileID: 1310180940}
