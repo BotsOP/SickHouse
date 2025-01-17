@@ -59,7 +59,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _HueShiftValue: 360
+    - _HueShiftValue: 51
     - _NoiseScale: 0.38
     - _QueueControl: 0
     - _QueueOffset: 0

@@ -2906,7 +2906,7 @@ PrefabInstance:
       objectReference: {fileID: 1310180940}
     - target: {fileID: 2775209671943112328, guid: 7671fe9c4f9025d4c9b5e2a8c4d2aa11, type: 3}
       propertyPath: gridLayer.m_Bits
-      value: 264
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 2851906993744850323, guid: 7671fe9c4f9025d4c9b5e2a8c4d2aa11, type: 3}
       propertyPath: m_Name
