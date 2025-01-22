@@ -27,6 +27,11 @@ public class MainMenuManager : MonoBehaviour
         leaderboard = new List<LeaderboardRanking>();
     }
 
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
     public void LoadMainScene()
     {
         SceneManager.LoadScene(mainSceneName);

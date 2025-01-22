@@ -574,7 +574,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 437762141583557255}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.9478682
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -901,7 +901,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2044832823519371379}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.9478682
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3178,7 +3178,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 286798209484176968}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.9478682
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3751,78 +3751,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_AlphaFadeSpeed: 0.15
---- !u!1 &3837525947087160082
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2197763569247313765}
-  - component: {fileID: 6139003089989101167}
-  - component: {fileID: 5440163707484113644}
-  m_Layer: 0
-  m_Name: badge
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &2197763569247313765
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3837525947087160082}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8444503339749836567}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 791, y: 29}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &6139003089989101167
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3837525947087160082}
-  m_CullTransparentMesh: 1
---- !u!114 &5440163707484113644
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3837525947087160082}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 5aae6a50c8f74894da176dbd899bdac7, type: 3}
-  m_UVRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
 --- !u!1 &3869833224508705178
 GameObject:
   m_ObjectHideFlags: 0
@@ -4750,7 +4678,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 5078378898973707742}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99999744
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6227,7 +6155,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 5834492914822196366}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.9478682
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7409,7 +7337,6 @@ RectTransform:
   - {fileID: 7005303644788928083}
   - {fileID: 6959989492650820662}
   - {fileID: 6042143091259411972}
-  - {fileID: 2197763569247313765}
   - {fileID: 7798278443479405973}
   - {fileID: 2870724575814592602}
   m_Father: {fileID: 9117356949070240012}
@@ -7578,7 +7505,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 6479838906725101495}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.9478682
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -8022,7 +7949,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00022142903}
+  m_AnchoredPosition: {x: 0, y: 0.0015477198}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2779189334071591446
