@@ -75,6 +75,10 @@ public class ScoreTracker : MonoBehaviour
         scoreUI.SetActive(true);
         gameUI.SetActive(false);
         score.text = finalScore.ToString();
+        if (leaderboard.Count == 0)
+        {
+            return;
+        }
         highScore.text = leaderboard[0].playerTime.ToString("#.##");
 
         if (leaderboard[0].playerTime < finalScore)

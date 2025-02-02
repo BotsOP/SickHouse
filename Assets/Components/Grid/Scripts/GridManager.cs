@@ -146,6 +146,11 @@ public class GridManager : MonoBehaviour
         return tileIDToMatrixIndex[(int)gridTileStruct.tileID] + gridTileStruct.version;
     }
 
+    private void OnEnable()
+    {
+        Time.timeScale = 1;
+    }
+
     private void OnDisable()
     {
         gridSelectionBuffer?.Release();
